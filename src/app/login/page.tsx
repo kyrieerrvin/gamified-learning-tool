@@ -3,18 +3,52 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Login() {
-  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const { signInWithEmail, signInWithGoogle } = useAuth();
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login/signup logic here
-    router.push('/dashboard');
+    
+    if (!email || !password) {
+      setError('Email and password are required');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError('');
+      
+      await signInWithEmail(email, password);
+      // No need to redirect here - it's handled in the auth context
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign in');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      await signInWithGoogle();
+      // No need to redirect here - it's handled in the auth context
+    } catch (err: any) {
+      if (err.code !== 'auth/popup-closed-by-user') { // Only set error for non-user-cancelled actions
+        setError(err.message || 'Failed to sign in with Google');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,41 +91,26 @@ export default function Login() {
             </p>
           )}
           
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+          
           {/* Social login buttons */}
           <div className="space-y-3 mb-4">
             <button 
-              onClick={() => router.push('/auth/google')}
+              onClick={handleGoogleSignIn}
               className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-full py-3 px-4 hover:bg-gray-50 transition-colors text-gray-700"
+              disabled={loading}
             >
-              <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-                <g transform="matrix(1, 0, 0, 1, 0, 0)">
-                  <path d="M21.35,11.1H12v3.2h5.59c-0.51,2.83-2.94,4.95-5.59,4.95c-3.31,0-6-2.69-6-6s2.69-6,6-6c1.52,0,2.9,0.57,3.95,1.5 l2.55-2.55C16.98,4.83,14.73,4,12,4c-4.97,0-9,4.03-9,9s4.02,9,9,9c7.01,0,9.45-6.38,8.35-10.9C20.35,11.1,21.35,11.1,21.35,11.1z" fill="#EA4335"/>
-                  <path d="M21.35,11.1H12v3.2h5.59c-0.25,1.42-1.01,2.61-2.12,3.4v0.02h0.02c1.47-0.85,2.75-2.31,3.43-4.12 C18.92,13.6,21.35,11.1,21.35,11.1z" fill="#FBBC05"/>
-                  <path d="M12,19.2c3.31,0,6-2.69,6-6s-2.69-6-6-6s-6,2.69-6,6S8.69,19.2,12,19.2z M12,7.2c-3.31,0-6,2.69-6,6s2.69,6,6,6 s6-2.69,6-6S15.31,7.2,12,7.2z" fill="#34A853"/>
-                  <path d="M6,12c0-0.39,0.04-0.77,0.12-1.14l-4.04-3.06C1.4,9.04,1,10.48,1,12s0.4,2.96,1.07,4.2l4.04-3.06 C6.04,12.77,6,12.39,6,12z" fill="#4285F4"/>
-                </g>
+              <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
+                <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
+                <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
+                <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
               </svg>
-              <span>Continue with Google</span>
-            </button>
-            
-            <button 
-              onClick={() => router.push('/auth/apple')}
-              className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-full py-3 px-4 hover:bg-gray-50 transition-colors text-gray-700"
-            >
-              <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.569 12.6254C17.597 15.4237 20.2179 16.3088 20.247 16.3216C20.2248 16.4014 19.8959 17.5356 19.1439 18.6827C18.5205 19.6559 17.8713 20.6228 16.8402 20.6483C15.8283 20.6738 15.4922 20.0177 14.3311 20.0177C13.1636 20.0177 12.8021 20.6228 11.8599 20.6738C10.8598 20.7249 10.0994 19.6431 9.47946 18.6761C8.19673 16.6913 7.23465 12.9457 8.53668 10.4269C9.17265 9.17695 10.3147 8.3701 11.5715 8.3446C12.5524 8.31911 13.4891 9.03815 14.1058 9.03815C14.7289 9.03815 15.8667 8.17381 17.0598 8.34969C17.6642 8.38028 18.7886 8.61856 19.5196 9.68571C19.4442 9.73139 17.5471 10.7999 17.569 12.6254ZM15.3131 6.56311C15.8219 5.93152 16.1508 5.06719 16.0435 4.21024C15.3259 4.24083 14.4445 4.71077 13.9102 5.33727C13.4378 5.8881 13.0325 6.77803 13.1591 7.61409C13.9616 7.67486 14.8043 7.19129 15.3131 6.56311Z" fill="black"/>
-              </svg>
-              <span>Continue with Apple</span>
-            </button>
-            
-            <button 
-              onClick={() => router.push('/auth/facebook')}
-              className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-full py-3 px-4 hover:bg-gray-50 transition-colors text-gray-700"
-            >
-              <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C18.34 21.21 22 17.06 22 12.06C22 6.53 17.5 2.04 12 2.04Z" fill="#1877F2"/>
-              </svg>
-              <span>Continue with Facebook</span>
+              <span>{loading ? 'Signing in...' : 'Continue with Google'}</span>
             </button>
           </div>
           
@@ -115,12 +134,8 @@ export default function Login() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter your email"
                 required
+                disabled={loading}
               />
-              <div className="mt-1 text-xs text-blue-600">
-                <Link href="/phone-login" className="hover:underline">
-                  Use your cell phone number
-                </Link>
-              </div>
             </div>
             
             <div className="mb-6">
@@ -135,6 +150,7 @@ export default function Login() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter your password"
                 required
+                disabled={loading}
               />
               <div className="mt-1 text-xs text-blue-600">
                 <Link href="/forgot-password" className="hover:underline">
@@ -145,21 +161,12 @@ export default function Login() {
             
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white rounded-full py-3 px-4 font-medium hover:bg-blue-700 transition-colors"
+              className="w-full bg-blue-600 text-white rounded-full py-3 px-4 font-medium hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+              disabled={loading}
             >
-              {isLogin ? 'Log in' : 'Sign up'}
+              {loading ? 'Signing in...' : (isLogin ? 'Log in' : 'Sign up')}
             </button>
           </form>
-          
-          {/* SSO login */}
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>
-              Does your company use single sign-on?{' '}
-              <Link href="/sso-login" className="text-blue-600 hover:underline">
-                Log in with SSO
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>
