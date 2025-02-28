@@ -11,7 +11,6 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -34,11 +33,39 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+
+  // Helper function to set a session cookie for the middleware
+  function setSessionCookie(token: string) {
+    // Set a session cookie that expires in 7 days
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 7);
+    
+    document.cookie = `session=${token}; expires=${expires.toUTCString()}; path=/;`;
+  }
+
+  // Helper to clear session cookie
+  function clearSessionCookie() {
+    document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  }
 
   useEffect(() => {
+    console.log("Setting up auth state listener");
+    
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("Auth state changed:", currentUser?.email || "no user");
       setUser(currentUser);
+      
+      // Set or clear session cookie based on auth state
+      if (currentUser) {
+        // For security purposes in a real app, this should be done by your backend
+        // This is a simplified approach for demonstration
+        currentUser.getIdToken().then(token => {
+          setSessionCookie(token);
+        });
+      } else {
+        clearSessionCookie();
+      }
+      
       setLoading(false);
     });
 
@@ -49,8 +76,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("Login successful:", userCredential.user.email);
-      // Redirect to success page
-      window.location.href = '/login-success';
+      
+      // Direct browser navigation
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Error signing in with email:', error);
       throw error;
@@ -62,23 +90,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       console.log("Google login successful:", result.user.email);
-      // Redirect to success page
-      window.location.href = '/login-success';
+      
+      // Direct browser navigation
+      window.location.href = '/dashboard';
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
-      // Don't throw the popup-closed-by-user error since it's a user action, not a failure
-      if (error.code === 'auth/popup-closed-by-user') {
-        console.log('User closed the popup window');
-        return; // Just return without throwing error for this specific case
+      if (error.code !== 'auth/popup-closed-by-user') {
+        throw error;
       }
-      throw error;
     }
   };
 
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
-      router.push('/');
+      clearSessionCookie();
+      console.log("Signed out successfully");
+      
+      // Direct browser navigation
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;

@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   description: "A fun and interactive way to learn Tagalog",
 };
 
+// Add "use client" directive to ensure client-side routing works correctly
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,6 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Add debugging script */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            console.log("Page loaded:", window.location.pathname);
+          `,
+        }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

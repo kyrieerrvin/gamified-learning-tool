@@ -270,8 +270,8 @@ export default function Home() {
                 className="bg-blue-50 rounded-xl p-6 max-w-xs transform transition-all duration-500 hover:scale-105 hover:rotate-1"
                 style={calculateParallax(-0.01)}
               >
-                <div className="text-blue-600 text-4xl font-bold mb-2">87M+</div>
-                <p className="text-gray-700">Tagalog is spoken by over 87 million people worldwide</p>
+                <div className="text-blue-600 text-4xl font-bold mb-2">22M+</div>
+                <p className="text-gray-700">Tagalog is spoken by over 22 million people worldwide</p>
               </div>
               
               <div 

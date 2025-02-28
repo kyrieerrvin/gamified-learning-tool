@@ -3,25 +3,16 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // This is a simplified version without actual token validation
-  // In a real app, you would verify the session token
-  const token = request.cookies.get('session');
+  // Just log for debugging and let all requests through for now
+  console.log("Middleware running for:", request.nextUrl.pathname);
   
-  // Only redirect for protected routes
-  if (!token && (
-    request.nextUrl.pathname.startsWith('/dashboard') ||
-    request.nextUrl.pathname.startsWith('/challenges')
-  )) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-  
+  // Temporarily disable all redirections to debug the route issue
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/challenges/:path*',
-    '/login-success'
+    '/challenges/:path*'
   ],
 };
