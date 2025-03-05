@@ -27,7 +27,6 @@ A fun and interactive web application for learning Tagalog through gamified chal
 - npm or yarn
 
 ### Project Structure
-.
 ├── public/               # Static assets (SVG files, etc.)
 ├── src/
 │   ├── app/              # Next.js app directory
