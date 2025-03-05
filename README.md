@@ -27,30 +27,7 @@ A fun and interactive web application for learning Tagalog through gamified chal
 - npm or yarn
 
 ### Project Structure
-├── public/               # Static assets (SVG files, etc.)
-├── src/
-│   ├── app/              # Next.js app directory
-│   │   ├── challenges/   # Challenge pages
-│   │   ├── dashboard/    # User dashboard
-│   │   ├── login/        # Authentication pages
-│   │   ├── profile/      # User profile
-│   │   ├── layout.tsx    # Root layout
-│   │   ├── page.tsx      # Home page
-│   │   └── providers.tsx # Context providers wrapper
-│   ├── components/       # React components
-│   │   ├── challenges/   # Challenge-specific components
-│   │   ├── layout/       # Layout components (Navbar, Header)
-│   │   └── ui/           # Reusable UI components (Button)
-│   ├── context/          # React context providers
-│   │   └── AuthContext.tsx # Authentication context
-│   ├── lib/              # Utility functions
-│   │   └── firebase.ts   # Firebase configuration
-│   ├── store/            # Zustand state management
-│   │   └── gameStore.ts  # Game state store
-│   └── types/            # TypeScript type definitions
-├── tailwind.config.ts    # Tailwind CSS configuration
-├── tsconfig.json         # TypeScript configuration
-└── next.config.ts        # Next.js configuration
+<img width="463" alt="Screenshot 2025-03-05 at 12 33 52 PM" src="https://github.com/user-attachments/assets/c376655f-200c-4fa1-9d48-583a20ef5574" />
 
 ## Deploy on Vercel
 
