@@ -88,11 +88,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signInWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
+      // Add additional OAuth scopes
+      provider.addScope('email');
+      provider.addScope('profile');
+      // Enable one-tap sign-in
+      provider.setCustomParameters({ prompt: 'select_account' });
+      
       const result = await signInWithPopup(auth, provider);
       console.log("Google login successful:", result.user.email);
       
-      // Direct browser navigation
-      window.location.href = '/dashboard';
+      // Get the auth token 
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      if (credential?.accessToken) {
+        // Set the user in state to ensure it's available immediately
+        setUser(result.user);
+        
+        // Set the session cookie immediately
+        await result.user.getIdToken().then(token => {
+          setSessionCookie(token);
+        });
+        
+        // Wait a moment to ensure the cookie is set and user state is updated
+        setTimeout(() => {
+          console.log("Redirecting to dashboard after Google login");
+          window.location.href = '/dashboard';
+        }, 300);
+      } else {
+        console.error("No credential returned from Google login");
+      }
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
       if (error.code !== 'auth/popup-closed-by-user') {
