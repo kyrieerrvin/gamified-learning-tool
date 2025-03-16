@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated_date": "2025-03-10",
+    "description": "Function call graph for the Gamified Learning Tool"
+  },
+  "functions": {
+    "nlpService.analyzeText": {
+      "file": "src/services/nlpService.ts",
+      "called_by": [
+        "gameService.generateChallenge"
+      ],
+      "calls": [
+        "fetch (API call to /api/analyze)"
+      ],
+      "signature": "async function analyzeText(text: string): Promise<AnalysisResult>",
+      "purpose": "Sends text to NLP backend for analysis",
+      "complexity": "medium"
+    },
+    "nlpService.verifyAnswer": {
+      "file": "src/services/nlpService.ts",
+      "called_by": [
+        "gameService.checkAnswer",
+        "PartsOfSpeechGame.handleSubmit"
+      ],
+      "calls": [
+        "fetch (API call to /api/verify)"
+      ],
+      "signature": "async function verifyAnswer(answer: string, expected: string): Promise<VerificationResult>",
+      "purpose": "Checks if a provided answer matches expected result using NLP model",
+      "complexity": "medium"
+    },
+    "gameService.generateChallenge": {
+      "file": "src/services/gameService.ts",
+      "called_by": [
+        "PartsOfSpeechGame.startNewGame",
+        "useEffect in PartsOfSpeechGame"
+      ],
+      "calls": [
+        "nlpService.analyzeText",
+        "gameStore.setCurrentChallenge"
+      ],
+      "signature": "async function generateChallenge(): Promise<Challenge>",
+      "purpose": "Creates a new language challenge using NLP service",
+      "complexity": "high"
+    },
+    "gameService.checkAnswer": {
+      "file": "src/services/gameService.ts",
+      "called_by": [
+        "PartsOfSpeechGame.handleSubmit"
+      ],
+      "calls": [
+        "nlpService.verifyAnswer",
+        "gameStore.updateScore"
+      ],
+      "signature": "async function checkAnswer(userAnswer: string, challengeId: string): Promise<AnswerResult>",
+      "purpose": "Verifies user's answer and updates game score",
+      "complexity": "medium"
+    },
+    "PartsOfSpeechGame.handleSubmit": {
+      "file": "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx",
+      "called_by": [
+        "form onSubmit event in PartsOfSpeechGame"
+      ],
+      "calls": [
+        "gameService.checkAnswer",
+        "useState setter functions"
+      ],
+      "signature": "const handleSubmit = async (e: React.FormEvent) => void",
+      "purpose": "Handles form submission in the game UI",
+      "complexity": "medium"
+    },
+    "PartsOfSpeechGame.startNewGame": {
+      "file": "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx",
+      "called_by": [
+        "Button onClick in PartsOfSpeechGame",
+        "useEffect in PartsOfSpeechGame"
+      ],
+      "calls": [
+        "gameService.generateChallenge",
+        "useState setter functions"
+      ],
+      "signature": "const startNewGame = async () => void",
+      "purpose": "Initializes a new game session",
+      "complexity": "medium"
+    },
+    "AuthContext.login": {
+      "file": "src/context/AuthContext.tsx",
+      "called_by": [
+        "login form submission in Login page"
+      ],
+      "calls": [
+        "firebase.auth().signInWithEmailAndPassword",
+        "localStorage.setItem"
+      ],
+      "signature": "const login = async (email: string, password: string): Promise<void>",
+      "purpose": "Authenticates user with Firebase",
+      "complexity": "medium"
+    },
+    "AuthContext.logout": {
+      "file": "src/context/AuthContext.tsx",
+      "called_by": [
+        "logout button click in Navbar"
+      ],
+      "calls": [
+        "firebase.auth().signOut",
+        "localStorage.removeItem"
+      ],
+      "signature": "const logout = async (): Promise<void>",
+      "purpose": "Signs out current user",
+      "complexity": "low"
+    },
+    "api/analyze/route.handler": {
+      "file": "src/app/api/analyze/route.ts",
+      "called_by": [
+        "HTTP POST request to /api/analyze"
+      ],
+      "calls": [
+        "Python backend API call"
+      ],
+      "signature": "export async function POST(req: Request): Promise<Response>",
+      "purpose": "API route handler for text analysis",
+      "complexity": "medium"
+    },
+    "api/verify/route.handler": {
+      "file": "src/app/api/verify/route.ts",
+      "called_by": [
+        "HTTP POST request to /api/verify"
+      ],
+      "calls": [
+        "Python backend API call"
+      ],
+      "signature": "export async function POST(req: Request): Promise<Response>",
+      "purpose": "API route handler for answer verification",
+      "complexity": "medium"
+    }
+  }
+}

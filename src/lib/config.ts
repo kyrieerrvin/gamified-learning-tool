@@ -75,10 +75,14 @@ export const API_ENDPOINTS = {
     HEALTH_ENDPOINT: `${getApiBaseUrl()}/health`,
     ANALYZE_ENDPOINT: `${getApiBaseUrl()}/api/analyze`,
     VERIFY_ENDPOINT: `${getApiBaseUrl()}/api/verify`,
+    MAKE_SENTENCE_WORDS_ENDPOINT: `${getApiBaseUrl()}/api/make-sentence/words`,
+    MAKE_SENTENCE_VERIFY_ENDPOINT: `${getApiBaseUrl()}/api/make-sentence/verify`,
     
     // Internal Next.js API routes that proxy to the Flask backend
     POS_GAME_PROXY: '/api/challenges/pos-game',
-    NLP_TEST_PROXY: '/api/analyze'  // Point to our new analyze endpoint
+    NLP_TEST_PROXY: '/api/analyze',  // Point to our analyze endpoint
+    MAKE_SENTENCE_WORDS_PROXY: '/api/challenges/make-sentence/words',
+    MAKE_SENTENCE_VERIFY_PROXY: '/api/challenges/make-sentence/verify'
 };
 
 // App Configuration

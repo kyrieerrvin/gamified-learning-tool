@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated_date": "2025-03-10",
+    "description": "Type relationships and interface implementations for the Gamified Learning Tool"
+  },
+  "types": {
+    "User": {
+      "file": "src/types/index.ts",
+      "definition": "interface User { id: string; email: string; displayName?: string; }",
+      "used_by": [
+        "src/context/AuthContext.tsx",
+        "src/app/profile/page.tsx"
+      ],
+      "relationships": []
+    },
+    "Challenge": {
+      "file": "src/types/index.ts",
+      "definition": "interface Challenge { id: string; text: string; options: string[]; correctAnswer: string; difficulty: 'easy' | 'medium' | 'hard'; }",
+      "used_by": [
+        "src/services/gameService.ts",
+        "src/store/gameStore.ts",
+        "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx"
+      ],
+      "relationships": []
+    },
+    "GameState": {
+      "file": "src/store/gameStore.ts",
+      "definition": "interface GameState { score: number; currentChallenge: Challenge | null; history: AnswerRecord[]; isLoading: boolean; }",
+      "used_by": [
+        "src/store/gameStore.ts",
+        "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx"
+      ],
+      "relationships": [
+        {"type": "references", "target": "Challenge"},
+        {"type": "references", "target": "AnswerRecord"}
+      ]
+    },
+    "AnswerRecord": {
+      "file": "src/types/index.ts",
+      "definition": "interface AnswerRecord { challengeId: string; userAnswer: string; isCorrect: boolean; timestamp: number; }",
+      "used_by": [
+        "src/services/gameService.ts",
+        "src/store/gameStore.ts"
+      ],
+      "relationships": []
+    },
+    "AnswerResult": {
+      "file": "src/types/index.ts",
+      "definition": "interface AnswerResult { isCorrect: boolean; correctAnswer: string; explanation?: string; }",
+      "used_by": [
+        "src/services/gameService.ts",
+        "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx"
+      ],
+      "relationships": []
+    },
+    "AnalysisResult": {
+      "file": "src/types/index.ts",
+      "definition": "interface AnalysisResult { partsOfSpeech: Record<string, string>; entities: string[]; sentimentScore: number; }",
+      "used_by": [
+        "src/services/nlpService.ts",
+        "src/app/api/analyze/route.ts"
+      ],
+      "relationships": []
+    },
+    "VerificationResult": {
+      "file": "src/types/index.ts",
+      "definition": "interface VerificationResult { isMatch: boolean; confidence: number; explanation?: string; }",
+      "used_by": [
+        "src/services/nlpService.ts",
+        "src/app/api/verify/route.ts"
+      ],
+      "relationships": []
+    },
+    "AuthContextType": {
+      "file": "src/context/AuthContext.tsx",
+      "definition": "interface AuthContextType { user: User | null; login: (email: string, password: string) => Promise<void>; logout: () => Promise<void>; isLoading: boolean; }",
+      "used_by": [
+        "src/context/AuthContext.tsx",
+        "src/app/layout.tsx",
+        "src/components/layout/Navbar.tsx"
+      ],
+      "relationships": [
+        {"type": "references", "target": "User"}
+      ]
+    }
+  },
+  "implementations": {
+    "GameStore": {
+      "file": "src/store/gameStore.ts",
+      "implements": "create<GameState>",
+      "methods": [
+        "setCurrentChallenge(challenge: Challenge): void",
+        "updateScore(points: number): void",
+        "addToHistory(record: AnswerRecord): void",
+        "resetGame(): void"
+      ]
+    },
+    "AuthProvider": {
+      "file": "src/context/AuthContext.tsx",
+      "implements": "React.FC<PropsWithChildren>",
+      "provides": "AuthContextType"
+    }
+  }
+}

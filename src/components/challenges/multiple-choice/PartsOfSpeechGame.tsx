@@ -10,9 +10,15 @@ import { API_ENDPOINTS } from '@/lib/config';
 
 interface PartsOfSpeechGameProps {
   difficulty?: 'easy' | 'medium' | 'hard';
+  levelNumber?: number;
+  onComplete?: (score: number, levelCompleted: boolean) => void;
 }
 
-export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpeechGameProps) {
+export default function PartsOfSpeechGame({ 
+  difficulty = 'medium',
+  levelNumber = 0,
+  onComplete
+}: PartsOfSpeechGameProps) {
   // State for the game
   const [data, setData] = useState<GameData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,8 +33,14 @@ export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpee
   const [useNlpApi, setUseNlpApi] = useState(false);
   const [nlpStatus, setNlpStatus] = useState<string>('unknown');
   
-  // Game store for managing global score and streak
-  const { addPoints, increaseStreak, resetStreak } = useGameStore();
+  // Game store for managing global score, streak and hearts
+  const { addPoints, increaseStreak, resetStreak, decreaseHeart } = useGameStore();
+  
+  // Track if this is the first mistake on this question
+  const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
+  
+  // Track skipped questions
+  const [skippedQuestions, setSkippedQuestions] = useState<number[]>([]);
   
   // Check for NLP API availability
   useEffect(() => {
@@ -221,8 +233,48 @@ export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpee
       } else {
         setFeedback(`Mali. Ang tamang sagot ay ${currentQuestion.correctAnswer}. ${currentQuestion.explanation}`);
         resetStreak(); // Reset streak on wrong answer
+        
+        // Decrease heart on first mistake for this question
+        if (!firstMistake[currentQuestionIndex]) {
+          decreaseHeart();
+          setFirstMistake(prev => ({
+            ...prev,
+            [currentQuestionIndex]: true
+          }));
+        }
       }
     }
+  };
+  
+  // Handle skipping a question
+  const handleSkip = () => {
+    if (!data) return;
+    
+    // Don't allow skipping the last question
+    if (currentQuestionIndex >= data.questions.length - 1) {
+      return;
+    }
+    
+    // Add to skipped questions
+    setSkippedQuestions(prev => [...prev, currentQuestionIndex]);
+    
+    // Save the current question for later
+    const currentQuestion = data.questions[currentQuestionIndex];
+    
+    // Create a new questions array by moving the current question to the end
+    const reorderedQuestions = [...data.questions];
+    reorderedQuestions.splice(currentQuestionIndex, 1); // Remove current
+    reorderedQuestions.push(currentQuestion); // Add to end
+    
+    // Update the data with reordered questions
+    setData({
+      ...data,
+      questions: reorderedQuestions
+    });
+    
+    setSelectedOption(null);
+    setFeedback(null);
+    setIsCorrect(null);
   };
 
   // Move to the next question
@@ -239,15 +291,6 @@ export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpee
         setIsCorrect(null);
       } else {
         setGameOver(true);
-        // Add a completion bonus if score is good
-        const correctAnswers = score / 10;
-        const totalQuestions = data.questions.length;
-        
-        if (correctAnswers >= totalQuestions * 0.7) { // 70% or better
-          const bonus = 20; // Completion bonus
-          addPoints(bonus);
-          setScore(prevScore => prevScore + bonus);
-        }
       }
       setIsTransitioning(false);
     }, 500);
@@ -312,17 +355,7 @@ export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpee
                 {`Dedicated NLP API (${nlpStatus})`}
               </span>
             )}
-            
-            {/* Analysis method indicator */}
-            {data.source && (
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                data.source === 'calamancy' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {data.source === 'calamancy' ? 'AI Analysis' : 'Basic Analysis'}
-              </span>
-            )}
+
           </div>
           
           <p className="text-lg text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
@@ -380,15 +413,30 @@ export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpee
             </div>
           )}
 
-          {/* Next button */}
-          {selectedOption && (
-            <Button 
-              onClick={handleNextQuestion}
-              className="w-full"
-            >
-              {currentQuestionIndex < data.questions.length - 1 ? 'Susunod na Tanong' : 'Tapusin'}
-            </Button>
-          )}
+          {/* Next or Skip buttons */}
+          <div className="flex gap-3">
+            {selectedOption ? (
+              <Button 
+                onClick={handleNextQuestion}
+                className="flex-1"
+              >
+                {currentQuestionIndex < data.questions.length - 1 ? 'Susunod na Tanong' : 'Tapusin'}
+              </Button>
+            ) : (
+              <>
+                {/* Skip button - disabled for last question */}
+                {currentQuestionIndex < data.questions.length - 1 && (
+                  <Button 
+                    onClick={handleSkip}
+                    variant="secondary"
+                    className="flex-1"
+                  >
+                    Laktawan
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       ) : (
         /* Game over screen */
@@ -420,11 +468,14 @@ export default function PartsOfSpeechGame({ difficulty = 'medium' }: PartsOfSpee
               Maglaro ulit
             </Button>
             <Button 
-              onClick={() => window.location.href = '/challenges'}
+              onClick={() => {
+                // Use window.location.replace to prevent the back button from returning to the game
+                window.location.replace('/challenges/multiple-choice');
+              }}
               variant="secondary"
               className="px-8"
             >
-              Bumalik sa mga hamon
+              Bumalik sa mapa
             </Button>
           </div>
         </div>

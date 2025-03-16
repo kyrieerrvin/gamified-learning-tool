@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated_date": "2025-03-10",
+    "description": "Common error patterns and solutions in the Gamified Learning Tool"
+  },
+  "errors": [
+    {
+      "id": "auth-001",
+      "pattern": "Firebase: Error (auth/invalid-credential)",
+      "component": "auth",
+      "description": "Invalid credentials provided to Firebase authentication",
+      "possible_causes": [
+        "User entered incorrect email/password",
+        "Token expired",
+        "Authentication not initialized properly"
+      ],
+      "solutions": [
+        "Verify user credentials input",
+        "Check Firebase initialization in AuthContext.tsx",
+        "Ensure proper setup in firebase.ts"
+      ],
+      "related_files": [
+        "src/context/AuthContext.tsx",
+        "src/lib/firebase.ts",
+        "src/app/login/page.tsx"
+      ]
+    },
+    {
+      "id": "nlp-001",
+      "pattern": "Failed to connect to NLP service",
+      "component": "nlpService",
+      "description": "Connection to the Python NLP backend failed",
+      "possible_causes": [
+        "Python server not running",
+        "Port mismatch",
+        "CORS issues",
+        "Calamancy model not loaded properly"
+      ],
+      "solutions": [
+        "Run start-nlp.sh to start the Python backend",
+        "Check if port 6000 is available and matches the configuration",
+        "Verify CORS settings in app.py",
+        "Check Python dependencies installation"
+      ],
+      "related_files": [
+        "src/services/nlpService.ts",
+        "app.py",
+        "start-nlp.sh"
+      ]
+    },
+    {
+      "id": "game-001",
+      "pattern": "Cannot read properties of undefined (reading 'score')",
+      "component": "gameService",
+      "description": "Game state not properly initialized or accessed before loading",
+      "possible_causes": [
+        "Accessing game state before initialization",
+        "Race condition in state updates",
+        "Missing null checks"
+      ],
+      "solutions": [
+        "Add null checks when accessing game state",
+        "Ensure proper initialization in gameStore.ts",
+        "Use optional chaining for accessing possibly undefined properties"
+      ],
+      "related_files": [
+        "src/store/gameStore.ts",
+        "src/services/gameService.ts",
+        "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx"
+      ]
+    },
+    {
+      "id": "api-001",
+      "pattern": "TypeError: Cannot read properties of null (reading 'text')",
+      "component": "api",
+      "description": "API request body validation error",
+      "possible_causes": [
+        "Missing request body",
+        "Incorrect request structure",
+        "Missing validation"
+      ],
+      "solutions": [
+        "Add request validation in API routes",
+        "Ensure proper request structure in client code",
+        "Add error handling for malformed requests"
+      ],
+      "related_files": [
+        "src/app/api/analyze/route.ts",
+        "src/app/api/verify/route.ts",
+        "src/app/api/challenges/pos-game/route.ts"
+      ]
+    }
+  ]
+}

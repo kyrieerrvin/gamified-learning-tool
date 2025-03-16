@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated_date": "2025-03-10",
+    "description": "Component dependency graph for the Gamified Learning Tool"
+  },
+  "components": {
+    "auth": {
+      "files": [
+        "src/context/AuthContext.tsx",
+        "src/app/login/page.tsx"
+      ],
+      "dependencies": ["firebase"],
+      "dependents": ["layout", "dashboard", "profile"]
+    },
+    "layout": {
+      "files": [
+        "src/app/layout.tsx",
+        "src/components/layout/Header.tsx",
+        "src/components/layout/Navbar.tsx"
+      ],
+      "dependencies": ["auth"],
+      "dependents": ["*"]
+    },
+    "dashboard": {
+      "files": [
+        "src/app/dashboard/page.tsx"
+      ],
+      "dependencies": ["auth", "layout"],
+      "dependents": []
+    },
+    "profile": {
+      "files": [
+        "src/app/profile/page.tsx"
+      ],
+      "dependencies": ["auth", "layout"],
+      "dependents": []
+    },
+    "challenges": {
+      "files": [
+        "src/app/challenges/page.tsx",
+        "src/components/challenges/ChallengeSelection.tsx"
+      ],
+      "dependencies": ["layout"],
+      "dependents": ["multiple-choice"]
+    },
+    "multiple-choice": {
+      "files": [
+        "src/app/challenges/multiple-choice/page.tsx",
+        "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx"
+      ],
+      "dependencies": ["challenges", "gameService", "nlpService"],
+      "dependents": []
+    },
+    "gameService": {
+      "files": [
+        "src/services/gameService.ts",
+        "src/store/gameStore.ts"
+      ],
+      "dependencies": ["nlpService"],
+      "dependents": ["multiple-choice"]
+    },
+    "nlpService": {
+      "files": [
+        "src/services/nlpService.ts",
+        "src/app/api/analyze/route.ts",
+        "src/app/api/verify/route.ts",
+        "src/app/api/challenges/pos-game/route.ts"
+      ],
+      "dependencies": [],
+      "dependents": ["gameService", "multiple-choice"]
+    },
+    "ui": {
+      "files": [
+        "src/components/ui/Button.tsx"
+      ],
+      "dependencies": [],
+      "dependents": ["*"]
+    }
+  }
+}

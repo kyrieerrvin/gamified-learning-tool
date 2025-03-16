@@ -1,4 +1,12 @@
 // src/app/api/analyze/route.ts
+/* 
+ * CLAUDE-MEMORY-ANCHOR: nlp-analyze-api
+ * UUID: 9e8d7c6b-5a4f-3e2d-1c9b-8f7e6d5c4b3a
+ * PURPOSE: API route for Tagalog text analysis with NLP model
+ * RELATED-COMPONENTS: nlpService, Flask NLP backend
+ * INTERFACES: Accepts {sentence: string}, Returns {sentence: string, tokens: NLPToken[], method: string}
+ * LAST-UPDATED: 2025-03-10
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { API_ENDPOINTS } from '@/lib/config';
 

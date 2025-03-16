@@ -72,6 +72,22 @@ SAMPLE_SENTENCES = {
     ]
 }
 
+# Sample words for Make a Sentence game
+MAKE_SENTENCE_WORDS = [
+    {"word": "Bayanihan", "description": "Pagtulong ng maraming tao sa isa't isa upang matapos ang isang gawain"},
+    {"word": "Pagmamahal", "description": "Malalim na pakiramdam ng malasakit at pagpapahalaga"},
+    {"word": "Kalayaan", "description": "Katayuan ng pagiging malaya o hindi nakatali sa limitasyon"},
+    {"word": "Matatag", "description": "Malakas at hindi madaling masira o matumba"},
+    {"word": "Kalikasan", "description": "Ang natural na kapaligiran at lahat ng buhay na nilalang"},
+    {"word": "Kasiyahan", "description": "Masayang pakiramdam o kalagayan"},
+    {"word": "Pakikipagkapwa", "description": "Pakikitungo sa ibang tao bilang kapantay"},
+    {"word": "Pagtitiwala", "description": "Pananalig sa kakayahan o katapatan ng ibang tao"},
+    {"word": "Kahusayan", "description": "Kagalingan o kahigitan sa isang larangan"},
+    {"word": "Katatagan", "description": "Lakas ng loob sa harap ng mga hamon"},
+    {"word": "Mapagkumbaba", "description": "Walang kayabangan; mahinahon"},
+    {"word": "Mapagbigay", "description": "Bukas-palad o handang tumulong"}
+]
+
 # Load the CalamanCy NLP model
 try:
     logger.info("Loading CalamanCy NLP model (tl_calamancy_md-0.2.0)...")
@@ -265,6 +281,85 @@ def verify_pos_answer(word, sentence, selected_answer):
     except Exception as e:
         logger.error(f"Error verifying answer: {str(e)}")
         return None
+
+def verify_sentence_usage(target_word, sentence):
+    """Verify if a word is used correctly in a sentence.
+    
+    This function uses the NLP model to verify if a word is used correctly
+    in a sentence created by a user.
+    
+    Args:
+        target_word (str): The word that should be used in the sentence
+        sentence (str): The sentence created by the user
+        
+    Returns:
+        dict: Verification result containing correctness and feedback
+    """
+    if not nlp:
+        logger.warning("CalamanCy model not available for sentence verification")
+        return {
+            "isCorrect": False,
+            "feedback": "Hindi magamit ang NLP model. Paki-refresh ang page at subukan ulit."
+        }
+    
+    try:
+        # Clean inputs
+        target_word = target_word.strip().lower()
+        sentence = sentence.strip()
+        
+        # Basic validation
+        if len(sentence) < 5:
+            return {
+                "isCorrect": False,
+                "feedback": "Masyadong maikli ang pangungusap. Gumawa ng kompletong pangungusap."
+            }
+            
+        # Check if the target word is in the sentence
+        words_in_sentence = [token.text.lower() for token in nlp(sentence)]
+        if target_word not in words_in_sentence:
+            return {
+                "isCorrect": False,
+                "feedback": f"Hindi mo ginamit ang salitang '{target_word}' sa iyong pangungusap."
+            }
+        
+        # Process the sentence with CalamanCy
+        doc = nlp(sentence)
+        
+        # For a valid sentence, we need at least one verb and noun
+        pos_counts = {}
+        for token in doc:
+            pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
+        
+        # Check if sentence has basic structure
+        has_verb = pos_counts.get('VERB', 0) > 0
+        has_noun = pos_counts.get('NOUN', 0) > 0
+        
+        # Simple validation: if it has verb and noun, it's correct
+        isCorrect = has_verb and has_noun
+        
+        # Generate feedback
+        if isCorrect:
+            feedback = "Mahusay! Tama ang paggamit mo ng salita sa pangungusap."
+        else:
+            if not has_verb:
+                feedback = "Kulang ang pangungusap ng pandiwa (verb)."
+            elif not has_noun:
+                feedback = "Kulang ang pangungusap ng pangngalan (noun)."
+            else:
+                feedback = "Hindi sapat ang pagkakabuo ng pangungusap."
+        
+        return {
+            "isCorrect": isCorrect,
+            "feedback": feedback
+        }
+        
+    except Exception as e:
+        logger.error(f"Error verifying sentence: {str(e)}")
+        return {
+            "isCorrect": False,
+            "error": str(e),
+            "feedback": "May naganap na error sa pagsuri ng pangungusap."
+        }
 
 @app.route('/', methods=['GET'])
 def home():
@@ -479,6 +574,65 @@ def custom_game():
         logger.error(f"Error creating custom game: {str(e)}", exc_info=True)
         return jsonify({
             "error": "Error creating custom game. Please try again."
+        }), 500
+
+@app.route('/api/make-sentence/words', methods=['GET', 'OPTIONS'])
+@cross_origin()
+def get_sentence_words():
+    """API endpoint to get words for Make a Sentence game"""
+    if request.method == 'OPTIONS':
+        return handle_preflight_request()
+    
+    try:
+        # Get all words and shuffle them
+        words = MAKE_SENTENCE_WORDS.copy()
+        random.shuffle(words)
+        
+        # Return the words
+        return create_cors_response({
+            "words": words,
+            "count": len(words)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting words for Make a Sentence game: {str(e)}", exc_info=True)
+        return jsonify({
+            "error": "Error getting words. Please try again."
+        }), 500
+
+@app.route('/api/make-sentence/verify', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def verify_make_sentence():
+    """API endpoint to verify a sentence created by a user"""
+    if request.method == 'OPTIONS':
+        return handle_preflight_request()
+    
+    try:
+        # Get data from request
+        data = request.json
+        if not data or 'word' not in data or 'sentence' not in data:
+            return jsonify({
+                "error": "Please provide both word and sentence"
+            }), 400
+        
+        word = data['word']
+        sentence = data['sentence']
+        
+        logger.info(f"Verifying sentence for word '{word}': '{sentence}'")
+        
+        # Verify the sentence
+        result = verify_sentence_usage(word, sentence)
+        
+        # Add request info to result
+        result["word"] = word
+        result["sentence"] = sentence
+        
+        return create_cors_response(result)
+        
+    except Exception as e:
+        logger.error(f"Error verifying sentence: {str(e)}", exc_info=True)
+        return jsonify({
+            "error": f"Error verifying sentence: {str(e)}"
         }), 500
 
 # --- Helper functions ---

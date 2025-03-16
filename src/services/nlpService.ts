@@ -1,4 +1,11 @@
 // src/services/nlpService.ts
+/* 
+ * CLAUDE-MEMORY-ANCHOR: nlp-service-main
+ * UUID: 7f4e9c3d-6a5b-4b8a-9e1f-3c9d7b2e8f1a
+ * PURPOSE: NLP service integration for Tagalog language analysis
+ * RELATED-COMPONENTS: gameService, API routes
+ * LAST-UPDATED: 2025-03-10
+ */
 import { POSQuestion } from './gameService';
 
 // Types for the NLP service
@@ -303,6 +310,120 @@ export async function checkNlpHealth(): Promise<{
     return data;
   } catch (error) {
     console.error('Error checking NLP health:', error);
+    throw error;
+  }
+}
+
+/**
+ * Interface for Make a Sentence game word
+ */
+export interface SentenceWord {
+  word: string;
+  description: string;
+}
+
+/**
+ * Interface for sentence verification result
+ */
+export interface SentenceVerificationResult {
+  isCorrect: boolean;
+  feedback: string;
+  word: string;
+  sentence: string;
+  error?: string;
+}
+
+/**
+ * Fetch words for Make a Sentence game
+ * @returns Promise with words for the game
+ */
+export async function fetchSentenceWords(): Promise<SentenceWord[]> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    // Use the Next.js API route for proxying the request
+    const url = `/api/challenges/make-sentence/words`;
+    console.log(`Fetching Make a Sentence words via API route`);
+    
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to fetch words (Status: ${response.status})`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data || !data.words || !Array.isArray(data.words)) {
+      throw new Error('Invalid data structure received from API');
+    }
+    
+    console.log(`Received ${data.words.length} words for Make a Sentence game`);
+    return data.words;
+  } catch (error) {
+    console.error('Error fetching sentence words:', error);
+    throw error;
+  }
+}
+
+/**
+ * Verify a sentence created by the user
+ * @param word The word that should be used in the sentence
+ * @param sentence The sentence created by the user
+ * @returns Promise with verification result
+ */
+export async function verifySentence(
+  word: string,
+  sentence: string
+): Promise<SentenceVerificationResult> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    
+    // Use the Next.js API route for proxying the request
+    const url = '/api/challenges/make-sentence/verify';
+    console.log(`Verifying sentence for word "${word}": "${sentence}"`);
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ word, sentence }),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      try {
+        const errorData = await response.json().catch(() => null);
+        if (errorData && errorData.error) {
+          throw new Error(errorData.error);
+        }
+      } catch (e) {
+        throw new Error(`Failed to verify sentence (Status: ${response.status})`);
+      }
+    }
+    
+    const data = await response.json();
+    
+    if (!data || typeof data.isCorrect !== 'boolean') {
+      throw new Error('Invalid verification data received from API');
+    }
+    
+    return data as SentenceVerificationResult;
+  } catch (error) {
+    console.error('Error verifying sentence:', error);
     throw error;
   }
 }

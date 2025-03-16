@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated_date": "2025-03-10",
+    "description": "Classification of files in the Gamified Learning Tool codebase"
+  },
+  "classifications": {
+    "implementation": [
+      "src/app/api/analyze/route.ts",
+      "src/app/api/verify/route.ts",
+      "src/app/api/challenges/pos-game/route.ts",
+      "src/services/nlpService.ts",
+      "src/services/gameService.ts",
+      "src/store/gameStore.ts",
+      "src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx",
+      "src/components/challenges/ChallengeSelection.tsx",
+      "src/components/layout/Header.tsx",
+      "src/components/layout/Navbar.tsx",
+      "src/components/ui/Button.tsx",
+      "src/context/AuthContext.tsx",
+      "src/lib/firebase.ts"
+    ],
+    "interface": [
+      "src/types/index.ts",
+      "src/lib/config.ts"
+    ],
+    "page": [
+      "src/app/page.tsx",
+      "src/app/login/page.tsx",
+      "src/app/profile/page.tsx",
+      "src/app/dashboard/page.tsx",
+      "src/app/challenges/page.tsx",
+      "src/app/challenges/multiple-choice/page.tsx",
+      "src/app/layout.tsx",
+      "src/app/providers.tsx"
+    ],
+    "configuration": [
+      "next.config.ts",
+      "tailwind.config.ts",
+      "postcss.config.mjs",
+      "eslint.config.mjs",
+      "tsconfig.json"
+    ],
+    "script": [
+      "start-nlp.sh",
+      "test-connection.py",
+      "test-nlp.py",
+      "app.py"
+    ],
+    "static": [
+      "public/file.svg",
+      "public/globe.svg",
+      "public/next.svg",
+      "public/vercel.svg",
+      "public/window.svg"
+    ]
+  }
+}
