@@ -147,6 +147,9 @@ export default function MakeSentenceGame({
       // Check if game is over
       if (updatedGameData.currentIndex >= updatedGameData.totalQuestions) {
         setGameOver(true);
+        if (onComplete) {
+          onComplete(updatedGameData.score, isLevelCompleted());
+        }
       }
       
     } catch (err) {
