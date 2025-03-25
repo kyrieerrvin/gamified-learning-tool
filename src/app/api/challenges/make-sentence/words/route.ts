@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         source: "fallback"
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('API error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'An error occurred' },

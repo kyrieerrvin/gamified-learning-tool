@@ -671,11 +671,7 @@ if __name__ == '__main__':
         sys.exit(1)
     finally:
         sock.close()
-    
-    # Save port to a file for other processes to discover
-    with open('/tmp/nlp_api_port.txt', 'w') as f:
-        f.write(str(port))
-    
+        
     # Log startup information
     logger.info(f"Using Python {sys.version}")
     if hasattr(calamancy, "__version__"):

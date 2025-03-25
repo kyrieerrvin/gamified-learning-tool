@@ -4,18 +4,16 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import Button from '@/components/ui/Button';
-import { fetchGameData, GameData } from '@/services/gameService';
-import { fetchNlpGameData, checkNlpHealth } from '@/services/nlpService';
+import { fetchGameData } from '@/services/game';
+import { fetchNlpGameData, checkNlpHealth, GameData } from '@/services/nlp';
 import { API_ENDPOINTS } from '@/lib/config';
 
 interface PartsOfSpeechGameProps {
-  difficulty?: 'easy' | 'medium' | 'hard';
   levelNumber?: number;
   onComplete?: (score: number, levelCompleted: boolean) => void;
 }
 
 export default function PartsOfSpeechGame({ 
-  difficulty = 'medium',
   levelNumber = 0,
   onComplete
 }: PartsOfSpeechGameProps) {
@@ -95,7 +93,7 @@ export default function PartsOfSpeechGame({
         
         while (attempts < maxAttempts && !gameData) {
           try {
-            console.log(`Attempt ${attempts + 1}: Fetching game data with difficulty '${difficulty}'`);
+            console.log(`Attempt ${attempts + 1}: Fetching game data`);
             
             // Store server/port info when received for future connections
             const storeServerInfo = (data: any) => {
@@ -122,7 +120,7 @@ export default function PartsOfSpeechGame({
               }
               
               console.log('Directly connecting to NLP API for game data...');
-              const response = await fetch(`${API_ENDPOINTS.API_BASE_URL}/api/pos-game?difficulty=${difficulty}`, {
+              const response = await fetch(`${API_ENDPOINTS.API_BASE_URL}/api/pos-game`, {
                 method: 'GET',
                 headers: {
                   'Accept': 'application/json'
@@ -148,16 +146,16 @@ export default function PartsOfSpeechGame({
               if (useNlpApi) {
                 console.log('Falling back to nlpService...');
                 try {
-                  gameData = await fetchNlpGameData(difficulty);
+                  gameData = await fetchNlpGameData();
                   console.log('Successfully received game data from NLP service:', gameData);
                 } catch (nlpError) {
                   console.error('Error fetching from NLP service, falling back to traditional API:', nlpError);
-                  gameData = await fetchGameData(difficulty);
+                  gameData = await fetchGameData();
                 }
               } else {
                 // If NLP API is not available, use the traditional API
                 console.log(`Using traditional API endpoint: ${API_ENDPOINTS.POS_GAME_PROXY}`);
-                gameData = await fetchGameData(difficulty);
+                gameData = await fetchGameData();
               }
             }
             
@@ -212,7 +210,7 @@ export default function PartsOfSpeechGame({
     };
     
     loadGameData();
-  }, [difficulty, useNlpApi]);
+  }, [useNlpApi]);
 
   // Handle user selecting an answer option
   const handleOptionSelect = (option: string) => {
@@ -300,7 +298,7 @@ export default function PartsOfSpeechGame({
   const handleRestart = async () => {
     setLoading(true);
     try {
-      const gameData = await fetchGameData(difficulty);
+      const gameData = await fetchGameData();
       setData(gameData);
       setError(null);
       setCurrentQuestionIndex(0);

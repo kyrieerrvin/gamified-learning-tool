@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { testPOSTagging } from '@/services/gameService';
+import { testPOSTagging } from '@/services/game';
 
 export default function Home() {
   const router = useRouter();
@@ -497,7 +497,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-700 text-center text-sm">
-            <p>© {new Date().getFullYear()} TagalogLearn. All rights reserved.</p>
+            <p> {new Date().getFullYear()} TagalogLearn. All rights reserved.</p>
           </div>
         </div>
       </footer>

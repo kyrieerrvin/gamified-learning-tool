@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import Button from '@/components/ui/Button';
-import * as gameService from '@/services/gameService';
-import * as nlpService from '@/services/nlpService';
-import { SentenceVerificationResult } from '@/services/nlpService';
+import * as gameService from '@/services/game';
+import * as nlpService from '@/services/nlp';
+import { SentenceVerificationResult, MakeSentenceGameData } from '@/types/game';
+import Hearts from '@/components/ui/Hearts';
 
 interface MakeSentenceGameProps {
   questionsCount?: number;
@@ -20,7 +21,7 @@ export default function MakeSentenceGame({
 }: MakeSentenceGameProps) {
   /************ All State Hooks First ************/
   // Game state
-  const [gameData, setGameData] = useState<gameService.MakeSentenceGameData | null>(null);
+  const [gameData, setGameData] = useState<MakeSentenceGameData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inputSentence, setInputSentence] = useState('');
@@ -325,13 +326,16 @@ export default function MakeSentenceGame({
         </div>
         
         {/* Score */}
-        <div className="text-right mb-4">
-          <span className="text-sm text-gray-500">Score: </span>
-          <span className="text-lg font-bold text-blue-600">{gameData.score}</span>
+        <div className="flex justify-between items-center mb-4">
+          <Hearts className="ml-1" />
+          <div className="text-right">
+            <span className="text-sm text-gray-500">Score: </span>
+            <span className="text-lg font-bold text-blue-600">{gameData.score}</span>
+          </div>
         </div>
       </div>
       
-      {/* Current word and instruction */}
+      {/* Current word */}
       {currentWord && !currentResult && (
         <div className="mb-6">
           <div className="p-4 bg-blue-50 rounded-lg mb-4">

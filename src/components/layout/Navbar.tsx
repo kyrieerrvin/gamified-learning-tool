@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Button from '@/components/ui/Button';
-import { testPOSTagging } from '@/services/gameService';
+import { testPOSTagging } from '@/services/game';
 
 export default function Navbar() {
   const pathname = usePathname();

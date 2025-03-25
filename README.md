@@ -117,7 +117,36 @@ If you encounter issues:
    - If problems persist, manually verify no processes are using the required ports
 
 ### Project Structure
-<img width="463" alt="Screenshot 2025-03-05 at 12 33 52 PM" src="https://github.com/user-attachments/assets/c376655f-200c-4fa1-9d48-583a20ef5574" />
+
+The project is organized into a clear, modular structure:
+
+```
+src/
+├── api/            # Backend API route handlers
+├── app/            # Next.js app router 
+│   └── api/        # API routes implementation
+├── components/     # UI components
+│   ├── challenges/ # Challenge-specific components
+│   ├── common/     # Shared components
+│   ├── layout/     # Layout components
+│   └── ui/         # UI elements
+├── data/           # Data layer
+│   ├── mock/       # Mock/fallback data
+│   └── models/     # Type definitions
+├── lib/            # Configuration and utilities
+├── services/       # Business logic
+│   ├── game/       # Game mechanics
+│   └── nlp/        # NLP functionality
+├── store/          # State management
+├── types/          # Global type definitions
+└── utils/          # Utility functions
+```
+
+Key architectural features:
+- Clear separation of concerns between data, services, and UI
+- Centralized type definitions to reduce duplication
+- Dedicated mock data directory for fallback scenarios
+- Modular service layer with focused responsibilities
 
 ## Technical Stack
 
