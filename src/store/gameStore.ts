@@ -1,6 +1,9 @@
 // src/store/gameStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 
 // Record of completed levels for progression tracking
 type LevelProgress = {
@@ -35,12 +38,19 @@ interface GameState {
   getCurrentLevel: (gameType: string) => number;
   canAccessLevel: (gameType: string, level: number) => boolean;
   initializeGameProgress: (gameType: string) => void;
+  
+  // User-specific progress
+  loadUserProgress: () => Promise<void>;
+  saveUserProgress: () => Promise<void>;
 }
 
 // Helper to get today's date as a string
 const getTodayDateString = () => {
   return new Date().toISOString().split('T')[0];
 };
+
+// Collection name for user game progress
+const GAME_PROGRESS_COLLECTION = 'gameProgress';
 
 export const useGameStore = create<GameState>()(
   persist(
@@ -53,9 +63,25 @@ export const useGameStore = create<GameState>()(
       progress: {},
       
       // Basic game actions
-      addPoints: (points) => set((state) => ({ score: state.score + points })),
-      increaseStreak: () => set((state) => ({ streak: state.streak + 1 })),
-      resetStreak: () => set({ streak: 0 }),
+      addPoints: (points) => set((state) => {
+        const newState = { score: state.score + points };
+        // Save to Firebase after updating local state
+        setTimeout(() => get().saveUserProgress(), 0);
+        return newState;
+      }),
+      
+      increaseStreak: () => set((state) => {
+        const newState = { streak: state.streak + 1 };
+        // Save to Firebase after updating local state
+        setTimeout(() => get().saveUserProgress(), 0);
+        return newState;
+      }),
+      
+      resetStreak: () => {
+        set({ streak: 0 });
+        // Save to Firebase after updating local state
+        setTimeout(() => get().saveUserProgress(), 0);
+      },
       
       // Heart system
       decreaseHeart: () => set((state) => {
@@ -64,17 +90,25 @@ export const useGameStore = create<GameState>()(
           return state;
         }
         
-        return { 
-          hearts: state.hearts - 1 
-        };
+        const newState = { hearts: state.hearts - 1 };
+        // Save to Firebase after updating local state
+        setTimeout(() => get().saveUserProgress(), 0);
+        return newState;
       }),
       
-      resetHearts: () => set({ hearts: 5 }),
+      resetHearts: () => {
+        set({ hearts: 5 });
+        // Save to Firebase after updating local state
+        setTimeout(() => get().saveUserProgress(), 0);
+      },
       
       checkAndResetDailyHearts: () => {
         // During development, always reset hearts for testing
         console.log('Development mode: Reset hearts to 5');
         set({ hearts: 5, lastHeartResetDate: getTodayDateString() });
+        
+        // Save to Firebase after updating local state
+        setTimeout(() => get().saveUserProgress(), 0);
         
         /* UNCOMMENT THIS FOR PRODUCTION
         const today = getTodayDateString();
@@ -83,6 +117,8 @@ export const useGameStore = create<GameState>()(
         if (today !== lastHeartResetDate) {
           console.log('New day detected, resetting hearts');
           set({ hearts: 5, lastHeartResetDate: today });
+          // Save to Firebase after updating local state
+          setTimeout(() => get().saveUserProgress(), 0);
         }
         */
       },
@@ -93,81 +129,171 @@ export const useGameStore = create<GameState>()(
         
         // Only initialize if not already present
         if (!currentProgress[gameType]) {
-          set((state) => ({
-            progress: {
-              ...state.progress,
-              [gameType]: {
-                currentLevel: 0,
-                levelsCompleted: [false, false, false, false, false]
+          set((state) => {
+            const newState = {
+              progress: {
+                ...state.progress,
+                [gameType]: {
+                  currentLevel: 0,
+                  levelsCompleted: [false, false, false, false, false]
+                }
               }
-            }
-          }));
+            };
+            
+            // Save to Firebase after updating local state
+            setTimeout(() => get().saveUserProgress(), 0);
+            
+            return newState;
+          });
         }
       },
       
       completeLevel: (gameType, level) => {
-        // Initialize game type if needed
-        if (!get().progress[gameType]) {
-          get().initializeGameProgress(gameType);
-        }
-        
         set((state) => {
-          const gameProgress = state.progress[gameType];
-          const newLevelsCompleted = [...gameProgress.levelsCompleted];
-          newLevelsCompleted[level] = true;
+          // Get the current progress for this game type
+          const gameProgress = state.progress[gameType] || {
+            currentLevel: 0,
+            levelsCompleted: [false, false, false, false, false]
+          };
           
-          // Calculate new current level (the next uncompleted level or the last one)
+          // Mark this level as completed
+          const updatedLevelsCompleted = [...gameProgress.levelsCompleted];
+          updatedLevelsCompleted[level] = true;
+          
+          // Calculate new current level (the next incomplete level)
           let newCurrentLevel = gameProgress.currentLevel;
-          for (let i = 0; i < newLevelsCompleted.length; i++) {
-            if (!newLevelsCompleted[i]) {
-              newCurrentLevel = i;
-              break;
-            }
+          
+          // If we just completed the current level, advance to the next level
+          if (level === gameProgress.currentLevel) {
+            // Find the next incomplete level
+            const nextIncompleteLevel = updatedLevelsCompleted.findIndex(
+              (completed) => !completed
+            );
             
-            // If all are completed, point to the last level
-            if (i === newLevelsCompleted.length - 1) {
-              newCurrentLevel = i;
-            }
+            // If all levels are completed, stay at the last level
+            newCurrentLevel = nextIncompleteLevel === -1 
+              ? updatedLevelsCompleted.length - 1 
+              : nextIncompleteLevel;
           }
           
-          return {
+          const newState = {
             progress: {
               ...state.progress,
               [gameType]: {
                 currentLevel: newCurrentLevel,
-                levelsCompleted: newLevelsCompleted
+                levelsCompleted: updatedLevelsCompleted
               }
             }
           };
+          
+          // Save to Firebase after updating local state
+          setTimeout(() => get().saveUserProgress(), 0);
+          
+          return newState;
         });
       },
       
       getCurrentLevel: (gameType) => {
-        // Initialize game type if needed
-        if (!get().progress[gameType]) {
-          get().initializeGameProgress(gameType);
-        }
-        
-        return get().progress[gameType]?.currentLevel || 0;
+        const state = get();
+        return state.progress[gameType]?.currentLevel || 0;
       },
       
       canAccessLevel: (gameType, level) => {
-        // Initialize game type if needed
-        if (!get().progress[gameType]) {
-          get().initializeGameProgress(gameType);
+        const state = get();
+        const gameProgress = state.progress[gameType];
+        
+        if (!gameProgress) {
+          // If no progress exists, only allow access to level 0
+          return level === 0;
         }
         
-        const gameProgress = get().progress[gameType];
-        
-        // Level 0 is always accessible
-        if (level === 0) return true;
-        
-        // Can access if previous level is completed
+        // Allow access to completed levels or the next playable level
         return level <= gameProgress.currentLevel;
+      },
+      
+      // User-specific progress methods
+      loadUserProgress: async () => {
+        try {
+          const currentUser = auth.currentUser;
+          
+          if (!currentUser) {
+            console.log('No user logged in, using local progress');
+            return;
+          }
+          
+          const userId = currentUser.uid;
+          const progressRef = doc(db, GAME_PROGRESS_COLLECTION, userId);
+          const progressDoc = await getDoc(progressRef);
+          
+          if (progressDoc.exists()) {
+            // Found user progress in Firestore
+            const userProgress = progressDoc.data();
+            console.log('Loaded user progress from Firestore:', userProgress);
+            
+            // Update local state with Firestore data
+            set({
+              score: userProgress.score || 0,
+              streak: userProgress.streak || 0,
+              hearts: userProgress.hearts || 5,
+              lastHeartResetDate: userProgress.lastHeartResetDate || getTodayDateString(),
+              progress: userProgress.progress || {}
+            });
+          } else {
+            // No progress found, initialize with defaults and save to Firestore
+            console.log('No existing progress found for user, creating new progress');
+            await get().saveUserProgress();
+          }
+        } catch (error) {
+          console.error('Error loading user progress:', error);
+        }
+      },
+      
+      saveUserProgress: async () => {
+        try {
+          const currentUser = auth.currentUser;
+          
+          if (!currentUser) {
+            console.log('No user logged in, cannot save progress to Firestore');
+            return;
+          }
+          
+          const userId = currentUser.uid;
+          const state = get();
+          
+          const progressData = {
+            score: state.score,
+            streak: state.streak,
+            hearts: state.hearts,
+            lastHeartResetDate: state.lastHeartResetDate,
+            progress: state.progress,
+            lastUpdated: new Date().toISOString()
+          };
+          
+          const progressRef = doc(db, GAME_PROGRESS_COLLECTION, userId);
+          
+          // Check if document exists and update or create accordingly
+          const progressDoc = await getDoc(progressRef);
+          
+          if (progressDoc.exists()) {
+            await updateDoc(progressRef, progressData);
+          } else {
+            await setDoc(progressRef, progressData);
+          }
+          
+          console.log('Saved user progress to Firestore');
+        } catch (error) {
+          console.error('Error saving user progress:', error);
+        }
       }
     }),
     {
       name: 'game-storage',
+      // Store temporary UI state in localStorage, but user progress comes from Firestore
+      partialize: (state) => ({ 
+        // Only these will be persisted to localStorage
+        hearts: state.hearts,
+        lastHeartResetDate: state.lastHeartResetDate
+      }),
     }
   )
 );

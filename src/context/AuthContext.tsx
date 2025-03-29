@@ -11,6 +11,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { useGameStore } from '@/store/gameStore';
 
 interface AuthContextType {
   user: User | null;
@@ -33,6 +34,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { loadUserProgress } = useGameStore();
 
   // Helper function to set a session cookie for the middleware
   function setSessionCookie(token: string) {
@@ -61,6 +63,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // This is a simplified approach for demonstration
         currentUser.getIdToken().then(token => {
           setSessionCookie(token);
+          
+          // Load user-specific game progress from Firestore
+          loadUserProgress().catch(err => {
+            console.error('Error loading user game progress:', err);
+          });
         });
       } else {
         clearSessionCookie();
@@ -70,12 +77,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return unsubscribe;
-  }, []);
+  }, [loadUserProgress]);
 
   const signInWithEmail = async (email: string, password: string) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("Login successful:", userCredential.user.email);
+      
+      // Load user-specific game progress before redirecting
+      await loadUserProgress();
       
       // Direct browser navigation
       window.location.href = '/dashboard';
@@ -107,6 +117,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await result.user.getIdToken().then(token => {
           setSessionCookie(token);
         });
+        
+        // Load user-specific game progress before redirecting
+        await loadUserProgress();
         
         // Wait a moment to ensure the cookie is set and user state is updated
         setTimeout(() => {

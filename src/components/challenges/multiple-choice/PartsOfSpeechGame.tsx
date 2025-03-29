@@ -7,11 +7,17 @@ import Button from '@/components/ui/Button';
 import { fetchGameData } from '@/services/game';
 import { fetchNlpGameData, checkNlpHealth, GameData } from '@/services/nlp';
 import { API_ENDPOINTS } from '@/lib/config';
+import { v4 as uuidv4 } from 'uuid';
+import ChallengeResultTracker from '@/components/common/ChallengeResultTracker';
+import { ChallengeResult } from '@/types/user';
+import { useUser } from '@/context/UserContext';
 
 interface PartsOfSpeechGameProps {
   levelNumber?: number;
   onComplete?: (score: number, levelCompleted: boolean) => void;
 }
+
+type DifficultyLevel = 'easy' | 'medium' | 'hard';
 
 export default function PartsOfSpeechGame({ 
   levelNumber = 0,
@@ -30,6 +36,7 @@ export default function PartsOfSpeechGame({
   const [score, setScore] = useState(0);
   const [useNlpApi, setUseNlpApi] = useState(false);
   const [nlpStatus, setNlpStatus] = useState<string>('unknown');
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>('easy');
   
   // Game store for managing global score, streak and hearts
   const { addPoints, increaseStreak, resetStreak, decreaseHeart } = useGameStore();
@@ -40,6 +47,13 @@ export default function PartsOfSpeechGame({
   // Track skipped questions
   const [skippedQuestions, setSkippedQuestions] = useState<number[]>([]);
   
+  // Track game duration
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
+  
+  // Challenge result state for Firestore tracking
+  const [challengeResult, setChallengeResult] = useState<ChallengeResult | null>(null);
+
   // Check for NLP API availability
   useEffect(() => {
     // Only run on the client side
@@ -74,143 +88,50 @@ export default function PartsOfSpeechGame({
     }
   }, []);
 
-  // Fetch game data from either NLP API or traditional API
+  // Set start time when game begins
   useEffect(() => {
-    // Only run on the client side
-    if (typeof window === 'undefined') {
-      return;
+    if (data && !loading && !gameOver && startTime === null) {
+      setStartTime(Date.now());
     }
+  }, [data, loading, gameOver, startTime]);
+
+  // Load game data
+  const loadGameData = async () => {
+    setLoading(true);
+    setError(null);
     
-    const loadGameData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Add a retry mechanism for API requests
-        let attempts = 0;
-        const maxAttempts = 3;
-        let gameData = null;
-        
-        while (attempts < maxAttempts && !gameData) {
-          try {
-            console.log(`Attempt ${attempts + 1}: Fetching game data`);
-            
-            // Store server/port info when received for future connections
-            const storeServerInfo = (data: any) => {
-              if (data?.source && typeof window !== 'undefined') {
-                try {
-                  // Only access localStorage if we're in a browser environment
-                  if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem('nlp_source', data.source);
-                    if (data.port) {
-                      localStorage.setItem('calamancy_api_port', data.port.toString());
-                    }
-                  }
-                } catch (e) {
-                  console.warn('Failed to save server info:', e);
-                }
-              }
-            };
-            
-            // Always try direct connection to NLP API first
-            try {
-              // Make sure we're in a browser environment with fetch available
-              if (typeof window === 'undefined') {
-                throw new Error('Not in browser environment, skipping direct API connection');
-              }
-              
-              console.log('Directly connecting to NLP API for game data...');
-              const response = await fetch(`${API_ENDPOINTS.API_BASE_URL}/api/pos-game`, {
-                method: 'GET',
-                headers: {
-                  'Accept': 'application/json'
-                }
-              });
-              
-              if (response.ok) {
-                const nlpData = await response.json();
-                if (nlpData && nlpData.sentence && nlpData.questions) {
-                  console.log('Successfully received game data directly from NLP API:', nlpData);
-                  setUseNlpApi(true);
-                  gameData = nlpData;
-                } else {
-                  throw new Error('Invalid data structure');
-                }
-              } else {
-                throw new Error(`Status: ${response.status}`);
-              }
-            } catch (directError) {
-              console.error('Error with direct NLP API connection:', directError);
-              
-              // Fall back to our service methods
-              if (useNlpApi) {
-                console.log('Falling back to nlpService...');
-                try {
-                  gameData = await fetchNlpGameData();
-                  console.log('Successfully received game data from NLP service:', gameData);
-                } catch (nlpError) {
-                  console.error('Error fetching from NLP service, falling back to traditional API:', nlpError);
-                  gameData = await fetchGameData();
-                }
-              } else {
-                // If NLP API is not available, use the traditional API
-                console.log(`Using traditional API endpoint: ${API_ENDPOINTS.POS_GAME_PROXY}`);
-                gameData = await fetchGameData();
-              }
-            }
-            
-            console.log('Received game data:', gameData);
-            
-            // Store server info for future connections
-            storeServerInfo(gameData);
-            
-            // Validate the data received
-            if (!gameData || !gameData.sentence || !gameData.questions || !Array.isArray(gameData.questions) || gameData.questions.length === 0) {
-              console.warn(`Attempt ${attempts + 1}: Received invalid data structure from API:`, gameData);
-              gameData = null; // Reset for retry
-              throw new Error('Invalid data structure received from API');
-            }
-            
-            // Ensure the options are in random order for each question
-            gameData.questions.forEach((question: { options?: string[], id: number, question: string, correctAnswer: string }) => {
-              // Create a copy of the options array and shuffle it
-              // (Randomize order to avoid having the correct answer always in the same position)
-              if (question.options && Array.isArray(question.options) && question.options.length > 0) {
-                const shuffledOptions = [...question.options];
-                for (let i = shuffledOptions.length - 1; i > 0; i--) {
-                  const j = Math.floor(Math.random() * (i + 1));
-                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-                }
-                question.options = shuffledOptions;
-              }
-            });
-            
-            setData(gameData);
-            console.log('Game data set successfully');
-          } catch (fetchError) {
-            attempts++;
-            console.error(`API fetch attempt ${attempts} failed:`, fetchError);
-            
-            if (attempts >= maxAttempts) {
-              throw fetchError; // Re-throw if we've exhausted all attempts
-            }
-            
-            // Wait a bit before retrying (with exponential backoff)
-            const backoffTime = 1000 * Math.pow(2, attempts - 1);
-            console.log(`Retrying in ${backoffTime}ms...`);
-            await new Promise(resolve => setTimeout(resolve, backoffTime));
-          }
-        }
-      } catch (err) {
-        console.error('Error loading game data after all retries:', err);
-        setError('Nagkaroon ng problema sa pagkuha ng mga tanong. Pakisubukang muli.');
-      } finally {
-        setLoading(false);
+    try {
+      // Use our enhanced NLP service that handles fallbacks properly
+      console.log('Loading game data using fetchNlpGameData...');
+      const gameData = await fetchNlpGameData(undefined, difficulty);
+      
+      if (!gameData || !gameData.questions || gameData.questions.length === 0) {
+        throw new Error('Invalid game data received');
       }
-    };
-    
+      
+      console.log('Successfully loaded game data:', gameData);
+      setData(gameData);
+      setUseNlpApi(true);
+      
+      // Reset game state
+      setCurrentQuestionIndex(0);
+      setSelectedOption(null);
+      setFeedback(null);
+      setIsCorrect(null);
+      setGameOver(false);
+      setScore(0);
+    } catch (error) {
+      console.error('Error loading game data:', error);
+      setUseNlpApi(false);
+      setError('Failed to load game data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadGameData();
-  }, [useNlpApi]);
+  }, []);
 
   // Handle user selecting an answer option
   const handleOptionSelect = (option: string) => {
@@ -289,30 +210,42 @@ export default function PartsOfSpeechGame({
         setIsCorrect(null);
       } else {
         setGameOver(true);
+        // Record end time when the game completes
+        setEndTime(Date.now());
+        
+        // Create the challenge result for Firestore when game is over
+        const now = new Date().toISOString();
+        const maxScore = data.questions.length * 10;
+        const duration = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+        
+        setChallengeResult({
+          id: uuidv4(),
+          challengeType: 'multipleChoice',
+          score,
+          maxScore,
+          completedAt: now,
+          duration
+        });
+        
+        // Call onComplete callback if provided
+        if (onComplete) {
+          onComplete(score, true);
+        }
       }
       setIsTransitioning(false);
     }, 500);
   };
 
   // Restart the game
-  const handleRestart = async () => {
-    setLoading(true);
-    try {
-      const gameData = await fetchGameData();
-      setData(gameData);
-      setError(null);
-      setCurrentQuestionIndex(0);
-      setSelectedOption(null);
-      setFeedback(null);
-      setIsCorrect(null);
-      setGameOver(false);
-      setScore(0);
-    } catch (err) {
-      console.error('Error reloading game data:', err);
-      setError('Nagkaroon ng problema sa pagkuha ng mga tanong. Pakisubukang muli.');
-    } finally {
-      setLoading(false);
-    }
+  const handleRestart = () => {
+    // Reset game state
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setScore(0);
+    setGameOver(false);
+    
+    // Load new game data
+    loadGameData();
   };
 
   // Loading state
@@ -478,6 +411,12 @@ export default function PartsOfSpeechGame({
           </div>
         </div>
       )}
+      
+      {/* Challenge Result Tracker - This records game results to Firestore */}
+      <ChallengeResultTracker 
+        result={challengeResult} 
+        onResultProcessed={() => setChallengeResult(null)} 
+      />
     </div>
   );
 }

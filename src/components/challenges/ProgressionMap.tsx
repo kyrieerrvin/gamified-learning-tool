@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import Link from 'next/link';
 import Hearts from '@/components/ui/Hearts';
+import { useUser } from '@/context/UserContext';
 
 export type GameType = 'make-sentence' | 'multiple-choice';
 
@@ -14,8 +15,17 @@ interface ProgressionMapProps {
 }
 
 export default function ProgressionMap({ gameType, title, description }: ProgressionMapProps) {
-  const { initializeGameProgress, canAccessLevel, progress } = useGameStore();
+  const { initializeGameProgress, canAccessLevel, progress, loadUserProgress } = useGameStore();
   const [levels, setLevels] = useState<{ completed: boolean; accessible: boolean }[]>([]);
+  const { userData } = useUser();
+  
+  // Load user-specific progress when the user is logged in
+  useEffect(() => {
+    if (userData?.uid) {
+      console.log('User logged in, loading progress for:', userData.displayName);
+      loadUserProgress();
+    }
+  }, [userData, loadUserProgress]);
   
   // Initialize progression data for this game type
   useEffect(() => {

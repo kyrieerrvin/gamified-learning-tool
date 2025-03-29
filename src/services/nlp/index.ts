@@ -9,9 +9,10 @@ import {
   POSAnswerVerification,
   SentenceWord,
   SentenceVerificationResult
-} from '@/types/game';
+} from '@/types/game/index';
 import { API_ENDPOINTS } from '@/lib/config';
 import { apiGet, apiPost } from '@/utils/api';
+import mockPosData from '../../data/mock/posData';
 
 // Re-export types for backward compatibility
 export type { 
@@ -33,7 +34,8 @@ function getNlpApiUrl(): string {
  * @returns Promise with game data
  */
 export async function fetchNlpGameData(
-  customSentence?: string
+  customSentence?: string,
+  difficulty?: string
 ): Promise<POSGameData> {
   try {
     // Create the URL with query parameters
@@ -43,15 +45,36 @@ export async function fetchNlpGameData(
       urlParams.append('sentence', customSentence);
     }
     
-    const url = `/api/game-data${customSentence ? `?${urlParams.toString()}` : ''}`;
-    console.log(`Fetching NLP game data from: ${url}`);
+    if (difficulty) {
+      urlParams.append('difficulty', difficulty);
+    }
     
-    // Use our centralized API service
-    return await apiGet<POSGameData>(url);
+    // Try using the Next.js API proxy endpoint first
+    const proxyUrl = `${API_ENDPOINTS.POS_GAME_PROXY}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`;
+    
+    try {
+      console.log(`Attempting to fetch game data via Next.js proxy: ${proxyUrl}`);
+      return await apiGet<POSGameData>(proxyUrl);
+    } catch (proxyError) {
+      console.warn("Next.js proxy route failed, trying direct API:", proxyError);
+      
+      // Fall back to direct API connection
+      const directUrl = `${API_ENDPOINTS.CALAMANCY_API}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`;
+      console.log(`Fetching NLP game data directly from: ${directUrl}`);
+      
+      try {
+        return await apiGet<POSGameData>(directUrl);
+      } catch (directError) {
+        console.warn("Direct API connection failed:", directError);
+        throw directError; // Re-throw to trigger mock data fallback
+      }
+    }
   } catch (error) {
-    console.error("Error fetching game data:", error);
-    // Re-throw to allow caller to handle
-    throw error;
+    console.error("Error fetching game data from both sources, using mock data:", error);
+    
+    // Final fallback to mock data
+    console.log("Using mock POS game data as ultimate fallback");
+    return mockPosData;
   }
 }
 
@@ -62,14 +85,27 @@ export async function fetchNlpGameData(
  */
 export async function createCustomGame(sentence: string): Promise<POSGameData> {
   try {
-    const url = `/api/custom-game`;
-    console.log(`Creating custom game with sentence: "${sentence}"`);
+    // Try proxy endpoint first
+    const proxyUrl = `${API_ENDPOINTS.POS_GAME_PROXY}`;
+    console.log(`Creating custom game with sentence: "${sentence}" via proxy`);
     
-    // Use our centralized API service
-    return await apiPost<POSGameData, { sentence: string }>(url, { sentence });
+    try {
+      // Use our centralized API service
+      return await apiPost<POSGameData, { sentence: string }>(proxyUrl, { sentence });
+    } catch (proxyError) {
+      console.warn("Next.js proxy route failed for custom game, trying direct API:", proxyError);
+      
+      // Fall back to direct API connection
+      const directUrl = `${API_ENDPOINTS.CALAMANCY_API}`;
+      return await apiPost<POSGameData, { sentence: string }>(directUrl, { sentence });
+    }
   } catch (error) {
-    console.error("Error creating custom game:", error);
-    throw error;
+    console.error("Error creating custom game from both sources:", error);
+    
+    // Fallback to basic mock data with the custom sentence
+    const mockData = {...mockPosData};
+    mockData.sentence = sentence;
+    return mockData;
   }
 }
 
@@ -84,18 +120,40 @@ export async function analyzeSentence(sentence: string): Promise<{
   method: string;
 }> {
   try {
-    const url = '/api/analyze';
+    // Try proxy endpoint first
+    const proxyUrl = API_ENDPOINTS.NLP_TEST_PROXY;
     console.log(`Analyzing sentence via Next.js API route: "${sentence}"`);
     
-    // Use our centralized API service
-    return await apiPost<{
-      sentence: string;
-      tokens: POSToken[];
-      method: string;
-    }, { sentence: string }>(url, { sentence });
+    try {
+      return await apiPost<{
+        sentence: string;
+        tokens: POSToken[];
+        method: string;
+      }, { sentence: string }>(proxyUrl, { sentence });
+    } catch (proxyError) {
+      console.warn("Next.js proxy route failed for sentence analysis, trying direct API:", proxyError);
+      
+      // Fall back to direct API connection
+      const directUrl = API_ENDPOINTS.ANALYZE_ENDPOINT;
+      return await apiPost<{
+        sentence: string;
+        tokens: POSToken[];
+        method: string;
+      }, { sentence: string }>(directUrl, { sentence });
+    }
   } catch (error) {
-    console.error("Error analyzing sentence:", error);
-    throw error;
+    console.error("Error analyzing sentence from both sources:", error);
+    
+    // Basic fallback response
+    return {
+      sentence,
+      tokens: sentence.split(' ').map(word => ({
+        text: word,
+        pos: 'UNK', // Unknown part of speech
+        description: 'Unknown word type'
+      })),
+      method: 'fallback'
+    };
   }
 }
 
@@ -142,20 +200,48 @@ export async function checkNlpHealth(): Promise<{
   pos_tags_available: string[];
 }> {
   try {
-    const url = `${getNlpApiUrl()}/health`;
+    // Try to check health via our centralized API utilities
+    const healthEndpoint = API_ENDPOINTS.HEALTH_ENDPOINT;
+    console.log(`Checking NLP API health at: ${healthEndpoint}`);
     
-    // Use our centralized API service
-    return await apiGet<{
-      status: string;
-      model: string;
-      model_status: string;
-      pos_tags_available: string[];
-    }>(url);
+    try {
+      // Use our centralized apiGet function instead of direct fetch
+      return await apiGet(healthEndpoint);
+    } catch (error) {
+      console.warn('Failed to check health with apiGet, trying direct fetch as fallback');
+      
+      // Fallback to simple fetch with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+      
+      try {
+        const response = await fetch(healthEndpoint, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`Health endpoint returned ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (fetchError) {
+        console.error('Direct fetch for health check failed:', fetchError);
+        throw fetchError;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
   } catch (error) {
     console.error("Error checking NLP health:", error);
+    
+    // Fallback response
     return {
-      status: 'error',
-      model: 'unknown',
+      status: 'offline',
+      model: 'unavailable',
       model_status: 'offline',
       pos_tags_available: []
     };
@@ -168,16 +254,29 @@ export async function checkNlpHealth(): Promise<{
  */
 export async function fetchSentenceWords(): Promise<SentenceWord[]> {
   try {
-    const url = `/api/challenges/make-sentence/words`;
-    console.log(`Fetching sentence words from: ${url}`);
+    // Try proxy endpoint first
+    const proxyUrl = API_ENDPOINTS.MAKE_SENTENCE_WORDS_PROXY;
+    console.log(`Fetching sentence words via Next.js API route`);
     
-    // Use our centralized API service
-    const response = await apiGet<{words: SentenceWord[];}>(url);
-    return response.words;
+    try {
+      return await apiGet<SentenceWord[]>(proxyUrl);
+    } catch (proxyError) {
+      console.warn("Next.js proxy route failed for sentence words, trying direct API:", proxyError);
+      
+      // Fall back to direct API connection
+      const directUrl = API_ENDPOINTS.MAKE_SENTENCE_WORDS_ENDPOINT;
+      return await apiGet<SentenceWord[]>(directUrl);
+    }
   } catch (error) {
-    console.error("Error fetching sentence words:", error);
-    // Re-throw to allow caller to handle with fallback
-    throw error;
+    console.error("Error fetching sentence words from both sources:", error);
+    
+    // Fallback words
+    return [
+      { word: 'ako', description: 'I or me (pronoun)' },
+      { word: 'kumain', description: 'to eat (verb)' },
+      { word: 'ng', description: 'of (particle)' },
+      { word: 'kanin', description: 'rice (noun)' }
+    ];
   }
 }
 
@@ -192,24 +291,34 @@ export async function verifySentence(
   sentence: string
 ): Promise<SentenceVerificationResult> {
   try {
-    const url = '/api/challenges/make-sentence/verify';
-    console.log(`Verifying sentence for word "${word}": "${sentence}"`);
+    const data = { word, sentence };
     
-    // Use our centralized API service
-    return await apiPost<SentenceVerificationResult, {
-      word: string;
-      sentence: string;
-    }>(url, { word, sentence });
+    // Try proxy endpoint first
+    const proxyUrl = API_ENDPOINTS.MAKE_SENTENCE_VERIFY_PROXY;
+    console.log(`Verifying sentence via Next.js API route`);
+    
+    try {
+      return await apiPost<SentenceVerificationResult, typeof data>(proxyUrl, data);
+    } catch (proxyError) {
+      console.warn("Next.js proxy route failed for sentence verification, trying direct API:", proxyError);
+      
+      // Fall back to direct API connection
+      const directUrl = API_ENDPOINTS.MAKE_SENTENCE_VERIFY_ENDPOINT;
+      return await apiPost<SentenceVerificationResult, typeof data>(directUrl, data);
+    }
   } catch (error) {
-    console.error("Error verifying sentence:", error);
+    console.error("Error verifying sentence from both sources:", error);
     
-    // Return error result
+    // Simple fallback validation (just checks if word is in sentence)
+    const isCorrect = sentence.toLowerCase().includes(word.toLowerCase());
+    
     return {
-      isCorrect: false,
-      feedback: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      isCorrect,
+      feedback: isCorrect 
+        ? 'Sentence accepted (fallback validation)' 
+        : `Your sentence must include the word "${word}"`,
       word,
-      sentence,
-      error: String(error)
+      sentence
     };
   }
 }
