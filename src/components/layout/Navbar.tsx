@@ -74,24 +74,6 @@ export default function Navbar() {
               Home
             </Link>
             <Link 
-              href="/profile" 
-              className={`text-sm font-medium transition-colors ${pathname === '/profile' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
-            >
-              Profile
-            </Link>
-            <Link 
-              href="/streak" 
-              className={`text-sm font-medium transition-colors ${pathname === '/streak' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
-            >
-              Streak
-            </Link>
-            <Link 
-              href="/achievements" 
-              className={`text-sm font-medium transition-colors ${pathname === '/achievements' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
-            >
-              Achievements
-            </Link>
-            <Link 
               href="/feedback" 
               className={`text-sm font-medium transition-colors ${pathname === '/feedback' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
             >
@@ -149,24 +131,6 @@ export default function Navbar() {
                 className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/dashboard' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
               >
                 Home
-              </Link>
-              <Link 
-                href="/profile" 
-                className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/profile' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
-              >
-                Profile
-              </Link>
-              <Link 
-                href="/streak" 
-                className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/streak' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
-              >
-                Streak
-              </Link>
-              <Link 
-                href="/achievements" 
-                className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/achievements' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
-              >
-                Achievements
               </Link>
               <Link 
                 href="/feedback" 

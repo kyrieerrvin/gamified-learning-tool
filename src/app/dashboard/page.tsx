@@ -100,39 +100,6 @@ export default function Dashboard() {
           </div>
         </div>
         
-        {/* Quick Stats Summary */}
-        <div className={`transition-all duration-1000 delay-500 transform ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        } mb-10`}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Progress Summary</h2>
-            <Link href="/profile" className="text-blue-600 text-sm font-medium hover:underline flex items-center">
-              View Details
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="bg-blue-100 p-4 rounded-lg mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500 mb-1">Overall Progress</div>
-                  <div className="text-3xl font-bold text-gray-800">4%</div>
-                  <div className="text-sm text-gray-500 mt-1">Keep up the good work!</div>
-                </div>
-              </div>
-              
-              {/* Note: The streak functionality is now in the top-right corner of the app */}
-            </div>
-          </div>
-        </div>
-        
       </main>
     </div>
   );
