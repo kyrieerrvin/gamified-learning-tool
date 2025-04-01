@@ -40,16 +40,14 @@ export default function PartsOfSpeechGame({
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(difficulty);
   
   // Game store for managing global score and streak
-  const { addPoints, increaseStreak, resetStreak } = useGameStore();
+  const { addPoints, increaseStreak } = useGameStore();
   
   // Track if this is the first mistake on this question
   const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
   
-  // Track skipped questions
-  const [skippedQuestions, setSkippedQuestions] = useState<number[]>([]);
-  
   // Track game duration
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [gameEndTime, setGameEndTime] = useState<number | null>(null);
   
   // User context for saving game results
   const { userData, addChallengeResult } = useUser();
@@ -136,13 +134,13 @@ export default function PartsOfSpeechGame({
     
     // Add points for correct answer
     if (isOptionCorrect) {
-      const points = skippedQuestions.includes(currentQuestionIndex) ? 5 : 10;
+      const points = 10;
       setScore(prevScore => prevScore + points);
-      addPoints(points, 'multipleChoice');
+      addPoints(points, 'multiple-choice');
       increaseStreak(); 
       setFeedback('Tama! Magaling!');
     } else {
-      resetStreak(); 
+      // Don't reset streak on incorrect answers
       setFeedback(`Hindi tama. Ang tamang sagot ay "${currentQuestion.correctAnswer}".`);
       
       // Track if this is the first mistake on this question
@@ -160,31 +158,6 @@ export default function PartsOfSpeechGame({
     }, 500);
   };
   
-  // Handle skipping a question
-  const handleSkipQuestion = () => {
-    if (isTransitioning) return;
-    
-    // Track skipped question
-    setSkippedQuestions([...skippedQuestions, currentQuestionIndex]);
-    
-    // Transition to the next question
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedOption(null);
-      setFeedback(null);
-      setIsCorrect(null);
-      
-      if (currentQuestionIndex < (data?.questions.length || 0) - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        // Game over
-        finishGame();
-      }
-      
-      setIsTransitioning(false);
-    }, 500);
-  };
-
   // Handle moving to the next question
   const handleNextQuestion = () => {
     if (isTransitioning) return;
@@ -208,6 +181,7 @@ export default function PartsOfSpeechGame({
   
   // Finish the game and calculate final score
   const finishGame = () => {
+    setGameEndTime(Date.now());
     setGameOver(true);
     
     // Calculate final score
@@ -222,7 +196,7 @@ export default function PartsOfSpeechGame({
       score: finalScore,
       maxScore: 100,
       completedAt: new Date().toISOString(),
-      duration: startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
+      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0
     };
     
     setChallengeResult(result);
@@ -335,7 +309,6 @@ export default function PartsOfSpeechGame({
           </div>
         )}
         
-        <h3 className="text-base font-medium text-gray-600 mb-2">What part of speech is this word?</h3>
         <div className="text-2xl font-bold text-duolingo-darkBlue">
           {question.question}
         </div>
@@ -387,14 +360,6 @@ export default function PartsOfSpeechGame({
       
       {/* Actions */}
       <div className="flex justify-between mt-6">
-        <Button 
-          onClick={handleSkipQuestion} 
-          disabled={!!selectedOption || skippedQuestions.includes(currentQuestionIndex)}
-          className="bg-gray-100 text-gray-700 hover:bg-gray-200"
-        >
-          Skip
-        </Button>
-        
         <Button 
           onClick={handleNextQuestion} 
           disabled={!selectedOption}

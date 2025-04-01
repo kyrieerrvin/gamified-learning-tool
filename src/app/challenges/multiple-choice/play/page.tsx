@@ -50,26 +50,19 @@ export default function PlayMultipleChoicePage() {
     setScore(score);
     setGameCompleted(true);
     
-    if (levelCompleted) {
-      // Complete level and add points
-      completeLevel('multiple-choice', sectionId, levelId);
-      addPoints(score, 'multiple-choice');
-    }
-      
-    // Check for perfect score quest - always update if score is 100, regardless of level completion
+    // Complete level with the score to determine if next level should unlock
+    completeLevel('multiple-choice', sectionId, levelId, score);
+    
+    // Update perfect score quest only if perfect
     if (score === 100) {
-      // Update perfect score quest
-      const gameProgress = progress['multiple-choice'];
-      if (gameProgress) {
-        const perfectScoreQuest = gameProgress.quests.find(quest => quest.id === 'perfect-score');
-        if (perfectScoreQuest && !perfectScoreQuest.isCompleted) {
-          // Add progress to perfect score quest
-          addPoints(10, 'multiple-choice'); // Bonus points for perfect score
-          // Directly add progress to the quest
-          addProgressToQuest('multiple-choice', 'perfect-score', 1);
-        }
-      }
+      addProgressToQuest('multiple-choice', 'perfect-score', 1);
     }
+    
+    // Always update complete-games quest - any completed game counts
+    addProgressToQuest('multiple-choice', 'complete-games', 1);
+    
+    // Add additional debug log for XP tracking
+    console.log(`[XP Debug - MultipleChoice] Score: ${score}, Level: ${levelId}, Section: ${sectionId}`);
   };
   
   if (loading) {
@@ -121,7 +114,7 @@ export default function PlayMultipleChoicePage() {
             </div>
             
             <div className="text-center text-xl font-bold text-duolingo-blue mb-6">
-              + {score} XP
+              + {Math.floor(score/2)} XP
             </div>
             
             <div className="space-y-3">

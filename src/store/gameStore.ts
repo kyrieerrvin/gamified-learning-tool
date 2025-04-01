@@ -62,7 +62,7 @@ type GameState = {
   resetStreak: (gameType?: string) => void;
   
   // Game progression
-  completeLevel: (gameType: string, sectionId: number, levelId: number) => void;
+  completeLevel: (gameType: string, sectionId: number, levelId: number, score?: number) => void;
   canAccessLevel: (gameType: string, sectionId: number, levelId: number) => boolean;
   unlockSection: (gameType: string, sectionId: number) => void;
   initializeGameProgress: (gameType: string) => void;
@@ -71,6 +71,7 @@ type GameState = {
   addProgressToQuest: (gameType: string, questId: string, amount: number) => void;
   completeQuest: (gameType: string, questId: string) => void;
   checkAndRefreshQuests: (gameType: string) => void;
+  resetQuests: (gameType: string) => void;
   
   // User specific data
   loadUserProgress: () => Promise<void>;
@@ -121,9 +122,9 @@ const generateDailyQuests = (): DailyQuest[] => {
       expiresAt: tomorrow.toISOString()
     },
     {
-      id: 'complete-levels',
-      title: 'Complete 3 Levels',
-      description: 'Complete any 3 levels today',
+      id: 'complete-games',
+      title: 'Complete 3 Games',
+      description: 'Complete any 3 games today (any score)',
       reward: 15,
       progress: 0,
       target: 3,
@@ -160,17 +161,33 @@ export const useGameStore = create<GameState>()(
         const gameProgress = state.progress[gameType];
         if (!gameProgress) return state;
         
+        console.log(`[XP Debug] Adding ${points} points to ${gameType}`);
+        console.log(`[XP Debug] Current XP: ${gameProgress.xp}`);
+        
         // Update XP for the specific game type
         const updatedGameProgress = {
           ...gameProgress,
           xp: gameProgress.xp + points
         };
         
-        // Update daily quest progress for XP
+        console.log(`[XP Debug] New total XP: ${updatedGameProgress.xp}`);
+        
+        // Update daily quest progress for XP - match with actual XP score
         const updatedQuests = gameProgress.quests.map(quest => {
           if (quest.id === 'daily-xp' && !quest.isCompleted) {
-            const newProgress = Math.min(quest.progress + points, quest.target);
+            console.log(`[XP Debug] Daily XP quest before: ${quest.progress}/${quest.target}`);
+            
+            // Calculate progress for daily-xp quest directly from the game's XP
+            const questProgressBefore = quest.progress;
+            const newProgress = Math.min(updatedGameProgress.xp, quest.target);
             const isCompleted = newProgress >= quest.target;
+            
+            console.log(`[XP Debug] Daily XP quest after: ${newProgress}/${quest.target}`);
+            console.log(`[XP Debug] Change in quest progress: ${newProgress - questProgressBefore}`);
+            
+            if (newProgress !== questProgressBefore) {
+              console.log(`[XP Debug] ⚠️ Quest progress differs from game XP!`);
+            }
             
             return {
               ...quest,
@@ -201,7 +218,7 @@ export const useGameStore = create<GameState>()(
         const today = getTodayDateString();
         let newStreak = state.streak;
         
-        // If last streak date is yesterday, increment streak
+        // If last streak date is not today, increment streak
         if (state.lastStreakDate !== today) {
           newStreak += 1;
         }
@@ -268,7 +285,7 @@ export const useGameStore = create<GameState>()(
         });
       },
       
-      completeLevel: (gameType: string, sectionId: number, levelId: number) => {
+      completeLevel: (gameType: string, sectionId: number, levelId: number, score?: number) => {
         set((state) => {
           const gameProgress = state.progress[gameType];
           if (!gameProgress) return state;
@@ -276,12 +293,26 @@ export const useGameStore = create<GameState>()(
           // Create a deep copy of sections
           const updatedSections = JSON.parse(JSON.stringify(gameProgress.sections));
           
-          // Mark the level as completed
+          // Get the section and level
           const section = updatedSections[sectionId];
-          if (section && section.levels[levelId]) {
-            section.levels[levelId].isCompleted = true;
+          if (!section || !section.levels[levelId]) return state;
+          
+          // Update level stats - this happens regardless of score
+          const level = section.levels[levelId];
+          level.attempts = (level.attempts || 0) + 1;
+          level.lastPlayed = new Date().toISOString();
+          
+          // Store the best score if higher than previous
+          if (score !== undefined && (level.bestScore === undefined || score > level.bestScore)) {
+            level.bestScore = score;
+          }
+          
+          // Only mark as completed and unlock next level if perfect score (100)
+          if (score === 100) {
+            // Mark the level as completed
+            level.isCompleted = true;
             
-            // Unlock the next level in this section if available
+            // Unlock the next level if available
             if (levelId < section.levels.length - 1) {
               section.levels[levelId + 1].isLocked = false;
             } 
@@ -298,10 +329,24 @@ export const useGameStore = create<GameState>()(
             }
           }
           
-          // Update quest progress for completing levels
+          // Update quest progress for game completion
           const updatedQuests = gameProgress.quests.map(quest => {
-            if (quest.id === 'complete-levels' && !quest.isCompleted) {
+            // For the 'perfect-score' quest, only count games with a perfect score
+            if (quest.id === 'perfect-score' && !quest.isCompleted && score === 100) {
               const newProgress = Math.min(quest.progress + 1, quest.target);
+              const isCompleted = newProgress >= quest.target;
+              
+              return {
+                ...quest,
+                progress: newProgress,
+                isCompleted
+              };
+            }
+            // Always update daily XP quest regardless of score
+            else if (quest.id === 'daily-xp' && !quest.isCompleted && score !== undefined) {
+              // Calculate new progress based on actual game XP, not derived from score
+              // This is to prevent the double counting issue
+              const newProgress = Math.min(gameProgress.xp, quest.target);
               const isCompleted = newProgress >= quest.target;
               
               return {
@@ -403,6 +448,13 @@ export const useGameStore = create<GameState>()(
             if (quest.id === questId && !quest.isCompleted) {
               const newProgress = Math.min(quest.progress + amount, quest.target);
               const isCompleted = newProgress >= quest.target;
+              
+              // When a quest completes, it automatically gives its reward
+              if (isCompleted && !quest.isCompleted) {
+                console.log(`Quest ${quest.title} completed! Reward: ${quest.reward} XP`);
+                // This is where the extra XP is coming from - automatic quest rewards
+                setTimeout(() => get().addPoints(quest.reward, gameType), 0);
+              }
               
               return {
                 ...quest,
@@ -507,6 +559,31 @@ export const useGameStore = create<GameState>()(
           }
           
           return state;
+        });
+      },
+      
+      resetQuests: (gameType: string) => {
+        set((state) => {
+          const gameProgress = state.progress[gameType];
+          if (!gameProgress) return state;
+          
+          // Generate fresh quests
+          const freshQuests = generateDailyQuests();
+          
+          const newState = {
+            progress: {
+              ...state.progress,
+              [gameType]: {
+                ...gameProgress,
+                quests: freshQuests
+              }
+            }
+          };
+          
+          // Save to Firebase after updating local state
+          setTimeout(() => get().saveUserProgress(), 0);
+          
+          return newState;
         });
       },
       

@@ -17,10 +17,14 @@ export default function UserStats({ gameType }: UserStatsProps) {
   const [completedLevels, setCompletedLevels] = useState(0);
   const [totalLevels, setTotalLevels] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [gameProgress, setGameProgress] = useState(progress[gameType]);
   
   useEffect(() => {
     // Initialize game progress for this game type
     initializeGameProgress(gameType);
+    
+    // Set game progress for this specific game type
+    setGameProgress(progress[gameType]);
     
     const checkProgress = () => {
       const gameProgress = progress[gameType];
@@ -43,17 +47,16 @@ export default function UserStats({ gameType }: UserStatsProps) {
         
         setCompletedLevels(completed);
         setTotalLevels(total);
-        setIsLoading(false);
+        
+        // Update game progress
+        setGameProgress(gameProgress);
       }
+      
+      setIsLoading(false);
     };
     
     checkProgress();
-    
-    // Check again if progress changes
-    const intervalId = setInterval(checkProgress, 500);
-    
-    return () => clearInterval(intervalId);
-  }, [gameType, initializeGameProgress, progress]);
+  }, [gameType, progress, initializeGameProgress]);
   
   if (isLoading) {
     return (
@@ -130,19 +133,25 @@ export default function UserStats({ gameType }: UserStatsProps) {
           <AchievementBadge 
             title="Perfect Score"
             description="Get 100% on any level" 
-            isUnlocked={false}
+            isUnlocked={
+              gameProgress?.sections.some(section => 
+                section.levels.some(level => level.bestScore === 100)
+              ) || false
+            }
             icon="🏆"
           />
           <AchievementBadge 
             title="Streak Master"
             description="Maintain a 7-day streak" 
-            isUnlocked={false}
+            isUnlocked={useGameStore.getState().streak >= 7}
             icon="🔥"
           />
           <AchievementBadge 
             title="Section Champion"
             description="Complete all levels in a section" 
-            isUnlocked={false}
+            isUnlocked={
+              gameProgress?.sections.some(section => section.isCompleted) || false
+            }
             icon="⭐"
           />
           <AchievementBadge 

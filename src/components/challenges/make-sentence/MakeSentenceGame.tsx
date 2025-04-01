@@ -31,9 +31,6 @@ export default function MakeSentenceGame({
   // Track if this is the first mistake on this question
   const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
   
-  // Track skipped questions
-  const [skippedQuestions, setSkippedQuestions] = useState<number[]>([]);
-  
   /************ All Ref Hooks Next ************/
   // Ref for input field to focus after submission
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -129,11 +126,10 @@ export default function MakeSentenceGame({
       
       // Update global score and streak
       if (result.isCorrect) {
-        addPoints(10, 'makeSentence');
+        addPoints(5, 'make-sentence'); // Changed from 10 to 5 XP per correct answer
         increaseStreak(); // Updated to use universal streak
       } else {
-        resetStreak(); // Updated to use universal streak
-        
+        // Don't reset streak on incorrect answers
         // Track first mistake for this question
         if (!firstMistake[gameData.currentIndex]) {
           setFirstMistake(prev => ({
@@ -161,44 +157,6 @@ export default function MakeSentenceGame({
   
   // Handle continuing to next word
   const handleNextWord = () => {
-    setInputSentence('');
-    setCurrentResult(null);
-    
-    // Focus on input field
-    setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, 100);
-  };
-  
-  // Handle skipping a question
-  const handleSkip = () => {
-    if (!gameData) return;
-    
-    // Don't allow skipping the last question
-    if (gameData.currentIndex >= gameData.totalQuestions - 1) {
-      return;
-    }
-    
-    // Add to skipped questions array
-    setSkippedQuestions(prev => [...prev, gameData.currentIndex]);
-    
-    // Save the current word
-    const currentWord = gameData.words[gameData.currentIndex];
-    
-    // Create a new words array by moving the current word to the end
-    const reorderedWords = [...gameData.words];
-    reorderedWords.splice(gameData.currentIndex, 1); // Remove current
-    reorderedWords.push(currentWord); // Add to end
-    
-    // Update the game data with reordered words without changing the current index
-    setGameData({
-      ...gameData,
-      words: reorderedWords
-    });
-    
-    // Reset state for question
     setInputSentence('');
     setCurrentResult(null);
     
@@ -369,18 +327,6 @@ export default function MakeSentenceGame({
               >
                 I-check ang Pangungusap
               </Button>
-              
-              {/* Skip button (disabled for last question) */}
-              {gameData.currentIndex < gameData.totalQuestions - 1 && (
-                <Button 
-                  type="button"
-                  variant="secondary"
-                  onClick={handleSkip}
-                  disabled={isSubmitting}
-                >
-                  Laktawan
-                </Button>
-              )}
             </div>
           </form>
         </div>

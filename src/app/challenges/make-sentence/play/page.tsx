@@ -13,7 +13,7 @@ export default function PlayMakeSentencePage() {
   const sectionId = parseInt(searchParams.get('section') || '0');
   const levelId = parseInt(searchParams.get('level') || '0');
   
-  const { progress, canAccessLevel, completeLevel, addPoints } = useGameStore();
+  const { progress, canAccessLevel, completeLevel, addPoints, addProgressToQuest } = useGameStore();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
@@ -39,25 +39,23 @@ export default function PlayMakeSentencePage() {
     setScore(score);
     setGameCompleted(true);
     
-    if (levelCompleted) {
-      // Complete level and add points
-      completeLevel('make-sentence', sectionId, levelId);
-      addPoints(score, 'make-sentence');
-      
-      // Check for perfect score for quest completion
-      if (score === 100) {
-        // Update perfect score quest
-        const gameProgress = progress['make-sentence'];
-        if (gameProgress) {
-          const perfectScoreQuest = gameProgress.quests.find(quest => quest.id === 'perfect-score');
-          if (perfectScoreQuest && !perfectScoreQuest.isCompleted) {
-            // Will be handled by the addProgressToQuest in the gameStore
-            setTimeout(() => {
-              addPoints(10, 'make-sentence'); // Bonus points for perfect score
-            }, 500);
-          }
-        }
-      }
+    // Complete the level in game store
+    completeLevel('make-sentence', sectionId, levelId, score);
+    
+    // Calculate correct XP (5 XP per correct answer)
+    const questionsCount = 10; // Standard number of questions per level
+    const correctAnswers = Math.floor((score / 100) * questionsCount);
+    const earnedXP = correctAnswers * 5;
+    
+    // Add XP to game progress (we now do this in the completeLevel function)
+    // addPoints(earnedXP, 'make-sentence');
+    
+    // Update daily quest progress for game completion
+    addProgressToQuest('make-sentence', 'complete-games', 1);
+    
+    // Add progress to perfect score quest if applicable
+    if (score === 100) {
+      addProgressToQuest('make-sentence', 'perfect-score', 1);
     }
   };
   
@@ -110,7 +108,7 @@ export default function PlayMakeSentencePage() {
             </div>
             
             <div className="mb-6">
-              <p className="text-lg font-bold text-duolingo-green">+ {score} XP</p>
+              <p className="text-lg font-bold text-duolingo-green">+ {Math.floor((score/100) * 10) * 5} XP</p>
             </div>
           </div>
           
@@ -125,7 +123,7 @@ export default function PlayMakeSentencePage() {
             {levelId < 4 && (
               <Button
                 onClick={() => router.push(`/challenges/make-sentence/play?section=${sectionId}&level=${levelId + 1}`)}
-                className="bg-white border border-duolingo-green hover:bg-gray-100 text-duolingo-green py-3 px-6 rounded-xl font-bold shadow-sm hover:shadow-md transition-all"
+                className="bg-duolingo-green hover:bg-duolingo-darkGreen text-white py-3 px-6 rounded-xl font-bold shadow-md hover:shadow-lg transition-all"
               >
                 Sunod na Level
               </Button>

@@ -25,6 +25,15 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
         setQuests(gameProgress.quests);
         setTotalXP(gameProgress.xp || 0);
         setIsLoading(false);
+        
+        // Add debug log for daily-xp quest
+        const dailyXP = gameProgress.quests.find(q => q.id === 'daily-xp');
+        console.log(`[DEBUG-DailyQuests] Game type: ${gameType}`);
+        console.log(`[DEBUG-DailyQuests] Game XP: ${gameProgress.xp}`);
+        if (dailyXP) {
+          console.log(`[DEBUG-DailyQuests] Daily XP quest: ${dailyXP.progress}/${dailyXP.target}`);
+          console.log(`[DEBUG-DailyQuests] Difference: ${dailyXP.progress - gameProgress.xp}`);
+        }
       }
     };
     

@@ -3,19 +3,23 @@
 
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
+import Navbar from '@/components/layout/Navbar';
+import { useGameStore } from '@/store/gameStore';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
-  
-  // Animation states
   const [isVisible, setIsVisible] = useState(false);
+  const { loadUserProgress, checkAndRefreshQuests } = useGameStore();
 
-  // Show animation after component mounts
   useEffect(() => {
+    loadUserProgress();
     setIsVisible(true);
-  }, []);
+    
+    // Refresh quests for all game types
+    checkAndRefreshQuests('make-sentence');
+    checkAndRefreshQuests('multiple-choice');
+  }, [loadUserProgress, checkAndRefreshQuests]);
 
   if (loading) {
     return (
