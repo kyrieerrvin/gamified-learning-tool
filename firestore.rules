@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Base rules that apply to all collections
+    match /{document=**} {
+      // Default deny all access
+      allow read, write: if false;
+    }
+    
+    // User document rules
+    match /users/{userId} {
+      // Allow users to read only their own documents
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow users to create their own document
+      allow create: if request.auth != null && 
+                     request.auth.uid == userId && 
+                     request.resource.data.uid == userId;
+                     
+      // Allow users to update their own document with proper field validation
+      allow update: if request.auth != null && 
+                     request.auth.uid == userId &&
+                     request.resource.data.uid == userId;
+
+      // Challenge results subcollection
+      match /challengeResults/{resultId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null && 
+                       request.auth.uid == userId && 
+                       request.resource.data.userId == userId;
+        allow update, delete: if false; // Results should be immutable once created
+      }
+    }
+    
+    // Admin access (for future use)
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null && 
+                           exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+  }
+}

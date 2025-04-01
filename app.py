@@ -2,20 +2,20 @@
 """
 Dedicated NLP API for Tagalog Learning POS Game.
 This is a focused implementation that handles:
-1. Parts of speech tagging with CalamanCy
+1. Parts of speech tagging with ToCylog model
 2. Multiple choice question generation
 3. Answer verification
 """
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-import calamancy
 import random
 import logging
 import sys
 import os
 import socket
 import time
+import spacy
 
 # Configure logging
 logging.basicConfig(
@@ -37,6 +37,7 @@ CORS(app, resources={r"/*": {
 
 # Predefined POS options and their Filipino translations
 POS_OPTIONS = {
+    # Core POS tags
     "PRON": "Panghalip (Pronoun)",
     "VERB": "Pandiwa (Verb)",
     "ADV": "Pang-Abay (Adverb)",
@@ -45,6 +46,15 @@ POS_OPTIONS = {
     "ADP": "Pang-ukol (Preposition)",
     "DET": "Pantukoy (Determiner)",
     "PART": "Panghikayat (Particle)",
+    # Extended POS tags from ToCylog model
+    "PROPN": "Pangngalang Pantangi (Proper Noun)",
+    "NUM": "Numero (Number)",
+    "CCONJ": "Pangatnig na Nagtutugma (Coordinating Conjunction)",
+    "SCONJ": "Pangatnig na Nagpapailalim (Subordinating Conjunction)",
+    "INTJ": "Pandamdam (Interjection)",
+    "X": "Iba Pa (Other)",
+    "PUNCT": "Bantas (Punctuation)",
+    "SYM": "Simbolo (Symbol)",
 }
 
 # Sample sentences for different difficulty levels
@@ -88,25 +98,17 @@ MAKE_SENTENCE_WORDS = [
     {"word": "Mapagbigay", "description": "Bukas-palad o handang tumulong"}
 ]
 
-# Load the CalamanCy NLP model
+# Load the ToCylog NLP model
 try:
-    logger.info("Loading CalamanCy NLP model (tl_calamancy_md-0.2.0)...")
-    nlp = calamancy.load("tl_calamancy_md-0.2.0")
-    logger.info("✅ CalamanCy model loaded successfully!")
+    logger.info("Loading toCylog model...")
+    nlp = spacy.load("./tl_tocylog_trf")
+    logger.info("✅ ToCylog model loaded successfully!")
     MODEL_STATUS = "loaded"
 except Exception as e:
     logger.error(f"Error loading model with specified version: {str(e)}")
-    try:
-        # Try loading with a simpler name - sometimes package patterns change
-        logger.info("Trying to load model with generic name (tl_calamancy_md)...")
-        nlp = calamancy.load("tl_calamancy_md")
-        logger.info("✅ CalamanCy model loaded successfully with generic name!")
-        MODEL_STATUS = "loaded"
-    except Exception as e:
-        logger.error(f"Error loading model with generic name: {str(e)}")
-        logger.error("❌ Failed to load CalamanCy model. Using fallback POS tagging logic.")
-        nlp = None
-        MODEL_STATUS = "unavailable"
+    logger.error("❌ Failed to load ToCylog model. Using fallback POS tagging logic.")
+    nlp = None
+    MODEL_STATUS = "unavailable"
 
 def generate_pos_questions(sentence, num_questions=5):
     """Generate multiple choice questions about parts of speech in the given sentence."""
@@ -116,11 +118,11 @@ def generate_pos_questions(sentence, num_questions=5):
         
     questions = []
     
-    if nlp:  # If CalamanCy model is loaded, use it
+    if nlp:  # If ToCylog model is loaded, use it
         try:
-            # Process the sentence with CalamanCy
+            # Process the sentence with ToCylog
             doc = nlp(sentence)
-            logger.info(f"CalamanCy tokens for '{sentence}': {[(token.text, token.pos_) for token in doc]}")
+            logger.info(f"ToCylog tokens for '{sentence}': {[(token.text, token.pos_) for token in doc]}")
             
             # Get tokens with relevant POS tags
             tokens = [token for token in doc if token.pos_ in POS_OPTIONS]
@@ -140,6 +142,49 @@ def generate_pos_questions(sentence, num_questions=5):
                 correct_pos = token.pos_
                 correct_answer = POS_OPTIONS[correct_pos]
                 
+                # Enhanced explanation using morphological features if available
+                explanation = f"Ang '{token.text}' ay isang {correct_answer.lower()}."
+                
+                # Add morphological information if available
+                if hasattr(token, 'morph') and len(token.morph) > 0:
+                    morph_features = []
+                    for feature, value in token.morph.to_dict().items():
+                        if feature == 'Case':
+                            if value == 'Nom':
+                                morph_features.append("nasa pangunahing anyo")
+                            elif value == 'Gen':
+                                morph_features.append("nagpapakita ng pagmamay-ari")
+                            elif value == 'Loc':
+                                morph_features.append("nagpapakita ng lokasyon")
+                            elif value == 'Dat':
+                                morph_features.append("nagpapakita ng tagatanggap ng kilos")
+                        elif feature == 'Aspect':
+                            if value == 'Imp':
+                                morph_features.append("di-ganap na aspekto")
+                            elif value == 'Perf':
+                                morph_features.append("ganap na aspekto")
+                        elif feature == 'Voice':
+                            if value == 'Act':
+                                morph_features.append("aktibong tinig")
+                            elif value == 'Pass':
+                                morph_features.append("pasibong tinig")
+                    
+                    if morph_features:
+                        explanation += f" Ito ay {', '.join(morph_features)}."
+                
+                # Add syntactic role information if available
+                if token.dep_ and token.dep_ != '':
+                    if token.dep_ == 'ROOT':
+                        explanation += " Ito ang pangunahing salita sa pangungusap."
+                    elif token.dep_ == 'nsubj':
+                        explanation += " Ito ang paksa ng pangungusap."
+                    elif token.dep_ == 'obj':
+                        explanation += " Ito ang layon ng pangungusap."
+                    elif token.dep_ == 'iobj':
+                        explanation += " Ito ang di-tuwirang layon."
+                    elif token.dep_ == 'obl':
+                        explanation += " Ito ay nagbibigay ng karagdagang impormasyon."
+                
                 # Generate distractors: randomly select 3 other POS options
                 available_distractors = [opt for opt in POS_OPTIONS.values() if opt != correct_answer]
                 distractors = random.sample(available_distractors, min(3, len(available_distractors)))
@@ -153,14 +198,14 @@ def generate_pos_questions(sentence, num_questions=5):
                     "question": f"Anong parte ng pangungusap ang '{token.text}' sa '{sentence}'?",
                     "options": options,
                     "correctAnswer": correct_answer,
-                    "explanation": f"Ang '{token.text}' ay isang {correct_answer.lower()}."
+                    "explanation": explanation
                 })
                 
-            logger.info(f"Generated {len(questions)} questions using CalamanCy")
+            logger.info(f"Generated {len(questions)} questions using ToCylog")
             return questions
             
         except Exception as e:
-            logger.error(f"Error using CalamanCy for POS tagging: {str(e)}")
+            logger.error(f"Error using ToCylog for POS tagging: {str(e)}")
             # Fall back to dictionary-based approach
             
     # Dictionary-based fallback approach
@@ -202,7 +247,12 @@ def generate_pos_questions(sentence, num_questions=5):
         "hanggang": "ADP", "dahil": "ADP",
         # Particles (Panghikayat)
         "ay": "PART", "ba": "PART", "na": "PART", "pa": "PART", "raw": "PART", "daw": "PART",
-        "lamang": "PART", "lang": "PART", "din": "PART", "rin": "PART", "pala": "PART"
+        "lamang": "PART", "lang": "PART", "din": "PART", "rin": "PART", "pala": "PART",
+        # Conjunctions (Pangatnig)
+        "at": "CCONJ", "o": "CCONJ", "ngunit": "CCONJ", "pero": "CCONJ", "subalit": "CCONJ",
+        "dahil": "SCONJ", "sapagkat": "SCONJ", "upang": "SCONJ", "kung": "SCONJ", "kapag": "SCONJ",
+        # Numbers (Numero)
+        "isa": "NUM", "dalawa": "NUM", "tatlo": "NUM", "sampu": "NUM", "isang": "NUM", "unang": "NUM"
     }
     
     # Split the sentence into words and clean them
@@ -250,38 +300,6 @@ def generate_pos_questions(sentence, num_questions=5):
     logger.info(f"Generated {len(questions)} questions using fallback dictionary")
     return questions
 
-def verify_pos_answer(word, sentence, selected_answer):
-    """Verify if the selected answer is correct for the word in the sentence."""
-    if not nlp:
-        logger.warning("CalamanCy model not available for answer verification")
-        return None
-        
-    try:
-        # Process the sentence with CalamanCy
-        doc = nlp(sentence)
-        
-        # Find the target word in the processed tokens
-        for token in doc:
-            if token.text.lower() == word.lower():
-                correct_pos = token.pos_
-                correct_answer = POS_OPTIONS.get(correct_pos)
-                
-                if correct_answer:
-                    is_correct = (selected_answer == correct_answer)
-                    return {
-                        "word": word,
-                        "selected": selected_answer,
-                        "correct": correct_answer,
-                        "is_correct": is_correct,
-                        "explanation": f"Ang '{word}' ay isang {correct_answer.lower()}."
-                    }
-        
-        logger.warning(f"Word '{word}' not found in sentence during verification")
-        return None
-    except Exception as e:
-        logger.error(f"Error verifying answer: {str(e)}")
-        return None
-
 def verify_sentence_usage(target_word, sentence):
     """Verify if a word is used correctly in a sentence.
     
@@ -296,7 +314,7 @@ def verify_sentence_usage(target_word, sentence):
         dict: Verification result containing correctness and feedback
     """
     if not nlp:
-        logger.warning("CalamanCy model not available for sentence verification")
+        logger.warning("ToCylog model not available for sentence verification")
         return {
             "isCorrect": False,
             "feedback": "Hindi magamit ang NLP model. Paki-refresh ang page at subukan ulit."
@@ -314,43 +332,77 @@ def verify_sentence_usage(target_word, sentence):
                 "feedback": "Masyadong maikli ang pangungusap. Gumawa ng kompletong pangungusap."
             }
             
+        # Process the sentence with ToCylog
+        doc = nlp(sentence)
+        
         # Check if the target word is in the sentence
-        words_in_sentence = [token.text.lower() for token in nlp(sentence)]
-        if target_word not in words_in_sentence:
+        target_tokens = []
+        for token in doc:
+            # Perform stemming or lemmatization to find variations of the word
+            if (token.text.lower() == target_word or 
+                (hasattr(token, 'lemma_') and token.lemma_.lower() == target_word)):
+                target_tokens.append(token)
+        
+        if not target_tokens:
             return {
                 "isCorrect": False,
                 "feedback": f"Hindi mo ginamit ang salitang '{target_word}' sa iyong pangungusap."
             }
-        
-        # Process the sentence with CalamanCy
-        doc = nlp(sentence)
         
         # For a valid sentence, we need at least one verb and noun
         pos_counts = {}
         for token in doc:
             pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
         
-        # Check if sentence has basic structure
+        # Enhanced checking for sentence structural completeness
         has_verb = pos_counts.get('VERB', 0) > 0
-        has_noun = pos_counts.get('NOUN', 0) > 0
+        has_noun = pos_counts.get('NOUN', 0) > 0 or pos_counts.get('PROPN', 0) > 0
+        has_subject = any(token.dep_ == 'nsubj' for token in doc)
+        has_predicate = has_verb or any(token.dep_ == 'ROOT' for token in doc)
         
-        # Simple validation: if it has verb and noun, it's correct
-        isCorrect = has_verb and has_noun
+        # Check if target word plays a significant role in the sentence
+        target_token = target_tokens[0]  # Use the first occurrence if multiple
+        target_has_dep = target_token.dep_ != ''
+        target_has_children = len(list(target_token.children)) > 0
         
-        # Generate feedback
+        # Evaluate the correctness of the sentence
+        structural_completeness = has_verb and has_noun
+        target_significance = target_has_dep or target_has_children
+        
+        isCorrect = structural_completeness and target_significance
+        
+        # Generate more detailed feedback
         if isCorrect:
-            feedback = "Mahusay! Tama ang paggamit mo ng salita sa pangungusap."
+            # Create more specific positive feedback
+            if target_token.dep_ == 'ROOT':
+                feedback = f"Mahusay! Ang salitang '{target_word}' ay ginagamit bilang pangunahing pandiwa ng pangungusap."
+            elif target_token.dep_ == 'nsubj':
+                feedback = f"Mahusay! Ang salitang '{target_word}' ay ginagamit bilang paksa ng pangungusap."
+            elif target_token.dep_ == 'obj':
+                feedback = f"Mahusay! Ang salitang '{target_word}' ay ginagamit bilang layon ng pangungusap."
+            else:
+                feedback = f"Mahusay! Tama ang paggamit mo ng salitang '{target_word}' sa pangungusap."
         else:
+            # Create more specific negative feedback
             if not has_verb:
                 feedback = "Kulang ang pangungusap ng pandiwa (verb)."
             elif not has_noun:
                 feedback = "Kulang ang pangungusap ng pangngalan (noun)."
+            elif not target_significance:
+                feedback = f"Ang salitang '{target_word}' ay hindi maayos na naiugnay sa pangungusap."
             else:
                 feedback = "Hindi sapat ang pagkakabuo ng pangungusap."
         
         return {
             "isCorrect": isCorrect,
-            "feedback": feedback
+            "feedback": feedback,
+            "analysis": {
+                "hasVerb": has_verb,
+                "hasNoun": has_noun,
+                "hasSubject": has_subject,
+                "hasPredicate": has_predicate,
+                "targetWordRole": target_token.dep_ if target_has_dep else "unknown"
+            }
         }
         
     except Exception as e:
@@ -360,6 +412,92 @@ def verify_sentence_usage(target_word, sentence):
             "error": str(e),
             "feedback": "May naganap na error sa pagsuri ng pangungusap."
         }
+
+def verify_pos_answer(word, sentence, selected_answer):
+    """Verify if the selected answer is correct for the word in the sentence."""
+    if not nlp:
+        logger.warning("ToCylog model not available for answer verification")
+        return None
+        
+    try:
+        # Process the sentence with ToCylog
+        doc = nlp(sentence)
+        
+        # Find the target word in the processed tokens
+        matching_tokens = []
+        for token in doc:
+            if token.text.lower() == word.lower():
+                matching_tokens.append(token)
+        
+        if not matching_tokens:
+            logger.warning(f"Word '{word}' not found in sentence during verification")
+            return None
+        
+        # Use the first matching token
+        token = matching_tokens[0]
+        correct_pos = token.pos_
+        correct_answer = POS_OPTIONS.get(correct_pos)
+                
+        if correct_answer:
+            is_correct = (selected_answer == correct_answer)
+            
+            # Create enhanced explanation with morphological features
+            explanation = f"Ang '{word}' ay isang {correct_answer.lower()}."
+            
+            # Add morphological information if available
+            if hasattr(token, 'morph') and len(token.morph) > 0:
+                morph_features = []
+                for feature, value in token.morph.to_dict().items():
+                    if feature == 'Case':
+                        if value == 'Nom':
+                            morph_features.append("nasa pangunahing anyo")
+                        elif value == 'Gen':
+                            morph_features.append("nagpapakita ng pagmamay-ari")
+                        elif value == 'Loc':
+                            morph_features.append("nagpapakita ng lokasyon")
+                        elif value == 'Dat':
+                            morph_features.append("nagpapakita ng tagatanggap ng kilos")
+                    elif feature == 'Aspect':
+                        if value == 'Imp':
+                            morph_features.append("di-ganap na aspekto")
+                        elif value == 'Perf':
+                            morph_features.append("ganap na aspekto")
+                    elif feature == 'Voice':
+                        if value == 'Act':
+                            morph_features.append("aktibong tinig")
+                        elif value == 'Pass':
+                            morph_features.append("pasibong tinig")
+                
+                if morph_features:
+                    explanation += f" Ito ay {', '.join(morph_features)}."
+            
+            # Add syntactic role information if available
+            if token.dep_ and token.dep_ != '':
+                if token.dep_ == 'ROOT':
+                    explanation += " Ito ang pangunahing salita sa pangungusap."
+                elif token.dep_ == 'nsubj':
+                    explanation += " Ito ang paksa ng pangungusap."
+                elif token.dep_ == 'obj':
+                    explanation += " Ito ang layon ng pangungusap."
+                elif token.dep_ == 'iobj':
+                    explanation += " Ito ang di-tuwirang layon."
+                elif token.dep_ == 'obl':
+                    explanation += " Ito ay nagbibigay ng karagdagang impormasyon."
+            
+            return {
+                "word": word,
+                "selected": selected_answer,
+                "correct": correct_answer,
+                "is_correct": is_correct,
+                "explanation": explanation,
+                "pos": correct_pos
+            }
+        
+        logger.warning(f"POS '{correct_pos}' for word '{word}' not found in POS_OPTIONS")
+        return None
+    except Exception as e:
+        logger.error(f"Error verifying answer: {str(e)}")
+        return None
 
 @app.route('/', methods=['GET'])
 def home():
@@ -408,7 +546,7 @@ def get_pos_game():
         response_data = {
             "sentence": sentence,
             "questions": questions,
-            "source": "calamancy" if nlp else "fallback",
+            "source": "ToCylog" if nlp else "fallback",
             "difficulty": difficulty,
             "timestamp": int(time.time())
         }
@@ -440,27 +578,52 @@ def analyze_text():
         
         if not nlp:
             return jsonify({
-                "error": "CalamanCy model is not loaded. Using fallback POS tagging."
+                "error": "ToCylog model is not loaded. Using fallback POS tagging."
             }), 500
         
         # Process the sentence
         doc = nlp(sentence)
         tokens = []
         
-        # Extract tokens with POS
+        # Extract tokens with POS and enhanced information
         for token in doc:
             pos = token.pos_
             description = POS_OPTIONS.get(pos, pos)
-            tokens.append({
+            
+            token_info = {
                 "text": token.text,
                 "pos": pos,
                 "description": description
-            })
+            }
+            
+            # Add morphological features if available
+            if hasattr(token, 'morph') and len(token.morph) > 0:
+                token_info["morph"] = token.morph.to_dict()
+            
+            # Add dependency parsing information if available
+            if token.dep_ and token.dep_ != '':
+                token_info["dep"] = token.dep_
+                if token.head.text != token.text:  # If not the root
+                    token_info["head"] = token.head.text
+            
+            # Add lemma if available
+            if hasattr(token, 'lemma_') and token.lemma_ != '':
+                token_info["lemma"] = token.lemma_
+                
+            tokens.append(token_info)
+        
+        # Add sentence-level analysis
+        sentence_analysis = {
+            "has_subject": any(token.dep_ == 'nsubj' for token in doc),
+            "has_predicate": any(token.dep_ == 'ROOT' for token in doc),
+            "pos_counts": {pos: tokens.count(pos) for pos in set(token.pos_ for token in doc)}
+        }
         
         return create_cors_response({
             "sentence": sentence,
             "tokens": tokens,
-            "method": "calamancy"
+            "analysis": sentence_analysis,
+            "method": "ToCylog"
         })
     
     except Exception as e:
@@ -515,11 +678,11 @@ def health_check():
         
         return create_cors_response({
             "status": "healthy",
-            "model": "tl_calamancy_md-0.2.0",
+            "model": "tl_tocylog_trf",
             "model_status": model_status,
             "pos_tags_available": list(POS_OPTIONS.keys()),
             "python_version": sys.version,
-            "calamancy_version": calamancy.__version__ if hasattr(calamancy, "__version__") else "unknown",
+            "spacy_version": spacy.__version__,
             "memory_info": {
                 "nlp_model_loaded": nlp is not None
             }
@@ -563,7 +726,7 @@ def custom_game():
         response_data = {
             "sentence": sentence,
             "questions": questions,
-            "source": "calamancy" if nlp else "fallback",
+            "source": "ToCylog" if nlp else "fallback",
             "custom": True,
             "timestamp": int(time.time())
         }
@@ -674,8 +837,6 @@ if __name__ == '__main__':
         
     # Log startup information
     logger.info(f"Using Python {sys.version}")
-    if hasattr(calamancy, "__version__"):
-        logger.info(f"CalamanCy version: {calamancy.__version__}")
     logger.info(f"Model status: {MODEL_STATUS}")
     logger.info(f"Starting NLP API server on port {port}")
     print(f"NLP API server running at: http://localhost:{port}")

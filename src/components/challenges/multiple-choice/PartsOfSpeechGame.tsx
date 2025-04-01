@@ -4,16 +4,18 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import Button from '@/components/ui/Button';
-import { fetchGameData } from '@/services/game';
-import { fetchNlpGameData, checkNlpHealth, GameData } from '@/services/nlp';
 import { API_ENDPOINTS } from '@/lib/config';
 import { v4 as uuidv4 } from 'uuid';
 import ChallengeResultTracker from '@/components/common/ChallengeResultTracker';
 import { ChallengeResult } from '@/types/user';
 import { useUser } from '@/context/UserContext';
+import { fetchPartsOfSpeechGame } from '@/services/game';
+import { POSGameData, POSQuestion } from '@/types/game/index';
 
+// Interface for component props
 interface PartsOfSpeechGameProps {
   levelNumber?: number;
+  difficulty?: 'easy' | 'medium' | 'hard';
   onComplete?: (score: number, levelCompleted: boolean) => void;
 }
 
@@ -21,10 +23,11 @@ type DifficultyLevel = 'easy' | 'medium' | 'hard';
 
 export default function PartsOfSpeechGame({ 
   levelNumber = 0,
+  difficulty = 'medium',
   onComplete
 }: PartsOfSpeechGameProps) {
   // State for the game
-  const [data, setData] = useState<GameData | null>(null);
+  const [data, setData] = useState<POSGameData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -34,12 +37,10 @@ export default function PartsOfSpeechGame({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [score, setScore] = useState(0);
-  const [useNlpApi, setUseNlpApi] = useState(false);
-  const [nlpStatus, setNlpStatus] = useState<string>('unknown');
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>('easy');
+  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(difficulty);
   
-  // Game store for managing global score, streak and hearts
-  const { addPoints, increaseStreak, resetStreak, decreaseHeart } = useGameStore();
+  // Game store for managing global score and streak
+  const { addPoints, increaseStreak, resetStreak } = useGameStore();
   
   // Track if this is the first mistake on this question
   const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
@@ -49,374 +50,359 @@ export default function PartsOfSpeechGame({
   
   // Track game duration
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [endTime, setEndTime] = useState<number | null>(null);
   
-  // Challenge result state for Firestore tracking
+  // User context for saving game results
+  const { userData, addChallengeResult } = useUser();
+  
+  // Final challenge result
   const [challengeResult, setChallengeResult] = useState<ChallengeResult | null>(null);
-
-  // Check for NLP API availability
+  
+  // Set start time when component mounts
   useEffect(() => {
-    // Only run on the client side
-    if (typeof window === 'undefined') {
-      return;
-    }
-    
-    const checkNlpApi = async () => {
-      try {
-        console.log('Checking NLP API availability...');
-        const health = await checkNlpHealth();
-        if (health.status === 'healthy') {
-          console.log(`NLP API is available and healthy. Model status: ${health.model_status}`);
-          setUseNlpApi(true);
-          setNlpStatus(health.model_status);
-        } else {
-          console.warn('NLP API is unhealthy, falling back to traditional API');
-          setUseNlpApi(false);
-        }
-      } catch (error) {
-        console.warn('NLP API is not available, falling back to traditional API:', error);
-        setUseNlpApi(false);
-      }
-    };
-    
-    // Wrap in a try-catch to prevent any unhandled errors
-    try {
-      checkNlpApi();
-    } catch (error) {
-      console.error('Error checking NLP API:', error);
-      setUseNlpApi(false);
-    }
+    setStartTime(Date.now());
   }, []);
-
-  // Set start time when game begins
+  
+  // Determine difficulty based on level number
   useEffect(() => {
-    if (data && !loading && !gameOver && startTime === null) {
-      setStartTime(Date.now());
+    let newDifficulty: DifficultyLevel = 'easy';
+    
+    if (levelNumber <= 1) {
+      newDifficulty = 'easy';
+    } else if (levelNumber <= 3) {
+      newDifficulty = 'medium';
+    } else {
+      newDifficulty = 'hard';
     }
-  }, [data, loading, gameOver, startTime]);
-
-  // Load game data
-  const loadGameData = async () => {
+    
+    setDifficultyLevel(newDifficulty);
+  }, [levelNumber]);
+  
+  // Initialize game data
+  useEffect(() => {
+    loadGameData();
+  }, [difficultyLevel]);
+  
+  async function loadGameData() {
     setLoading(true);
     setError(null);
     
     try {
-      // Use our enhanced NLP service that handles fallbacks properly
-      console.log('Loading game data using fetchNlpGameData...');
-      const gameData = await fetchNlpGameData(undefined, difficulty);
-      
-      if (!gameData || !gameData.questions || gameData.questions.length === 0) {
-        throw new Error('Invalid game data received');
-      }
-      
-      console.log('Successfully loaded game data:', gameData);
+      // Fetch game data from the NLP API
+      const gameData = await fetchPartsOfSpeechGame(difficultyLevel);
+      console.log('Loaded POS game data from API:', gameData);
       setData(gameData);
-      setUseNlpApi(true);
-      
-      // Reset game state
-      setCurrentQuestionIndex(0);
-      setSelectedOption(null);
-      setFeedback(null);
-      setIsCorrect(null);
-      setGameOver(false);
-      setScore(0);
-    } catch (error) {
-      console.error('Error loading game data:', error);
-      setUseNlpApi(false);
-      setError('Failed to load game data. Please try again later.');
+    } catch (err) {
+      console.error('Error loading game data:', err);
+      setError('Failed to load game data. Please try again.');
     } finally {
       setLoading(false);
     }
+  }
+  
+  // Helper to get the current question
+  const getCurrentQuestion = (): POSQuestion | null => {
+    if (!data || !data.questions || data.questions.length === 0) {
+      return null;
+    }
+    return data.questions[currentQuestionIndex];
   };
-
-  useEffect(() => {
-    loadGameData();
-  }, []);
-
-  // Handle user selecting an answer option
+  
+  // Helper to format options as Tagalog (English)
+  const getTagalogTermForPOS = (pos: string) => {
+    const tagalogTerms: Record<string, string> = {
+      "Noun": "Pangngalan",
+      "Verb": "Pandiwa",
+      "Adjective": "Pang-uri",
+      "Adverb": "Pang-abay",
+      "Pronoun": "Panghalip",
+      "Preposition": "Pang-ukol",
+      "Conjunction": "Pangatnig",
+      "Interjection": "Pandamdam",
+      "Article": "Pantukoy"
+    };
+    
+    return tagalogTerms[pos] || pos;
+  };
+  
+  // Handle option selection
   const handleOptionSelect = (option: string) => {
-    if (isTransitioning || selectedOption) return; // Prevent multiple selections
-    
     setSelectedOption(option);
-    const currentQuestion = data?.questions[currentQuestionIndex];
     
-    if (currentQuestion) {
-      const correct = option === currentQuestion.correctAnswer;
-      setIsCorrect(correct);
+    const currentQuestion = getCurrentQuestion();
+    if (!currentQuestion) return;
+    
+    const isOptionCorrect = option === currentQuestion.correctAnswer;
+    setIsCorrect(isOptionCorrect);
+    
+    // Add points for correct answer
+    if (isOptionCorrect) {
+      const points = skippedQuestions.includes(currentQuestionIndex) ? 5 : 10;
+      setScore(prevScore => prevScore + points);
+      addPoints(points, 'multipleChoice');
+      increaseStreak(); 
+      setFeedback('Tama! Magaling!');
+    } else {
+      resetStreak(); 
+      setFeedback(`Hindi tama. Ang tamang sagot ay "${currentQuestion.correctAnswer}".`);
       
-      if (correct) {
-        setFeedback(`Tama! ${currentQuestion.explanation}`);
-        addPoints(10); // Add points to the global store
-        increaseStreak(); // Increase streak in the global store
-        setScore(prevScore => prevScore + 10); // Update local score
-      } else {
-        setFeedback(`Mali. Ang tamang sagot ay ${currentQuestion.correctAnswer}. ${currentQuestion.explanation}`);
-        resetStreak(); // Reset streak on wrong answer
-        
-        // Decrease heart on first mistake for this question
-        if (!firstMistake[currentQuestionIndex]) {
-          decreaseHeart();
-          setFirstMistake(prev => ({
-            ...prev,
-            [currentQuestionIndex]: true
-          }));
-        }
+      // Track if this is the first mistake on this question
+      if (!firstMistake[currentQuestionIndex]) {
+        setFirstMistake(prev => ({
+          ...prev,
+          [currentQuestionIndex]: true
+        }));
       }
     }
+    
+    // Wait before enabling the Next button
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 500);
   };
   
   // Handle skipping a question
-  const handleSkip = () => {
-    if (!data) return;
+  const handleSkipQuestion = () => {
+    if (isTransitioning) return;
     
-    // Don't allow skipping the last question
-    if (currentQuestionIndex >= data.questions.length - 1) {
-      return;
-    }
+    // Track skipped question
+    setSkippedQuestions([...skippedQuestions, currentQuestionIndex]);
     
-    // Add to skipped questions
-    setSkippedQuestions(prev => [...prev, currentQuestionIndex]);
-    
-    // Save the current question for later
-    const currentQuestion = data.questions[currentQuestionIndex];
-    
-    // Create a new questions array by moving the current question to the end
-    const reorderedQuestions = [...data.questions];
-    reorderedQuestions.splice(currentQuestionIndex, 1); // Remove current
-    reorderedQuestions.push(currentQuestion); // Add to end
-    
-    // Update the data with reordered questions
-    setData({
-      ...data,
-      questions: reorderedQuestions
-    });
-    
-    setSelectedOption(null);
-    setFeedback(null);
-    setIsCorrect(null);
-  };
-
-  // Move to the next question
-  const handleNextQuestion = () => {
-    if (!data) return;
-    
+    // Transition to the next question
     setIsTransitioning(true);
-    
     setTimeout(() => {
-      if (currentQuestionIndex < data.questions.length - 1) {
+      setSelectedOption(null);
+      setFeedback(null);
+      setIsCorrect(null);
+      
+      if (currentQuestionIndex < (data?.questions.length || 0) - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedOption(null);
-        setFeedback(null);
-        setIsCorrect(null);
       } else {
-        setGameOver(true);
-        // Record end time when the game completes
-        setEndTime(Date.now());
-        
-        // Create the challenge result for Firestore when game is over
-        const now = new Date().toISOString();
-        const maxScore = data.questions.length * 10;
-        const duration = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
-        
-        setChallengeResult({
-          id: uuidv4(),
-          challengeType: 'multipleChoice',
-          score,
-          maxScore,
-          completedAt: now,
-          duration
-        });
-        
-        // Call onComplete callback if provided
-        if (onComplete) {
-          onComplete(score, true);
-        }
+        // Game over
+        finishGame();
       }
+      
       setIsTransitioning(false);
     }, 500);
   };
 
-  // Restart the game
-  const handleRestart = () => {
-    // Reset game state
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-    setScore(0);
-    setGameOver(false);
+  // Handle moving to the next question
+  const handleNextQuestion = () => {
+    if (isTransitioning) return;
     
-    // Load new game data
-    loadGameData();
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedOption(null);
+      setFeedback(null);
+      setIsCorrect(null);
+      
+      if (currentQuestionIndex < (data?.questions.length || 0) - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        // Game over
+        finishGame();
+      }
+      
+      setIsTransitioning(false);
+    }, 500);
   };
-
-  // Loading state
+  
+  // Finish the game and calculate final score
+  const finishGame = () => {
+    setGameOver(true);
+    
+    // Calculate final score
+    const correctAnswers = score / 10;
+    const totalQuestions = data?.questions.length || 0;
+    const finalScore = Math.round((correctAnswers / totalQuestions) * 100);
+    
+    // Create challenge result
+    const result: ChallengeResult = {
+      id: uuidv4(),
+      challengeType: 'multipleChoice',
+      score: finalScore,
+      maxScore: 100,
+      completedAt: new Date().toISOString(),
+      duration: startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
+    };
+    
+    setChallengeResult(result);
+    
+    // Call the onComplete callback with the final score
+    if (onComplete) {
+      // Consider the level completed if the score is at least 80%
+      const levelCompleted = finalScore >= 80;
+      onComplete(finalScore, levelCompleted);
+    }
+  };
+  
+  // Render loading state
   if (loading) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        <p className="mt-4 text-gray-600">Naglo-load...</p>
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-duolingo-blue mx-auto mb-4"></div>
+        <p className="text-lg text-gray-600">Naglo-load ang game...</p>
       </div>
     );
   }
   
-  // Error state
-  if (error || !data) {
+  // Render error state
+  if (error) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center">
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
-          <p>{error || 'Hindi ma-load ang mga tanong. Pakisubukang muli.'}</p>
+      <div className="text-center py-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500 mx-auto mb-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <h2 className="text-xl font-bold text-red-800 mb-2">May Error</h2>
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button onClick={loadGameData} className="bg-red-100 text-red-800 hover:bg-red-200">
+            Subukan Ulit
+          </Button>
         </div>
-        <Button onClick={() => window.location.reload()}>Subukang Muli</Button>
       </div>
     );
   }
-
-  const currentQuestion = data.questions[currentQuestionIndex];
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-6 max-w-2xl mx-auto">
-      {/* Game header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-center mb-4">Parts of a Sentence</h1>
-        <div className="relative">
-          {/* Enhanced API source indicator */}
-          <div className="absolute top-0 right-0 -mt-1 -mr-1 flex flex-col gap-1">
-            {/* NLP API indicator */}
-            {useNlpApi && (
-              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
-                {`Dedicated NLP API (${nlpStatus})`}
-              </span>
-            )}
-
-          </div>
+  
+  // Render game over state
+  if (gameOver) {
+    const correctAnswers = score / 10;
+    const totalQuestions = data?.questions.length || 0;
+    const finalScore = Math.round((correctAnswers / totalQuestions) * 100);
+    
+    return (
+      <div className="text-center py-8">
+        <div className="bg-duolingo-blue bg-opacity-10 border border-duolingo-blue border-opacity-30 rounded-lg p-6 max-w-md mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-duolingo-blue mx-auto mb-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          <h2 className="text-xl font-bold text-duolingo-darkBlue mb-2">Tapos na!</h2>
+          <p className="text-lg text-duolingo-darkBlue mb-2">Score: {finalScore}%</p>
+          <p className="text-duolingo-blue mb-4">{correctAnswers} sa {totalQuestions} ang tama</p>
           
-          <p className="text-lg text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-            {data.sentence}
-          </p>
+          <div className="space-y-2">
+            <Button onClick={() => window.location.reload()} className="bg-duolingo-blue bg-opacity-20 text-duolingo-darkBlue hover:bg-opacity-30 w-full">
+              Subukan Ulit
+            </Button>
+          </div>
         </div>
+        
+        {/* Challenge Result Tracker */}
+        <ChallengeResultTracker 
+          result={challengeResult}
+          onResultProcessed={() => setChallengeResult(null)}
+        />
       </div>
-
-      {/* Game progress */}
+    );
+  }
+  
+  // Get the current question
+  const question = getCurrentQuestion();
+  
+  if (!question) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-lg text-gray-600">Walang mga tanong na available. Please try again later.</p>
+        <Button onClick={loadGameData} className="mt-4">
+          Subukan Ulit
+        </Button>
+      </div>
+    );
+  }
+  
+  // Render the game
+  return (
+    <div className="max-w-2xl mx-auto">
+      {/* Progress indicator */}
       <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-500">Progress</span>
-          <span className="text-sm font-medium">{currentQuestionIndex + 1} of {data.questions.length}</span>
+        <div className="flex justify-between text-sm text-gray-600 mb-1">
+          <span>Question {currentQuestionIndex + 1} of {data?.questions.length}</span>
+          <span>Score: {score}</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="bg-gray-200 h-2 rounded-full">
           <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-            style={{ width: `${((currentQuestionIndex + 1) / data.questions.length) * 100}%` }}
+            className="bg-duolingo-blue h-2 rounded-full transition-all duration-500"
+            style={{ width: `${((currentQuestionIndex) / (data?.questions.length || 1)) * 100}%` }}
           ></div>
         </div>
       </div>
-
-      {/* Question and options */}
-      {!gameOver ? (
-        <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <h2 className="text-xl font-medium mb-6">
-            {currentQuestion.question}
-          </h2>
-          
-          <div className="grid grid-cols-1 gap-3 mb-6">
-            {currentQuestion.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleOptionSelect(option)}
-                disabled={selectedOption !== null}
-                className={`py-3 px-4 rounded-lg text-left transition-all ${
-                  selectedOption === option
-                    ? isCorrect
-                      ? 'bg-green-100 border-green-300 text-green-800'
-                      : 'bg-red-100 border-red-300 text-red-800'
-                    : selectedOption !== null && option === currentQuestion.correctAnswer
-                    ? 'bg-green-100 border-green-300 text-green-800'
-                    : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
-                } ${selectedOption === null ? 'hover:scale-[1.01]' : ''}`}
-              >
-                {option}
-              </button>
-            ))}
+      
+      {/* Question and Sentence */}
+      <div className="bg-white shadow-md rounded-lg border border-gray-200 p-6 mb-6">
+        {/* Show the sentence prominently at the top */}
+        {data?.sentence && (
+          <div className="mb-5 text-lg font-medium text-gray-800 border-b pb-4 border-gray-100">
+            {data.sentence}
           </div>
-
-          {/* Feedback section */}
-          {feedback && (
-            <div className={`mb-6 p-4 rounded-lg ${isCorrect ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-              {feedback}
-            </div>
-          )}
-
-          {/* Next or Skip buttons */}
-          <div className="flex gap-3">
-            {selectedOption ? (
-              <Button 
-                onClick={handleNextQuestion}
-                className="flex-1"
-              >
-                {currentQuestionIndex < data.questions.length - 1 ? 'Susunod na Tanong' : 'Tapusin'}
-              </Button>
-            ) : (
-              <>
-                {/* Skip button - disabled for last question */}
-                {currentQuestionIndex < data.questions.length - 1 && (
-                  <Button 
-                    onClick={handleSkip}
-                    variant="secondary"
-                    className="flex-1"
-                  >
-                    Laktawan
-                  </Button>
-                )}
-              </>
-            )}
-          </div>
+        )}
+        
+        <h3 className="text-base font-medium text-gray-600 mb-2">What part of speech is this word?</h3>
+        <div className="text-2xl font-bold text-duolingo-darkBlue">
+          {question.question}
         </div>
-      ) : (
-        /* Game over screen */
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Natapos mo na ang laro!</h2>
-          
-          {/* Score display */}
-          <div className="bg-blue-50 p-6 rounded-lg mb-6 inline-block">
-            <div className="text-gray-600 mb-2">Iyong iskor</div>
-            <div className="text-4xl font-bold text-blue-600">{score}</div>
-            <div className="text-sm text-gray-500 mt-2">
-              {score >= data.questions.length * 10 
-                ? "Perpekto! Napakahusay!" 
-                : score >= data.questions.length * 7 
-                  ? "Magaling! Halos perpekto!" 
-                  : score >= data.questions.length * 5 
-                    ? "Mabuti! Patuloy lang sa pag-aaral."
-                    : "Magpatuloy sa pag-aaral. Kaya mo yan!"}
-            </div>
-          </div>
-          
-          <p className="text-lg mb-6">
-            Maraming salamat sa paglalaro! Subukan mo ulit para lalo mong maintindihan 
-            ang mga bahagi ng pangungusap sa Tagalog.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button onClick={handleRestart} className="px-8">
-              Maglaro ulit
-            </Button>
-            <Button 
-              onClick={() => {
-                // Use window.location.replace to prevent the back button from returning to the game
-                window.location.replace('/challenges/multiple-choice');
-              }}
-              variant="secondary"
-              className="px-8"
-            >
-              Bumalik sa mapa
-            </Button>
-          </div>
+      </div>
+      
+      {/* Options */}
+      <div className="space-y-3 my-6">
+        {question.options
+          // Filter out punctuation options which are too obvious
+          .filter(option => !['Punctuation', 'Bantas'].includes(option))
+          .map(option => {
+            // Format the option to show only once, e.g. "Pang-Uri (Adjective)"
+            const tagalogTerm = getTagalogTermForPOS(option);
+            // If the option is already in Tagalog, show with English translation
+            // If the option is in English, show with Tagalog translation
+            const displayOption = option === tagalogTerm 
+              ? `${tagalogTerm}` 
+              : `${tagalogTerm} (${option})`;
+            
+            return (
+              <button
+                key={option}
+                className={`w-full text-left p-4 rounded-lg transition-all duration-200 
+                  ${selectedOption === option 
+                    ? isCorrect 
+                      ? 'bg-green-100 border-2 border-green-500 text-green-800' 
+                      : 'bg-red-100 border-2 border-red-500 text-red-800'
+                    : selectedOption
+                      ? 'bg-gray-100 text-gray-500'
+                      : 'bg-duolingo-blue bg-opacity-10 border border-duolingo-blue text-duolingo-darkBlue hover:bg-opacity-20'
+                  }`}
+                onClick={() => handleOptionSelect(option)}
+                disabled={!!selectedOption}
+              >
+                {displayOption}
+              </button>
+            );
+          })}
+      </div>
+      
+      {/* Feedback */}
+      {feedback && (
+        <div className={`text-center py-3 px-4 rounded-lg mb-6 ${
+          isCorrect ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
+        }`}>
+          {feedback}
         </div>
       )}
       
-      {/* Challenge Result Tracker - This records game results to Firestore */}
-      <ChallengeResultTracker 
-        result={challengeResult} 
-        onResultProcessed={() => setChallengeResult(null)} 
-      />
+      {/* Actions */}
+      <div className="flex justify-between mt-6">
+        <Button 
+          onClick={handleSkipQuestion} 
+          disabled={!!selectedOption || skippedQuestions.includes(currentQuestionIndex)}
+          className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+        >
+          Skip
+        </Button>
+        
+        <Button 
+          onClick={handleNextQuestion} 
+          disabled={!selectedOption}
+          className="bg-duolingo-blue text-white hover:bg-duolingo-darkBlue"
+        >
+          {currentQuestionIndex >= (data?.questions.length || 0) - 1 ? 'Finish' : 'Next'}
+        </Button>
+      </div>
     </div>
   );
 }

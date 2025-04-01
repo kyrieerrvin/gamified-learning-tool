@@ -6,7 +6,6 @@ import Button from '@/components/ui/Button';
 import * as gameService from '@/services/game';
 import * as nlpService from '@/services/nlp';
 import { SentenceVerificationResult, MakeSentenceGameData } from '@/types/game';
-import Hearts from '@/components/ui/Hearts';
 
 interface MakeSentenceGameProps {
   questionsCount?: number;
@@ -41,7 +40,7 @@ export default function MakeSentenceGame({
   
   /************ All Custom/Library Hooks Next ************/
   // Global game store
-  const { addPoints, increaseStreak, resetStreak, decreaseHeart } = useGameStore();
+  const { addPoints, increaseStreak, resetStreak } = useGameStore();
   
   /************ All Effect Hooks Last ************/
   // Load game data on component mount
@@ -130,14 +129,13 @@ export default function MakeSentenceGame({
       
       // Update global score and streak
       if (result.isCorrect) {
-        addPoints(10);
-        increaseStreak();
+        addPoints(10, 'makeSentence');
+        increaseStreak(); // Updated to use universal streak
       } else {
-        resetStreak();
+        resetStreak(); // Updated to use universal streak
         
-        // Decrease heart on first mistake for this question
+        // Track first mistake for this question
         if (!firstMistake[gameData.currentIndex]) {
-          decreaseHeart();
           setFirstMistake(prev => ({
             ...prev,
             [gameData.currentIndex]: true
@@ -327,7 +325,6 @@ export default function MakeSentenceGame({
         
         {/* Score */}
         <div className="flex justify-between items-center mb-4">
-          <Hearts className="ml-1" />
           <div className="text-right">
             <span className="text-sm text-gray-500">Score: </span>
             <span className="text-lg font-bold text-blue-600">{gameData.score}</span>

@@ -1,11 +1,65 @@
+/* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 92.5 100% 40.2%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 76.2% 36.3%;
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
+  }
+}
+
+/* stylelint-disable-next-line at-rule-no-unknown */
+@layer base {
+  * {
+    /* stylelint-disable-next-line at-rule-no-unknown */
+    @apply border-border;
+  }
+  body {
+    /* stylelint-disable-next-line at-rule-no-unknown */
+    @apply bg-background text-foreground;
+  }
 }
 
 /* Add smooth transitions */
@@ -22,9 +76,127 @@ button {
   transform: scale(1.05);
 }
 
+/* 3D Button Effect */
+.btn-3d {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 0 0 var(--tw-shadow-color);
+  transition: all 0.1s ease;
+}
+
+.btn-3d:active {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 0 0 var(--tw-shadow-color);
+}
+
+/* Path styling for the learning path */
+.learning-path {
+  position: relative;
+}
+
+.learning-path::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 8px;
+  background: linear-gradient(to bottom, #58CC02, #1CB0F6);
+  transform: translateX(-50%);
+  border-radius: 4px;
+  z-index: 0;
+}
+
+/* Custom style to remove any vertical lines in the learning path */
+.learning-path::before,
+.learning-path::after,
+.learning-path > div::before,
+.learning-path > div::after,
+.learning-path > *::before,
+.learning-path > *::after {
+  display: none !important;
+}
+
+/* Hide any other potential vertical line elements */
+.vertical-line,
+[class*="vertical"],
+[class*="line"] {
+  border-left: none !important;
+  border-right: none !important;
+}
+
 /* Ensure the page takes up full height */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+/* Animation keyframes for section cards */
+@keyframes levitate {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.levitate {
+  animation: levitate 5s ease-in-out infinite;
+}
+
+/* Skill level indicator */
+.skill-progress {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+  background: linear-gradient(to right, #58CC02, #1CB0F6);
+}
+
+/* Badge effect */
+.badge-glow {
+  animation: pulse 2s infinite;
+  filter: drop-shadow(0 0 4px rgba(88, 204, 2, 0.5));
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+/* Added specific CSS targeting our newly added remove-vertical-lines class to forcefully remove any vertical lines or dividers in the learning path */
+.remove-vertical-lines::before,
+.remove-vertical-lines::after,
+.remove-vertical-lines *::before,
+.remove-vertical-lines *::after {
+  display: none !important;
+  border: none !important;
+  background: none !important;
+}
+
+.remove-vertical-lines .learning-path {
+  background: none !important;
+}
+
+/* Specifically target any vertical lines */
+.remove-vertical-lines [style*="left:50%"],
+.remove-vertical-lines [style*="left: 50%"],
+.remove-vertical-lines [class*="line"],
+.remove-vertical-lines [class*="divider"],
+.remove-vertical-lines [class*="connector"] {
+  display: none !important;
 }

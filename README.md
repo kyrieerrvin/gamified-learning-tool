@@ -13,6 +13,7 @@ A fun and interactive web application for learning Tagalog through gamified chal
   - Daily streak tracking
   - Score and point system
   - Performance analytics and statistics
+  - Persistent user progress via Firebase Firestore
 
 - **User Authentication**:
   - Email and password login
@@ -154,7 +155,7 @@ Key architectural features:
 - **Backend**: Python Flask API with calamancy NLP model
 - **Authentication**: Firebase Authentication
 - **State Management**: Zustand
-- **Data Storage**: Firebase
+- **Data Storage**: Firebase Firestore
 
 ## NLP Integration Details
 
@@ -192,6 +193,52 @@ The system includes multi-level fallbacks:
 - The Python backend runs on port 5000 by default
 - The NLP API writes its port to `/tmp/nlp_api_port.txt` for the frontend to discover
 - The CalamanCy model needs 1-2GB RAM and may take 10-15 seconds to load initially
+
+## Firebase Integration
+
+### Authentication
+
+The application uses Firebase Authentication to manage user accounts:
+- Email and password authentication
+- Google sign-in integration
+- Secure token management
+
+### Firestore Data Model
+
+User data is stored in Firebase Firestore using the following structure:
+
+- **users/{userId}** - Main user document
+  - Basic profile information (displayName, email, photoURL)
+  - progress - User progress data:
+    - totalScore - Total points earned
+    - level - Current user level
+    - nextLevelPoints - Points needed for next level
+    - streakDays - Current streak of consecutive days
+    - challengesCompleted - Total number of completed challenges
+    - completedChallenges - Counts by challenge type
+  - achievements - Array of earned achievements
+  - recentChallenges - Recently completed challenges
+  - preferences - User preferences and settings
+  
+  - **challengeResults/{resultId}** - Subcollection of challenge results
+    - challengeType - Type of challenge
+    - score - Points earned
+    - completedAt - Timestamp
+    - duration - Time taken to complete
+
+### Security Rules
+
+The application uses Firestore Security Rules to ensure that:
+- Users can only read and write their own data
+- Challenge results are immutable once created
+- Admin functions are protected
+
+### User Context
+
+The `UserContext` provides access to user data throughout the application:
+- Use the `useUser()` hook to access user data and functions
+- Updates are automatically synchronized with Firestore
+- Challenge results are tracked and stored in real-time
 
 ## Deploy on Vercel
 

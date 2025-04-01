@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Button from '@/components/ui/Button';
 import { testPOSTagging } from '@/services/game';
+import StreakWidget from '@/components/ui/StreakWidget';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -65,7 +66,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex md:items-center md:space-x-4">
             <Link 
               href="/dashboard" 
               className={`text-sm font-medium transition-colors ${pathname === '/dashboard' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
@@ -105,8 +106,13 @@ export default function Navbar() {
               Test NLP
             </button>
             
+            {/* Streak Widget */}
+            <div className="mx-2">
+              <StreakWidget />
+            </div>
+            
             {/* User Info & Sign Out */}
-            <div className="flex items-center ml-4 pl-4 border-l border-gray-200">
+            <div className="flex items-center ml-2 pl-4 border-l border-gray-200">
               <div className="text-sm text-gray-600 mr-4">
                 {user?.email}
               </div>
