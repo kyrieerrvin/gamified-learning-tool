@@ -541,7 +541,46 @@ export const useGameStore = create<GameState>()(
             await get().migrateUserData();
           } else {
             // User doesn't have progress data yet, initialize defaults
-            console.log('No existing progress found for user, using defaults');
+            console.log('No existing progress found for user, initializing default data');
+            
+            // Initialize default game types
+            const defaultGameTypes = ['make-sentence', 'multiple-choice', 'conversation'];
+            const initialProgress: LevelProgress = {};
+            
+            // Initialize progress for each game type
+            defaultGameTypes.forEach(gameType => {
+              initialProgress[gameType] = {
+                sections: generateSections(),
+                xp: 0,
+                quests: generateDailyQuests(),
+                currentSection: 0,
+                currentLevel: 0
+              };
+              
+              // First section and first level are always unlocked
+              if (initialProgress[gameType].sections.length > 0) {
+                initialProgress[gameType].sections[0].isLocked = false;
+                
+                if (initialProgress[gameType].sections[0].levels.length > 0) {
+                  initialProgress[gameType].sections[0].levels[0].isLocked = false;
+                }
+              }
+            });
+            
+            // Create initial user state
+            const initialUserState = {
+              score: 0,
+              streak: 0,
+              lastStreakDate: '',
+              progress: initialProgress
+            };
+            
+            // Update local state
+            set(initialUserState);
+            
+            // Save to Firestore
+            await setDoc(userProgressRef, initialUserState);
+            console.log('Initialized and saved default user progress to Firestore');
           }
         } catch (error) {
           console.error('Error loading user progress:', error);
