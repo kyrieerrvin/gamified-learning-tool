@@ -40,7 +40,11 @@ export default function PartsOfSpeechGame({
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(difficulty);
   
   // Game store for managing global score and streak
-  const { addPoints, increaseStreak } = useGameStore();
+  const { addPoints, increaseStreak, completeStreakBonusQuest } = useGameStore();
+  
+  // Track consecutive correct answers for streak bonus
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
+  const [streakBonusActive, setStreakBonusActive] = useState(false);
   
   // Track if this is the first mistake on this question
   const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
@@ -134,13 +138,36 @@ export default function PartsOfSpeechGame({
     
     // Add points for correct answer
     if (isOptionCorrect) {
-      const points = 10;
-      setScore(prevScore => prevScore + points);
-      addPoints(points, 'multiple-choice');
+      // Base points for correct answer
+      const basePoints = 10;
+      let totalPoints = basePoints;
+      
+      // Update consecutive correct count
+      setConsecutiveCorrect(prev => prev + 1);
+      
+      // Check if streak bonus should be applied (3 or more consecutive)
+      if (consecutiveCorrect >= 2) { // Already have 2, this makes 3+
+        setStreakBonusActive(true);
+        totalPoints += 3; // Bonus points for streak
+        
+        // Complete the streak-bonus quest for this specific game type
+        completeStreakBonusQuest('multiple-choice');
+      }
+      
+      setScore(prevScore => prevScore + totalPoints);
+      addPoints(totalPoints, 'multiple-choice');
       increaseStreak(); 
       setFeedback('Tama! Magaling!');
     } else {
-      // Don't reset streak on incorrect answers
+      // Don't reset streak on incorrect answers for daily streak
+      // But do reset the consecutive correct answers streak
+      setConsecutiveCorrect(0);
+      setStreakBonusActive(false);
+      
+      // Subtract points for wrong answer, but don't go below 0
+      setScore(prevScore => Math.max(0, prevScore - 5));
+      addPoints(-5, 'multiple-choice');
+      
       setFeedback(`Hindi tama. Ang tamang sagot ay "${currentQuestion.correctAnswer}".`);
       
       // Track if this is the first mistake on this question
@@ -290,7 +317,10 @@ export default function PartsOfSpeechGame({
       <div className="mb-6">
         <div className="flex justify-between text-sm text-gray-600 mb-1">
           <span>Question {currentQuestionIndex + 1} of {data?.questions.length}</span>
-          <span>Score: {score}</span>
+          <span>
+            {streakBonusActive && <span className="text-red-500 mr-1">🔥</span>}
+            Score: {score}
+          </span>
         </div>
         <div className="bg-gray-200 h-2 rounded-full">
           <div 

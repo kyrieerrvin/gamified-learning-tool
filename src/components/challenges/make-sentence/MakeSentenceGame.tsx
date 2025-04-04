@@ -31,13 +31,17 @@ export default function MakeSentenceGame({
   // Track if this is the first mistake on this question
   const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
   
+  // Track consecutive correct answers for streak bonus
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
+  const [streakBonusActive, setStreakBonusActive] = useState(false);
+  
   /************ All Ref Hooks Next ************/
   // Ref for input field to focus after submission
   const inputRef = useRef<HTMLTextAreaElement>(null);
   
   /************ All Custom/Library Hooks Next ************/
   // Global game store
-  const { addPoints, increaseStreak, resetStreak } = useGameStore();
+  const { addPoints, increaseStreak, completeStreakBonusQuest } = useGameStore();
   
   /************ All Effect Hooks Last ************/
   // Load game data on component mount
@@ -126,10 +130,33 @@ export default function MakeSentenceGame({
       
       // Update global score and streak
       if (result.isCorrect) {
-        addPoints(5, 'make-sentence'); // Changed from 10 to 5 XP per correct answer
-        increaseStreak(); // Updated to use universal streak
+        // Base points for correct answer
+        const basePoints = 10;
+        let totalPoints = basePoints;
+        
+        // Update consecutive correct count
+        setConsecutiveCorrect(prev => prev + 1);
+        
+        // Check if streak bonus should be applied (3 or more consecutive)
+        if (consecutiveCorrect >= 2) { // Already have 2, this makes 3+
+          setStreakBonusActive(true);
+          totalPoints += 3; // Bonus points for streak
+          
+          // Complete the streak-bonus quest for this specific game type
+          completeStreakBonusQuest('make-sentence');
+        }
+        
+        addPoints(totalPoints, 'make-sentence');
+        increaseStreak();
       } else {
-        // Don't reset streak on incorrect answers
+        // Don't reset streak on incorrect answers for daily streak
+        // But do reset the consecutive correct answers streak
+        setConsecutiveCorrect(0);
+        setStreakBonusActive(false);
+        
+        // Subtract points for wrong answer, but don't go below 0
+        addPoints(-5, 'make-sentence');
+        
         // Track first mistake for this question
         if (!firstMistake[gameData.currentIndex]) {
           setFirstMistake(prev => ({
@@ -176,6 +203,8 @@ export default function MakeSentenceGame({
       setGameOver(false);
       setCurrentResult(null);
       setInputSentence('');
+      setConsecutiveCorrect(0);
+      setStreakBonusActive(false);
       
       const data = await gameService.fetchMakeSentenceGame(questionsCount);
       setGameData(data);
@@ -286,6 +315,7 @@ export default function MakeSentenceGame({
           <div className="text-right">
             <span className="text-sm text-gray-500">Score: </span>
             <span className="text-lg font-bold text-blue-600">{gameData.score}</span>
+            {streakBonusActive && <span className="text-red-500 ml-1">🔥</span>}
           </div>
         </div>
       </div>
