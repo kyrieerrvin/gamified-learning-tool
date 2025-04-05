@@ -106,15 +106,16 @@ export default function PlayMultipleChoicePage() {
                 ? 'Napakahusay mo! Nakumpleto mo ang level na ito.' 
                 : 'Magaling ka! Subukan mo ulit para makakuha ng mas mataas na score.'}
             </p>
-            
+            {/* PROGRESS BAR 
             <div className="bg-gray-100 rounded-full p-2 mb-6">
               <div className="bg-duolingo-blue h-6 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ width: `${score}%` }}>
                 {score}%
               </div>
             </div>
-            
+            */}
+
             <div className="text-center text-xl font-bold text-duolingo-blue mb-6">
-              + {Math.floor(score/2)} XP
+              + {Math.floor(score)} XP
             </div>
             
             <div className="space-y-3">
@@ -137,32 +138,23 @@ export default function PlayMultipleChoicePage() {
               {score >= 80 && progress['multiple-choice'] && (
                 <Button 
                   onClick={() => {
-                    // Navigate to next level if available
-                    const currentSection = progress['multiple-choice'].sections.find(s => s.id === sectionId);
-                    if (currentSection) {
-                      const nextLevel = currentSection.levels.find(l => l.id === levelId + 1);
-                      if (nextLevel && !nextLevel.isLocked) {
-                        // Go to the next level in the same section
-                        router.push(`/challenges/multiple-choice/play?section=${sectionId}&level=${levelId + 1}`);
-                        return;
-                      } 
+                    // Use the currentSection and currentLevel to navigate to the next level
+                    const gameProgress = progress['multiple-choice'];
+                    if (gameProgress) {
+                      // These values are automatically updated in completeLevel function
+                      const nextSectionId = gameProgress.currentSection;
+                      const nextLevelId = gameProgress.currentLevel;
                       
-                      // Try next section's first level
-                      const nextSection = progress['multiple-choice'].sections.find(s => s.id === sectionId + 1 && !s.isLocked);
-                      if (nextSection && nextSection.levels.length > 0) {
-                        // Find the first unlocked level in the next section
-                        const firstUnlockedLevel = nextSection.levels.find(l => !l.isLocked);
-                        if (firstUnlockedLevel) {
-                          router.push(`/challenges/multiple-choice/play?section=${sectionId + 1}&level=${firstUnlockedLevel.id}`);
-                          return;
-                        }
-                      }
+                      console.log(`[Navigation] Going to next level: Section ${nextSectionId}, Level ${nextLevelId}`);
                       
-                      // If there's no next level available, go back to dashboard
+                      // Navigate to the next level using the stored values
+                      router.push(`/challenges/multiple-choice/play?section=${nextSectionId}&level=${nextLevelId}`);
+                    } else {
+                      // Fallback to challenges page if no progress data
                       router.push('/challenges/multiple-choice');
                     }
                   }}
-                  className="w-full border border-duolingo-blue text-duolingo-blue hover:bg-duolingo-blue hover:bg-opacity-10"
+                  className="w-full bg-duolingo-green text-white hover:bg-duolingo-darkGreen"
                 >
                   Susunod na Level
                 </Button>

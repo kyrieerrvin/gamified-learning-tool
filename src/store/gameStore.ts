@@ -46,6 +46,7 @@ type LevelProgress = {
     sections: Section[];
     xp: number;
     quests: DailyQuest[];
+    completedLevels: string[];
   }
 };
 
@@ -56,6 +57,7 @@ type GameState = {
   lastStreakDate: string;
   streakState: "none" | "inactive" | "active";
   progress: LevelProgress;
+  achievements: string[];
   
   // Actions
   addPoints: (points: number, gameType: string) => void;
@@ -81,6 +83,8 @@ type GameState = {
   migrateUserData: () => Promise<void>;
   checkStreakReset: () => void;
   checkStreakStatus: () => void;
+  completeGame: (gameType: string, score: number, isCorrect: boolean) => void;
+  ensureGameProgressExists: (gameType: string) => void;
 };
 
 // Helper to get today's date as a string in local time (YYYY-MM-DD format)
@@ -219,6 +223,7 @@ export const useGameStore = create<GameState>()(
       lastStreakDate: '',
       streakState: 'none' as 'none' | 'inactive' | 'active',
       progress: {},
+      achievements: [],
       
       // Basic game actions
       addPoints: (points, gameType) => set((state) => {
@@ -348,7 +353,8 @@ export const useGameStore = create<GameState>()(
                 xp: 0,
                 quests,
                 currentSection: 0,
-                currentLevel: 0
+                currentLevel: 0,
+                completedLevels: []
               }
             }
           };
@@ -377,32 +383,73 @@ export const useGameStore = create<GameState>()(
             level.bestScore = score;
           }
           
-          // Only mark as completed and unlock next level if perfect score (100)
-          if (score === 100) {
+          // Create a unique ID for this level to track completion
+          const levelKey = `${sectionId}-${levelId}`;
+          
+          // Track completed levels for summary stats
+          let completedLevels = [...(gameProgress.completedLevels || [])];
+          let achievements = [...(state.achievements || [])];
+          
+          // Track where the user should go next (current position)
+          let nextSectionId = sectionId;
+          let nextLevelId = levelId;
+          
+          // Mark level as completed if score is at least 80% (threshold for completing a level)
+          const isLevelCompleted = score !== undefined && score >= 80;
+          
+          if (isLevelCompleted) {
             // Mark the level as completed
             level.isCompleted = true;
             
-            // Unlock the next level if available
+            // Add to completed levels array if not already there
+            if (!completedLevels.includes(levelKey)) {
+              completedLevels.push(levelKey);
+            }
+            
+            // Check for "Perfect Score" achievement - score must be at least 100 (including bonuses)
+            if (score >= 100 && !achievements.includes('perfect-score')) {
+              achievements.push('perfect-score');
+              console.log('[Achievement] Unlocked: Perfect Score');
+            }
+            
+            // Calculate the next level ID - advance to the next level
             if (levelId < section.levels.length - 1) {
-              section.levels[levelId + 1].isLocked = false;
+              // Move to the next level in the same section
+              nextLevelId = levelId + 1;
+              
+              // Unlock the next level
+              section.levels[nextLevelId].isLocked = false;
             } 
-            // If this was the last level in the section, mark section as completed
+            // If this was the last level in the section, move to the next section
             else if (levelId === section.levels.length - 1) {
               section.isCompleted = true;
               
-              // Unlock the next section if available
+              // Check for "Section Champion" achievement
+              // A section is considered completed when all its levels are completed
+              const isSectionCompleted = section.levels.every(lvl => lvl.isCompleted);
+              if (isSectionCompleted && !achievements.includes('section-champion')) {
+                achievements.push('section-champion');
+                console.log('[Achievement] Unlocked: Section Champion');
+              }
+              
+              // Move to the next section if available
               if (sectionId < updatedSections.length - 1) {
-                updatedSections[sectionId + 1].isLocked = false;
+                nextSectionId = sectionId + 1;
+                nextLevelId = 0; // Start at the first level of the next section
+                
+                // Unlock the next section
+                updatedSections[nextSectionId].isLocked = false;
+                
                 // Unlock the first level of the next section
-                updatedSections[sectionId + 1].levels[0].isLocked = false;
+                updatedSections[nextSectionId].levels[0].isLocked = false;
               }
             }
           }
           
           // Update quest progress for game completion
           const updatedQuests = gameProgress.quests.map(quest => {
-            // For the 'perfect-score' quest, only count games with a perfect score
-            if (quest.id === 'perfect-score' && !quest.isCompleted && score === 100) {
+            // For the 'perfect-score' quest, count games with a score of at least 100 (including bonuses)
+            if (quest.id === 'perfect-score' && !quest.isCompleted && score >= 100) {
               const newProgress = Math.min(quest.progress + 1, quest.target);
               const isCompleted = newProgress >= quest.target;
               
@@ -429,16 +476,32 @@ export const useGameStore = create<GameState>()(
             return quest;
           });
           
+          // Calculate XP Master achievement
+          if (gameProgress.xp >= 1000 && !achievements.includes('xp-master')) {
+            achievements.push('xp-master');
+            console.log('[Achievement] Unlocked: XP Master');
+          }
+          
+          // Prepare updated state
           const newState = {
+            achievements, // Update global achievements
             progress: {
               ...state.progress,
               [gameType]: {
                 ...gameProgress,
                 sections: updatedSections,
-                quests: updatedQuests
+                quests: updatedQuests,
+                completedLevels, // Update completed levels tracking
+                
+                // Update the current position to the next level
+                currentSection: nextSectionId,
+                currentLevel: nextLevelId
               }
             }
           };
+          
+          // Log the level transition
+          console.log(`[Progress] Advanced to Section ${nextSectionId}, Level ${nextLevelId}`);
           
           // Save to Firebase after updating local state
           setTimeout(() => get().saveUserProgress(), 0);
@@ -555,9 +618,13 @@ export const useGameStore = create<GameState>()(
       
       completeQuest: (gameType: string, questId: string) => {
         set((state) => {
-          const gameProgress = state.progress[gameType];
-          if (!gameProgress) return state;
+          // Skip if no progress data for this game type
+          if (!state.progress || !state.progress[gameType]) return state;
           
+          // Get the quests for this specific game type
+          const gameProgress = state.progress[gameType];
+          
+          // Update only the streak-bonus quest for this game type
           const updatedQuests = gameProgress.quests.map(quest => {
             if (quest.id === questId) {
               // Give XP reward for completing the quest
@@ -574,20 +641,19 @@ export const useGameStore = create<GameState>()(
             return quest;
           });
           
-          const newState = {
-            progress: {
-              ...state.progress,
-              [gameType]: {
-                ...gameProgress,
-                quests: updatedQuests
-              }
+          // Create the updated progress for just this game type
+          const updatedProgress = {
+            ...state.progress,
+            [gameType]: {
+              ...gameProgress,
+              quests: updatedQuests
             }
           };
           
-          // Save to Firebase after updating local state
+          // Save to Firebase after updating
           setTimeout(() => get().saveUserProgress(), 0);
           
-          return newState;
+          return { progress: updatedProgress };
         });
       },
       
@@ -745,68 +811,194 @@ export const useGameStore = create<GameState>()(
         });
       },
       
+      // Complete a game and handle streak/XP tracking
+      completeGame: (gameType, score, isCorrect) => set((state) => {
+        if (!gameType) return state;
+        
+        console.log(`[GameDB] Completing game: ${gameType}, Score: ${score}, Correct: ${isCorrect}`);
+        
+        // Update the last played timestamp
+        const gameProgress = state.progress[gameType] || {
+          sections: generateSections(),
+          xp: 0,
+          quests: generateDailyQuests(),
+          currentSection: 0,
+          currentLevel: 0,
+          completedLevels: [],
+          lastPlayedAt: ''
+        };
+        
+        // Create updated game progress with timestamp
+        const updatedGameProgress = {
+          ...gameProgress,
+          lastPlayedAt: new Date().toISOString()
+        };
+        
+        // Update streak handling - IMPORTANT: streak is not reset on wrong answers
+        // It only updates (increases) when it's the first correct answer of a new day
+        const today = getTodayDateString();
+        const streakUpdates: Partial<GameState> = {};
+        
+        // Only consider streak updates for correct answers
+        if (isCorrect) {
+          if (state.lastStreakDate !== today) {
+            // This is the first correct answer of a new day - increase streak
+            streakUpdates.streak = state.streak + 1;
+            streakUpdates.lastStreakDate = today;
+            streakUpdates.streakState = 'active';
+            
+            console.log(`[GameDB] Increasing streak to ${streakUpdates.streak} (first correct answer today)`);
+          } else {
+            // Already played today and got something correct - streak remains active
+            streakUpdates.streakState = 'active';
+          }
+        }
+        
+        // Update achievements - First Steps is earned by completing any game
+        let achievements = [...(state.achievements || [])];
+        
+        // Check for "First Steps" achievement - completing any game
+        if (!achievements.includes('first-steps')) {
+          achievements.push('first-steps');
+          console.log('[Achievement] Unlocked: First Steps - Completed your first game!');
+        }
+        
+        // Check for "Perfect Score" achievement - score must be at least 100 (including bonuses)
+        if (score >= 100 && !achievements.includes('perfect-score')) {
+          achievements.push('perfect-score');
+          console.log('[Achievement] Unlocked: Perfect Score - Scored 100% or higher in a game!');
+        }
+        
+        // Check for "Streak Master" achievement - maintain a 7-day streak
+        if (streakUpdates.streak >= 7 && !achievements.includes('streak-master')) {
+          achievements.push('streak-master');
+          console.log('[Achievement] Unlocked: Streak Master - Maintained a 7-day streak!');
+        }
+        
+        // Update progress with the game progress
+        const updatedProgress = {
+          ...state.progress,
+          [gameType]: updatedGameProgress
+        };
+        
+        // Create the final state updates
+        const gameUpdates = {
+          progress: updatedProgress,
+          achievements,
+          ...streakUpdates
+        };
+        
+        // Save to database
+        setTimeout(() => get().saveUserProgress(), 0);
+        
+        return gameUpdates;
+      }),
+      
+      // Save user progress to database with better error handling
+      saveUserProgress: async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error('[Database] Cannot save: No authenticated user');
+          return;
+        }
+        
+        try {
+          console.log('[Database] Saving user progress to Firestore...');
+          
+          // Get the user document reference
+          const userProgressRef = doc(db, GAME_PROGRESS_COLLECTION, user.uid);
+          
+          // Prepare data to save - ensure all fields exist
+          const dataToSave = {
+            // User stats
+            score: get().score || 0,
+            streak: get().streak || 0,
+            lastStreakDate: get().lastStreakDate || '',
+            streakState: get().streakState || 'none',
+            
+            // Achievements
+            achievements: get().achievements || [],
+            
+            // Game progress data
+            progress: get().progress || {},
+            
+            // Metadata
+            updatedAt: new Date().toISOString(),
+            userId: user.uid
+          };
+          
+          // Log a summary of what's being saved
+          console.log(`[Database] Saving - Score: ${dataToSave.score}, Streak: ${dataToSave.streak}, Achievements: ${dataToSave.achievements.length}`);
+          
+          // Deep clone to avoid Firebase warnings about objects with custom prototypes
+          const cleanData = JSON.parse(JSON.stringify(dataToSave));
+          
+          // Use merge to avoid overwriting any fields not included in current state
+          await setDoc(userProgressRef, cleanData, { merge: true });
+          console.log('[Database] Successfully saved user progress to Firestore');
+        } catch (error) {
+          console.error('[Database] Error saving user progress:', error);
+          
+          // Try to save again after a delay
+          setTimeout(() => {
+            console.log('[Database] Retrying failed save operation...');
+            get().saveUserProgress();
+          }, 3000);
+        }
+      },
+      
       // User-specific progress
       loadUserProgress: async () => {
         const user = auth.currentUser;
-        if (!user) return;
+        if (!user) {
+          console.log('[Auth] No authenticated user found when trying to load progress');
+          return;
+        }
         
         try {
+          console.log(`[Auth] Loading progress for user: ${user.uid}`);
           const userProgressRef = doc(db, GAME_PROGRESS_COLLECTION, user.uid);
           const userProgressDoc = await getDoc(userProgressRef);
           
           if (userProgressDoc.exists()) {
-            const userData = userProgressDoc.data();
-            console.log("Loaded user progress from Firestore");
+            const data = userProgressDoc.data();
             
-            // Check if we need to reset the streak
-            const today = getTodayDateString();
-            let { streak = 0, lastStreakDate = '' } = userData;
-            
-            // If the last streak date is not today or yesterday, reset streak
-            if (lastStreakDate && 
-                !isSameDay(lastStreakDate, today) && 
-                !isConsecutiveDay(lastStreakDate, today)) {
-              console.log("Resetting streak due to inactivity. Last played:", lastStreakDate);
-              streak = 0; // Reset streak
-              lastStreakDate = ''; // Clear the last streak date
-            }
-            
-            // Update user data with potentially reset streak
-            set((state) => ({
+            set(state => ({
               ...state,
-              ...userData,
-              streak,
-              lastStreakDate
+              score: data.score || 0,
+              streak: data.streak || 0,
+              lastStreakDate: data.lastStreakDate || '',
+              streakState: data.streakState || 'none',
+              achievements: data.achievements || [],
+              progress: data.progress || {}
             }));
             
-            // Check and refresh quests for each game type
-            Object.keys(userData.progress || {}).forEach(gameType => {
-              get().checkAndRefreshQuests(gameType);
-            });
-            
-            console.log('Loaded user progress from Firestore');
-            
-            // Run migration to clean up hearts-related fields
-            await get().migrateUserData();
+            console.log('[Auth] Successfully loaded user progress from Firestore');
           } else {
-            // User doesn't have progress data yet, initialize defaults
-            console.log('No existing progress found for user, initializing default data');
+            console.log('[Auth] No saved progress found for user. Initializing new progress.');
             
-            // Initialize default game types
-            const defaultGameTypes = ['make-sentence', 'multiple-choice', 'conversation'];
-            const initialProgress: LevelProgress = {};
-            
-            // Initialize progress for each game type
-            defaultGameTypes.forEach(gameType => {
-              initialProgress[gameType] = {
+            // Create initial game progress structure
+            const initialProgress = {
+              'make-sentence': {
                 sections: generateSections(),
                 xp: 0,
                 quests: generateDailyQuests(),
                 currentSection: 0,
-                currentLevel: 0
-              };
-              
-              // First section and first level are always unlocked
+                currentLevel: 0,
+                completedLevels: []
+              },
+              'multiple-choice': {
+                sections: generateSections(),
+                xp: 0,
+                quests: generateDailyQuests(),
+                currentSection: 0,
+                currentLevel: 0,
+                completedLevels: []
+              }
+            };
+            
+            // First, unlock the first level of each game type
+            for (const gameType of Object.keys(initialProgress)) {
               if (initialProgress[gameType].sections.length > 0) {
                 initialProgress[gameType].sections[0].isLocked = false;
                 
@@ -814,100 +1006,67 @@ export const useGameStore = create<GameState>()(
                   initialProgress[gameType].sections[0].levels[0].isLocked = false;
                 }
               }
-            });
+            }
             
-            // Create initial user state
-            const initialUserState = {
+            // Create initial state to update locally
+            const newUserData = {
               score: 0,
               streak: 0,
               lastStreakDate: '',
-              streakState: 'none' as 'none' | 'inactive' | 'active',
-              progress: initialProgress
+              streakState: 'none',
+              achievements: [],
+              progress: initialProgress,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              userId: user.uid
             };
             
             // Update local state
-            set(initialUserState);
+            set(state => ({
+              ...state,
+              ...newUserData
+            }));
             
-            // Save to Firestore
-            await setDoc(userProgressRef, initialUserState);
-            console.log('Initialized and saved default user progress to Firestore');
-          }
-        } catch (error) {
-          console.error('Error loading user progress:', error);
-        }
-      },
-      
-      saveUserProgress: async () => {
-        const user = auth.currentUser;
-        if (!user) return;
-        
-        try {
-          const userProgressRef = doc(db, GAME_PROGRESS_COLLECTION, user.uid);
-          const userProgressDoc = await getDoc(userProgressRef);
-          
-          // Ensure both game types are initialized in progress
-          const currentProgress = get().progress;
-          const gameTypes = ['make-sentence', 'multiple-choice'];
-          
-          // Initialize any missing game types
-          gameTypes.forEach(gameType => {
-            if (!currentProgress[gameType]) {
-              get().initializeGameProgress(gameType);
+            // IMPORTANT: Save the initial data to Firestore immediately
+            // This ensures the user has a gameProgress document from the start
+            try {
+              await setDoc(userProgressRef, newUserData);
+              console.log('[Auth] Successfully created new user progress document in Firestore');
+            } catch (error) {
+              console.error('[Auth] Error creating initial progress document:', error);
             }
-          });
-          
-          const dataToSave = {
-            score: get().score,
-            streak: get().streak,
-            lastStreakDate: get().lastStreakDate,
-            streakState: get().streakState,
-            progress: get().progress,
-            updatedAt: new Date().toISOString()
-          };
-          
-          if (userProgressDoc.exists()) {
-            // Update existing document - explicitly remove hearts-related fields
-            await updateDoc(userProgressRef, {
-              ...dataToSave,
-              // Use Firebase field deletion to remove hearts-related fields
-              hearts: deleteField(),
-              lastHeartResetDate: deleteField()
-            });
-          } else {
-            // Create new document
-            await setDoc(userProgressRef, {
-              ...dataToSave,
-              createdAt: new Date().toISOString(),
-              userId: user.uid
-            });
           }
           
-          console.log('Saved user progress to Firebase');
+          // Check if streak should be reset after loading data
+          get().checkStreakReset();
+          
         } catch (error) {
-          console.error('Error saving user progress:', error);
+          console.error('[Auth] Error loading user progress:', error);
         }
       },
       
-      migrateUserData: async () => {
-        const user = auth.currentUser;
-        if (!user) return;
-        
-        try {
-          const userProgressRef = doc(db, GAME_PROGRESS_COLLECTION, user.uid);
-          const userProgressDoc = await getDoc(userProgressRef);
-          
-          if (userProgressDoc.exists()) {
-            // Use Firebase field deletion to remove hearts-related fields
-            await updateDoc(userProgressRef, {
-              hearts: deleteField(),
-              lastHeartResetDate: deleteField()
-            });
+      // Ensure game progress exists for a given game type
+      ensureGameProgressExists: (gameType: string) => {
+        set((state) => {
+          if (!state.progress[gameType]) {
+            const newProgress = {
+              sections: generateSections(),
+              xp: 0,
+              quests: generateDailyQuests(),
+              currentSection: 0,
+              currentLevel: 0,
+              completedLevels: []
+            };
             
-            console.log('Migrated user data and removed hearts-related fields');
+            return {
+              progress: {
+                ...state.progress,
+                [gameType]: newProgress
+              }
+            };
           }
-        } catch (error) {
-          console.error('Error migrating user data:', error);
-        }
+          return state;
+        });
       },
     }),
     {

@@ -11,7 +11,7 @@ interface UserStatsProps {
 }
 
 export default function UserStats({ gameType }: UserStatsProps) {
-  const { progress, initializeGameProgress } = useGameStore();
+  const { progress, initializeGameProgress, achievements } = useGameStore();
   const { userData } = useUser();
   const [xp, setXP] = useState(0);
   const [completedLevels, setCompletedLevels] = useState(0);
@@ -127,37 +127,31 @@ export default function UserStats({ gameType }: UserStatsProps) {
           <AchievementBadge 
             title="First Steps"
             description="Complete your first level" 
-            isUnlocked={completedLevels > 0}
+            isUnlocked={achievements?.includes('first-steps') || false}
             icon="🌱"
           />
           <AchievementBadge 
             title="Perfect Score"
             description="Get 100% on any level" 
-            isUnlocked={
-              gameProgress?.sections.some(section => 
-                section.levels.some(level => level.bestScore === 100)
-              ) || false
-            }
+            isUnlocked={achievements?.includes('perfect-score') || false}
             icon="🏆"
           />
           <AchievementBadge 
             title="Streak Master"
             description="Maintain a 7-day streak" 
-            isUnlocked={useGameStore.getState().streak >= 7}
+            isUnlocked={achievements?.includes('streak-master') || false}
             icon="🔥"
           />
           <AchievementBadge 
             title="Section Champion"
             description="Complete all levels in a section" 
-            isUnlocked={
-              gameProgress?.sections.some(section => section.isCompleted) || false
-            }
+            isUnlocked={achievements?.includes('section-champion') || false}
             icon="⭐"
           />
           <AchievementBadge 
             title="XP Master"
-            description="Earn 500 XP" 
-            isUnlocked={xp >= 500}
+            description="Earn 1000 XP" 
+            isUnlocked={achievements?.includes('xp-master') || false}
             icon="💎"
           />
         </div>

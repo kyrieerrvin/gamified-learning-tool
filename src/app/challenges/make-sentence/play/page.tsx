@@ -100,15 +100,15 @@ export default function PlayMakeSentencePage() {
                 ? 'Napakahusay mo! Nakumpleto mo ang level na ito.' 
                 : 'Magaling ka! Subukan mo ulit para makakuha ng mas mataas na score.'}
             </p>
-            
+            {/* PROGRESS BAR
             <div className="bg-gray-100 rounded-full p-2 mb-6">
               <div className="bg-duolingo-green h-6 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ width: `${score}%` }}>
                 {score}%
               </div>
             </div>
-            
+            */}
             <div className="mb-6">
-              <p className="text-lg font-bold text-duolingo-green">+ {Math.floor((score/100) * 10) * 5} XP</p>
+              <p className="text-lg font-bold text-duolingo-green">+ {Math.floor(score)} XP</p>
             </div>
           </div>
           
@@ -120,12 +120,28 @@ export default function PlayMakeSentencePage() {
               Bumalik sa Learning Path
             </Button>
             
-            {levelId < 4 && (
-              <Button
-                onClick={() => router.push(`/challenges/make-sentence/play?section=${sectionId}&level=${levelId + 1}`)}
-                className="bg-duolingo-green hover:bg-duolingo-darkGreen text-white py-3 px-6 rounded-xl font-bold shadow-md hover:shadow-lg transition-all"
+            {score >= 80 && progress['make-sentence'] && (
+              <Button 
+                onClick={() => {
+                  // Use the currentSection and currentLevel to navigate to the next level
+                  const gameProgress = progress['make-sentence'];
+                  if (gameProgress) {
+                    // These values are automatically updated in completeLevel function
+                    const nextSectionId = gameProgress.currentSection;
+                    const nextLevelId = gameProgress.currentLevel;
+                    
+                    console.log(`[Navigation] Going to next level: Section ${nextSectionId}, Level ${nextLevelId}`);
+                    
+                    // Navigate to the next level using the stored values
+                    router.push(`/challenges/make-sentence/play?section=${nextSectionId}&level=${nextLevelId}`);
+                  } else {
+                    // Fallback to challenges page if no progress data
+                    router.push('/challenges/make-sentence');
+                  }
+                }}
+                className="w-full bg-duolingo-green text-white hover:bg-duolingo-darkGreen"
               >
-                Sunod na Level
+                Susunod na Level
               </Button>
             )}
           </div>
