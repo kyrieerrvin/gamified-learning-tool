@@ -530,7 +530,7 @@ def get_pos_game():
             logger.info(f"Selected random {difficulty} sentence: '{sentence}'")
         
         # Generate questions for the sentence
-        questions = generate_pos_questions(sentence, num_questions=5)
+        questions = generate_pos_questions(sentence, num_questions=10)
         
         if not questions:
             logger.warning(f"No questions generated for sentence: '{sentence}'")
@@ -711,7 +711,7 @@ def custom_game():
         logger.info(f"Creating custom game with sentence: '{sentence}'")
         
         # Generate questions for the custom sentence
-        questions = generate_pos_questions(sentence, num_questions=5)
+        questions = generate_pos_questions(sentence, num_questions=10)
         
         if not questions:
             return jsonify({

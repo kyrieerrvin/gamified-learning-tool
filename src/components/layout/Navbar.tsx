@@ -73,12 +73,14 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link 
-              href="/feedback" 
-              className={`text-sm font-medium transition-colors ${pathname === '/feedback' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+            <a 
+              href="https://forms.gle/1NZy1hTMBMA8PdvS9" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium transition-colors text-gray-600 hover:text-blue-600"
             >
               Feedback
-            </Link>
+            </a>
             
             {/* NLP Test Button (DEV ONLY) */}
             <button
@@ -132,12 +134,14 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link 
-                href="/feedback" 
-                className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/feedback' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
+              <a 
+                href="https://forms.gle/yourGoogleFormLink" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2 py-1 text-sm font-medium rounded text-gray-600 hover:text-blue-600"
               >
                 Feedback
-              </Link>
+              </a>
               
               {/* NLP Test Button (Mobile) */}
               <button

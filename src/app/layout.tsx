@@ -1,12 +1,14 @@
 // src/app/layout.tsx
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { DatabaseSyncWrapper } from "@/components/auth/DatabaseSyncWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -19,26 +21,19 @@ export const metadata: Metadata = {
   description: "A fun and interactive way to learn Tagalog",
 };
 
-// Add "use client" directive to ensure client-side routing works correctly
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        {/* Add debugging script */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            console.log("Page loaded:", window.location.pathname);
-          `,
-        }} />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>{children}</Providers>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+      <body>
+        <Providers>
+          <DatabaseSyncWrapper>
+            {children}
+          </DatabaseSyncWrapper>
+        </Providers>
       </body>
     </html>
   );

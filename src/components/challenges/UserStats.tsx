@@ -11,7 +11,7 @@ interface UserStatsProps {
 }
 
 export default function UserStats({ gameType }: UserStatsProps) {
-  const { progress, initializeGameProgress, achievements } = useGameStore();
+  const { progress, initializeGameProgress, achievements, gameAchievements } = useGameStore();
   const { userData } = useUser();
   const [xp, setXP] = useState(0);
   const [completedLevels, setCompletedLevels] = useState(0);
@@ -127,31 +127,48 @@ export default function UserStats({ gameType }: UserStatsProps) {
           <AchievementBadge 
             title="First Steps"
             description="Complete your first level" 
-            isUnlocked={achievements?.includes('first-steps') || false}
+            isUnlocked={
+              (gameAchievements && gameAchievements[gameType]?.includes('first-steps')) || 
+              false
+            }
             icon="🌱"
           />
           <AchievementBadge 
             title="Perfect Score"
             description="Get 100% on any level" 
-            isUnlocked={achievements?.includes('perfect-score') || false}
+            isUnlocked={
+              (gameAchievements && gameAchievements[gameType]?.includes('perfect-score')) || 
+              false
+            }
             icon="🏆"
           />
           <AchievementBadge 
             title="Streak Master"
             description="Maintain a 7-day streak" 
-            isUnlocked={achievements?.includes('streak-master') || false}
+            isUnlocked={
+              (gameAchievements && gameAchievements[gameType]?.includes('streak-master')) || 
+              achievements?.includes('streak-master') || 
+              false
+            }
             icon="🔥"
           />
           <AchievementBadge 
             title="Section Champion"
             description="Complete all levels in a section" 
-            isUnlocked={achievements?.includes('section-champion') || false}
+            isUnlocked={
+              (gameAchievements && gameAchievements[gameType]?.includes('section-champion')) || 
+              false
+            }
             icon="⭐"
           />
           <AchievementBadge 
             title="XP Master"
             description="Earn 1000 XP" 
-            isUnlocked={achievements?.includes('xp-master') || false}
+            isUnlocked={
+              (gameAchievements && gameAchievements[gameType]?.includes('xp-master')) || 
+              achievements?.includes('xp-master') || 
+              false
+            }
             icon="💎"
           />
         </div>

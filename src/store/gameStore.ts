@@ -50,6 +50,15 @@ type LevelProgress = {
   }
 };
 
+// Define achievement types
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  unlockedAt?: string;
+  gameType?: string; // Which game type this achievement was earned in
+}
+
 // GameState represents the global game state
 type GameState = {
   score: number;
@@ -57,7 +66,10 @@ type GameState = {
   lastStreakDate: string;
   streakState: "none" | "inactive" | "active";
   progress: LevelProgress;
-  achievements: string[];
+  achievements: string[]; // For backward compatibility with existing users
+  gameAchievements: {
+    [gameType: string]: string[]; // Game-specific achievements by game type
+  };
   
   // Actions
   addPoints: (points: number, gameType: string) => void;
@@ -224,6 +236,7 @@ export const useGameStore = create<GameState>()(
       streakState: 'none' as 'none' | 'inactive' | 'active',
       progress: {},
       achievements: [],
+      gameAchievements: {},
       
       // Basic game actions
       addPoints: (points, gameType) => set((state) => {
@@ -388,7 +401,10 @@ export const useGameStore = create<GameState>()(
           
           // Track completed levels for summary stats
           let completedLevels = [...(gameProgress.completedLevels || [])];
+          
+          // Get achievements arrays
           let achievements = [...(state.achievements || [])];
+          let gameTypeAchievements = [...(state.gameAchievements[gameType] || [])];
           
           // Track where the user should go next (current position)
           let nextSectionId = sectionId;
@@ -407,9 +423,16 @@ export const useGameStore = create<GameState>()(
             }
             
             // Check for "Perfect Score" achievement - score must be at least 100 (including bonuses)
-            if (score >= 100 && !achievements.includes('perfect-score')) {
-              achievements.push('perfect-score');
-              console.log('[Achievement] Unlocked: Perfect Score');
+            if (score >= 100 && !gameTypeAchievements.includes('perfect-score')) {
+              // Add to game-specific achievements
+              gameTypeAchievements.push('perfect-score');
+              
+              // Also add to global achievements for backward compatibility
+              if (!achievements.includes('perfect-score')) {
+                achievements.push('perfect-score');
+              }
+              
+              console.log(`[Achievement] Unlocked: Perfect Score in ${gameType}`);
             }
             
             // Calculate the next level ID - advance to the next level
@@ -427,9 +450,16 @@ export const useGameStore = create<GameState>()(
               // Check for "Section Champion" achievement
               // A section is considered completed when all its levels are completed
               const isSectionCompleted = section.levels.every(lvl => lvl.isCompleted);
-              if (isSectionCompleted && !achievements.includes('section-champion')) {
-                achievements.push('section-champion');
-                console.log('[Achievement] Unlocked: Section Champion');
+              if (isSectionCompleted && !gameTypeAchievements.includes('section-champion')) {
+                // Add to game-specific achievements
+                gameTypeAchievements.push('section-champion');
+                
+                // Also add to global achievements for backward compatibility
+                if (!achievements.includes('section-champion')) {
+                  achievements.push('section-champion');
+                }
+                
+                console.log(`[Achievement] Unlocked: Section Champion in ${gameType}`);
               }
               
               // Move to the next section if available
@@ -469,7 +499,7 @@ export const useGameStore = create<GameState>()(
               
               return {
                 ...quest,
-                progress: newProgress,
+                progress: newProgress,  // Use exact same XP value as the game total
                 isCompleted
               };
             }
@@ -477,14 +507,28 @@ export const useGameStore = create<GameState>()(
           });
           
           // Calculate XP Master achievement
-          if (gameProgress.xp >= 1000 && !achievements.includes('xp-master')) {
-            achievements.push('xp-master');
-            console.log('[Achievement] Unlocked: XP Master');
+          if (gameProgress.xp >= 1000 && !gameTypeAchievements.includes('xp-master')) {
+            // Add to game-specific achievements
+            gameTypeAchievements.push('xp-master');
+            
+            // Also add to global achievements for backward compatibility
+            if (!achievements.includes('xp-master')) {
+              achievements.push('xp-master');
+            }
+            
+            console.log(`[Achievement] Unlocked: XP Master in ${gameType}`);
           }
+          
+          // Prepare updated gameAchievements object
+          const updatedGameAchievements = {
+            ...state.gameAchievements,
+            [gameType]: gameTypeAchievements
+          };
           
           // Prepare updated state
           const newState = {
-            achievements, // Update global achievements
+            achievements, // Update global achievements for backward compatibility
+            gameAchievements: updatedGameAchievements, // Update game-specific achievements
             progress: {
               ...state.progress,
               [gameType]: {
@@ -592,7 +636,7 @@ export const useGameStore = create<GameState>()(
               
               return {
                 ...quest,
-                progress: newProgress,
+                progress: newProgress,  // Use exact same XP value as the game total
                 isCompleted
               };
             }
@@ -854,26 +898,55 @@ export const useGameStore = create<GameState>()(
           }
         }
         
-        // Update achievements - First Steps is earned by completing any game
+        // Update achievements - track each game type separately
         let achievements = [...(state.achievements || [])];
+        let gameTypeAchievements = [...(state.gameAchievements[gameType] || [])];
         
         // Check for "First Steps" achievement - completing any game
-        if (!achievements.includes('first-steps')) {
-          achievements.push('first-steps');
-          console.log('[Achievement] Unlocked: First Steps - Completed your first game!');
+        if (!gameTypeAchievements.includes('first-steps')) {
+          // Add to game-specific achievements
+          gameTypeAchievements.push('first-steps');
+          
+          // Also add to global achievements for backward compatibility
+          if (!achievements.includes('first-steps')) {
+            achievements.push('first-steps');
+          }
+          
+          console.log(`[Achievement] Unlocked: First Steps in ${gameType} - Completed your first game!`);
         }
         
         // Check for "Perfect Score" achievement - score must be at least 100 (including bonuses)
-        if (score >= 100 && !achievements.includes('perfect-score')) {
-          achievements.push('perfect-score');
-          console.log('[Achievement] Unlocked: Perfect Score - Scored 100% or higher in a game!');
+        if (score >= 100 && !gameTypeAchievements.includes('perfect-score')) {
+          // Add to game-specific achievements
+          gameTypeAchievements.push('perfect-score');
+          
+          // Also add to global achievements for backward compatibility
+          if (!achievements.includes('perfect-score')) {
+            achievements.push('perfect-score');
+          }
+          
+          console.log(`[Achievement] Unlocked: Perfect Score in ${gameType} - Scored 100% or higher!`);
         }
         
         // Check for "Streak Master" achievement - maintain a 7-day streak
+        // Note: Streak Master is a global achievement, not game-specific
         if (streakUpdates.streak >= 7 && !achievements.includes('streak-master')) {
+          // Add directly to global achievements
           achievements.push('streak-master');
+          
+          // But also add to game-specific achievements for the current game type
+          if (!gameTypeAchievements.includes('streak-master')) {
+            gameTypeAchievements.push('streak-master');
+          }
+          
           console.log('[Achievement] Unlocked: Streak Master - Maintained a 7-day streak!');
         }
+        
+        // Prepare updated gameAchievements object
+        const updatedGameAchievements = {
+          ...state.gameAchievements,
+          [gameType]: gameTypeAchievements
+        };
         
         // Update progress with the game progress
         const updatedProgress = {
@@ -884,7 +957,8 @@ export const useGameStore = create<GameState>()(
         // Create the final state updates
         const gameUpdates = {
           progress: updatedProgress,
-          achievements,
+          achievements, // For backward compatibility
+          gameAchievements: updatedGameAchievements,
           ...streakUpdates
         };
         
@@ -918,6 +992,7 @@ export const useGameStore = create<GameState>()(
             
             // Achievements
             achievements: get().achievements || [],
+            gameAchievements: get().gameAchievements || {},
             
             // Game progress data
             progress: get().progress || {},
@@ -970,6 +1045,7 @@ export const useGameStore = create<GameState>()(
               lastStreakDate: data.lastStreakDate || '',
               streakState: data.streakState || 'none',
               achievements: data.achievements || [],
+              gameAchievements: data.gameAchievements || {},
               progress: data.progress || {}
             }));
             
@@ -1015,6 +1091,7 @@ export const useGameStore = create<GameState>()(
               lastStreakDate: '',
               streakState: 'none',
               achievements: [],
+              gameAchievements: {},
               progress: initialProgress,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),

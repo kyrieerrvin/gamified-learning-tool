@@ -40,7 +40,7 @@ export default function PartsOfSpeechGame({
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(difficulty);
   
   // Game store for managing global score and streak
-  const { addPoints, increaseStreak, completeStreakBonusQuest } = useGameStore();
+  const { addPoints, increaseStreak, completeStreakBonusQuest, completeLevel, completeGame } = useGameStore();
   
   // Track consecutive correct answers for streak bonus
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
@@ -206,6 +206,50 @@ export default function PartsOfSpeechGame({
     }, 500);
   };
   
+  // Handle game completion
+  const handleGameCompletion = () => {
+    if (gameOver) return; // Prevent multiple calls
+    
+    setGameOver(true);
+    
+    // Calculate final score percentage
+    const finalScore = Math.round((score / (data?.questions.length || 1)) * 100);
+    
+    // Create result record
+    const result: ChallengeResult = {
+      id: uuidv4(),
+      challengeType: 'multipleChoice',
+      score: finalScore,
+      maxScore: 100,
+      completedAt: new Date().toISOString(),
+      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0
+    };
+    
+    setChallengeResult(result);
+    
+    // Update database with game progress
+    if (typeof levelNumber === 'number') {
+      // Map difficulty to section ID
+      const sectionMap = { 'easy': 0, 'medium': 1, 'hard': 2 };
+      const sectionId = sectionMap[difficultyLevel] || 0;
+      
+      // First, complete the level in the database
+      completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
+      
+      // Then mark the game as completed, updating streak and timestamps
+      completeGame('multiple-choice', finalScore, score > 0);
+      
+      console.log(`[GameCompletion] Saved progress to database. Level: ${levelNumber}, Section: ${sectionId}`);
+    }
+    
+    // Call the onComplete callback with the final score
+    if (onComplete) {
+      // Consider the level completed if the score is at least 80%
+      const levelCompleted = finalScore >= 80;
+      onComplete(finalScore, levelCompleted);
+    }
+  };
+  
   // Finish the game and calculate final score
   const finishGame = () => {
     setGameEndTime(Date.now());
@@ -227,6 +271,21 @@ export default function PartsOfSpeechGame({
     };
     
     setChallengeResult(result);
+    
+    // Update database with game progress
+    if (typeof levelNumber === 'number') {
+      // Map difficulty to section ID
+      const sectionMap = { 'easy': 0, 'medium': 1, 'hard': 2 };
+      const sectionId = sectionMap[difficultyLevel] || 0;
+      
+      // First, complete the level in the database
+      completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
+      
+      // Then mark the game as completed, updating streak and timestamps
+      completeGame('multiple-choice', finalScore, score > 0);
+      
+      console.log(`[GameCompletion] Saved progress to database. Level: ${levelNumber}, Section: ${sectionId}`);
+    }
     
     // Call the onComplete callback with the final score
     if (onComplete) {

@@ -6,28 +6,31 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { useGameStore } from '@/store/gameStore';
+import ClientOnly from '@/components/common/ClientOnly';
 
-export default function Dashboard() {
-  const { user, loading } = useAuth();
+function DashboardContent() {
+  const { user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const { loadUserProgress, checkAndRefreshQuests } = useGameStore();
 
   useEffect(() => {
     loadUserProgress();
-    setIsVisible(true);
+    
+    // Delay setting visibility to avoid transition on initial load
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
     
     // Refresh quests for all game types
     checkAndRefreshQuests('make-sentence');
     checkAndRefreshQuests('multiple-choice');
+    
+    return () => clearTimeout(timer);
   }, [loadUserProgress, checkAndRefreshQuests]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  const visibilityClasses = isVisible 
+    ? 'translate-y-0 opacity-100'
+    : 'translate-y-10 opacity-0';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,17 +38,13 @@ export default function Dashboard() {
 
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
-        <div className={`transition-all duration-1000 transform ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        } mb-8`}>
+        <div className={`transition-all duration-1000 transform ${visibilityClasses} mb-8`}>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome, {user?.displayName || 'Learner'}!</h1>
           <p className="text-gray-600">Choose a challenge or review your progress.</p>
         </div>
         
         {/* Challenge Cards */}
-        <div className={`transition-all duration-1000 delay-300 transform ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        } mb-10`}>
+        <div className={`transition-all duration-1000 delay-300 transform ${visibilityClasses} mb-10`}>
           <h2 className="text-xl font-semibold mb-4 text-gray-800">Today's Challenges</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Link href="/challenges/conversation" className="group">
@@ -103,8 +102,28 @@ export default function Dashboard() {
             </Link>
           </div>
         </div>
-        
       </main>
     </div>
+  );
+}
+
+// Wrapper component for Dashboard that ensures all content is rendered client-side only
+export default function Dashboard() {
+  const { loading } = useAuth();
+  
+  const loadingState = (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  );
+  
+  if (loading) {
+    return loadingState;
+  }
+  
+  return (
+    <ClientOnly fallback={loadingState}>
+      <DashboardContent />
+    </ClientOnly>
   );
 }
