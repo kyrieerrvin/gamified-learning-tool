@@ -3,7 +3,7 @@
  * This provides minimal game functionality during development or when backend is down
  */
 
-import { POSGameData, POSQuestion, SentenceWord } from '@/types/game';
+import { POSGameData, POSQuestion, SentenceWord } from '@/types/game/index';
 
 /**
  * Creates a POS question with appropriate options

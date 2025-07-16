@@ -2,21 +2,18 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import {
-  createOrUpdateUser,
-  getUserData,
-  updateUserProgress,
-  addUserAchievement,
-  addChallengeResult as addChallengeResultService,
-  updateUserPreferences,
-} from '@/services/user/userService';
-import { 
-  UserData,
-  UserProgress, 
-  UserAchievement, 
-  ChallengeResult,
-  UserContextType
-} from '@/types/user';
+import { useGameStore, ChallengeResult, UserProfile } from '@/store/gameStore';
+
+// Simplified interface that matches gameStore data structure
+export interface UserContextType {
+  userData: UserProfile | null;
+  loading: boolean;
+  error: Error | null;
+  updateUserProgress: (score: number) => Promise<void>;
+  updateUserAchievements: (achievementId: string) => Promise<void>;
+  addChallengeResult: (result: ChallengeResult) => Promise<void>;
+  updateUserPreferences: (preferences: Partial<UserProfile['preferences']>) => Promise<void>;
+}
 
 // Create the context with default values
 const UserContext = createContext<UserContextType>({
@@ -34,46 +31,65 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, loading: authLoading } = useAuth();
-  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  
+  // Get all needed functions and data from gameStore
+  const { 
+    profile, 
+    addPoints, 
+    addChallengeResult: gameStoreAddChallengeResult,
+    updateUserProfile,
+    loadUserProgress,
+    saveUserProgress
+  } = useGameStore();
 
-  // Fetch user data when auth state changes
+  // Load user data when auth state changes
   useEffect(() => {
     let isMounted = true;
 
-    const fetchUserData = async () => {
+    const initializeUserData = async () => {
       try {
         if (!user) {
           if (isMounted) {
-            setUserData(null);
             setLoading(false);
           }
           return;
         }
 
-        // First, create or update the user in Firestore
-        const updatedUserData = await createOrUpdateUser(user);
+        // Load user progress from gameStore
+        await loadUserProgress();
         
-        // Then get the full user data
+        // Update profile with latest user info
+        updateUserProfile({
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          joinDate: profile?.joinDate || new Date().toISOString(),
+          lastActiveDate: new Date().toISOString(),
+          preferences: profile?.preferences || {
+            emailNotifications: false,
+            dailyReminder: true,
+          }
+        });
+        
         if (isMounted) {
-          setUserData(updatedUserData);
           setLoading(false);
           setError(null);
         }
       } catch (err) {
-        console.error('Error fetching user data:', err);
+        console.error('Error initializing user data:', err);
         if (isMounted) {
-          setError(err instanceof Error ? err : new Error('Failed to fetch user data'));
+          setError(err instanceof Error ? err : new Error('Failed to initialize user data'));
           setLoading(false);
         }
       }
     };
 
-    // Only fetch user data if auth is not loading
+    // Only initialize user data if auth is not loading
     if (!authLoading) {
       setLoading(true);
-      fetchUserData();
+      initializeUserData();
     }
 
     return () => {
@@ -81,49 +97,27 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [user, authLoading]);
 
-  // Update user progress
-  const handleUpdateUserProgress = async (progressUpdate: Partial<UserProgress>) => {
-    if (!user || !userData) return;
+  // Update user progress (add points)
+  const handleUpdateUserProgress = async (score: number) => {
+    if (!user) return;
 
     try {
-      await updateUserProgress(user.uid, progressUpdate);
-      
-      // Update local state
-      setUserData(prev => {
-        if (!prev) return null;
-        
-        return {
-          ...prev,
-          progress: {
-            ...prev.progress,
-            ...progressUpdate,
-          },
-          updatedAt: new Date().toISOString(),
-        };
-      });
+      addPoints(score, 'general');
+      await saveUserProgress();
     } catch (err) {
       console.error('Error updating user progress:', err);
       setError(err instanceof Error ? err : new Error('Failed to update user progress'));
     }
   };
 
-  // Add new achievement
-  const handleUpdateUserAchievements = async (achievement: UserAchievement) => {
-    if (!user || !userData) return;
+  // Add new achievement (simplified - just add to store)
+  const handleUpdateUserAchievements = async (achievementId: string) => {
+    if (!user) return;
 
     try {
-      await addUserAchievement(user.uid, achievement);
-      
-      // Update local state
-      setUserData(prev => {
-        if (!prev) return null;
-        
-        return {
-          ...prev,
-          achievements: [...prev.achievements, achievement],
-          updatedAt: new Date().toISOString(),
-        };
-      });
+      // The gameStore handles achievement logic internally
+      // Just save to persist the changes
+      await saveUserProgress();
     } catch (err) {
       console.error('Error adding achievement:', err);
       setError(err instanceof Error ? err : new Error('Failed to add achievement'));
@@ -132,17 +126,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Add challenge result
   const handleAddChallengeResult = async (result: ChallengeResult) => {
-    if (!user || !userData) return;
+    if (!user) return;
 
     try {
-      await addChallengeResultService(user.uid, result);
-      
-      // Instead of manually updating the state, fetch the latest user data
-      // This ensures all calculated fields (streaks, levels, etc.) are accurate
-      const updatedUserData = await getUserData(user.uid);
-      if (updatedUserData) {
-        setUserData(updatedUserData);
-      }
+      gameStoreAddChallengeResult(result);
+      await saveUserProgress();
     } catch (err) {
       console.error('Error adding challenge result:', err);
       setError(err instanceof Error ? err : new Error('Failed to add challenge result'));
@@ -150,25 +138,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Update user preferences
-  const handleUpdateUserPreferences = async (preferencesUpdate: Partial<UserData['preferences']>) => {
-    if (!user || !userData) return;
+  const handleUpdateUserPreferences = async (preferencesUpdate: Partial<UserProfile['preferences']>) => {
+    if (!user || !profile) return;
 
     try {
-      await updateUserPreferences(user.uid, preferencesUpdate);
-      
-      // Update local state
-      setUserData(prev => {
-        if (!prev) return null;
-        
-        return {
-          ...prev,
-          preferences: {
-            ...prev.preferences,
-            ...preferencesUpdate,
-          },
-          updatedAt: new Date().toISOString(),
-        };
+      updateUserProfile({
+        ...profile,
+        preferences: {
+          ...profile.preferences,
+          ...preferencesUpdate,
+        }
       });
+      await saveUserProgress();
     } catch (err) {
       console.error('Error updating preferences:', err);
       setError(err instanceof Error ? err : new Error('Failed to update preferences'));
@@ -176,7 +157,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const value = {
-    userData,
+    userData: profile,
     loading: loading || authLoading,
     error,
     updateUserProgress: handleUpdateUserProgress,

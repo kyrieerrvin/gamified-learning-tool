@@ -3,12 +3,14 @@
 
 import { useAuth } from '@/context/AuthContext';
 import { useUser } from '@/context/UserContext';
+import { useGameStore } from '@/store/gameStore';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const { userData, loading: userDataLoading } = useUser();
+  const { score, streak, totalChallengesCompleted, achievements, progress } = useGameStore();
   
   // Animation state
   const [isVisible, setIsVisible] = useState(false);
@@ -28,15 +30,25 @@ export default function ProfilePage() {
     );
   }
 
+  // Calculate total game completions across all game types
+  const totalGameCompletions = Object.values(progress).reduce((total, gameData) => {
+    return total + (gameData.completedLevels?.length || 0);
+  }, 0);
+
+  // Get total XP across all game types
+  const totalXP = Object.values(progress).reduce((total, gameData) => {
+    return total + (gameData.xp || 0);
+  }, 0);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-
-      <main className="container mx-auto px-4 py-8">
-        {/* Profile Header */}
+      
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header Section */}
         <div className={`transition-all duration-700 transform ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        } mb-8`}>
+        }`}>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Your Profile</h1>
           
           <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
@@ -48,8 +60,8 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-semibold">{user?.displayName || "Tagalog Learner"}</h2>
                 <p className="text-gray-600">{user?.email}</p>
                 <p className="text-gray-500 text-sm mt-1">
-                  Member since {userData?.progress.joinDate 
-                    ? new Date(userData.progress.joinDate).toLocaleDateString() 
+                  Member since {userData?.joinDate 
+                    ? new Date(userData.joinDate).toLocaleDateString() 
                     : new Date().toLocaleDateString()}
                 </p>
               </div>
@@ -75,118 +87,132 @@ export default function ProfilePage() {
                 <div className="flex-grow">
                   <div className="text-gray-500 mb-1">Total Score</div>
                   <div className="text-3xl font-bold text-gray-800">
-                    {userData?.progress.totalScore || 0} points
+                    {score || 0} points
                   </div>
                   <div className="mt-4">
-                    <div className="text-sm text-gray-500 mb-1">Progress to next level</div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div className="text-sm text-gray-500 mb-2">Total XP Earned</div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-blue-600 h-2.5 rounded-full" 
-                        style={{ 
-                          width: `${userData 
-                            ? Math.min(100, (userData.progress.totalScore / userData.progress.nextLevelPoints) * 100) 
-                            : 0}%` 
-                        }}
-                      ></div>
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, (totalXP / 1000) * 100)}%` }}
+                      />
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Level {userData?.progress.level || 1} • 
-                      {userData?.progress.totalScore || 0}/{userData?.progress.nextLevelPoints || 100} points to 
-                      Level {(userData?.progress.level || 1) + 1}
+                    <div className="text-sm text-gray-500 mt-2">
+                      {totalXP || 0} XP • Next milestone: 1000 XP
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            {/* Challenges Completed Card */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex flex-col md:flex-row md:items-center">
-                <div className="bg-green-100 p-4 rounded-lg mb-4 md:mb-0 md:mr-6 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+                <div className="text-2xl font-bold text-blue-600 mb-2">
+                  {totalChallengesCompleted || 0}
                 </div>
-                <div className="flex-grow">
-                  <div className="text-gray-500 mb-1">Challenges Completed</div>
-                  <div className="text-3xl font-bold text-gray-800">
-                    {userData?.progress.challengesCompleted || 0}
-                  </div>
-                  
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <div className="text-sm font-medium text-gray-600 mb-1">Conversation</div>
-                      <div className="text-lg font-semibold text-gray-800">
-                        {userData?.progress.completedChallenges.conversation || 0}
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <div className="text-sm font-medium text-gray-600 mb-1">Make a Sentence</div>
-                      <div className="text-lg font-semibold text-gray-800">
-                        {userData?.progress.completedChallenges.makeSentence || 0}
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <div className="text-sm font-medium text-gray-600 mb-1">Multiple Choice</div>
-                      <div className="text-lg font-semibold text-gray-800">
-                        {userData?.progress.completedChallenges.multipleChoice || 0}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <div className="text-gray-500">Total Challenges</div>
               </div>
-            </div>
-            
-            {/* Streak Card */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex flex-col md:flex-row md:items-center">
-                <div className="bg-yellow-100 p-4 rounded-lg mb-4 md:mb-0 md:mr-6 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
-                  </svg>
+              
+              <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+                <div className="text-2xl font-bold text-green-600 mb-2">
+                  {totalGameCompletions || 0}
                 </div>
-                <div className="flex-grow">
-                  <div className="text-gray-500 mb-1">Current Streak</div>
-                  <div className="text-3xl font-bold text-gray-800">
-                    {userData?.progress.streakDays || 0} days
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Last active: {userData?.progress.lastActiveDate 
-                      ? new Date(userData.progress.lastActiveDate).toLocaleDateString() 
-                      : 'Today'}
-                  </div>
+                <div className="text-gray-500">Games Completed</div>
+              </div>
+              
+              <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+                <div className="text-2xl font-bold text-purple-600 mb-2">
+                  {totalXP || 0}
                 </div>
+                <div className="text-gray-500">Total XP</div>
               </div>
             </div>
           </div>
         </div>
         
+        {/* Streak Section */}
+        <div className={`transition-all duration-700 delay-300 transform ${
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+        } mb-8`}>
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">Current Streak</h3>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                <span className="text-sm font-medium text-orange-600">
+                  {streak || 0} days
+                </span>
+              </div>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Last active: {userData?.lastActiveDate
+                ? new Date(userData.lastActiveDate).toLocaleDateString()
+                : 'Never'}
+            </p>
+          </div>
+        </div>
+        
         {/* Achievements Section */}
-        {userData?.achievements && userData.achievements.length > 0 && (
-          <div className={`transition-all duration-700 delay-300 transform ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          } mb-8`}>
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Your Achievements</h2>
-            
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {userData.achievements.map((achievement) => (
-                  <div key={achievement.id} className="bg-gray-50 p-4 rounded-lg text-center">
-                    <div className="w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center bg-blue-100">
-                      <span className="text-xl">{achievement.iconName}</span>
+        <div className={`transition-all duration-700 delay-400 transform ${
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+        }`}>
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">Achievements</h3>
+          
+          {achievements && achievements.length > 0 ? (
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="text-sm text-gray-500 mb-4">
+                You have earned {achievements.length} achievement{achievements.length !== 1 ? 's' : ''}
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {achievements.map((achievementId) => (
+                  <div key={achievementId} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </div>
-                    <div className="font-medium text-gray-800">{achievement.name}</div>
-                    <div className="text-xs text-gray-500 mt-1">{achievement.description}</div>
+                    <div>
+                      <div className="font-medium text-gray-800 capitalize">
+                        {achievementId.replace('-', ' ')}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {getAchievementDescription(achievementId)}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Settings Section (if needed) */}
-      </main>
+          ) : (
+            <div className="bg-white p-6 rounded-xl shadow-sm text-center">
+              <div className="text-gray-400 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <p className="text-gray-500">No achievements yet. Start playing to earn your first achievement!</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
+}
+
+// Helper function to get achievement descriptions
+function getAchievementDescription(achievementId: string): string {
+  switch (achievementId) {
+    case 'first-steps':
+      return 'Completed your first game';
+    case 'perfect-score':
+      return 'Achieved a perfect score';
+    case 'streak-master':
+      return 'Maintained a 7-day streak';
+    case 'xp-master':
+      return 'Earned 1000 XP';
+    default:
+      return 'Achievement unlocked';
+  }
 }

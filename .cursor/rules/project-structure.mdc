@@ -1,0 +1,14 @@
+---
+---
+
+# Project Structure Guide
+
+- The main backend entry point is [app.py](mdc:app.py).
+- The main frontend and API routes are under [src/app/](mdc:src/app/).
+- Shared React components are in [src/components/](mdc:src/components/).
+- Utility functions and services are in [src/utils/](mdc:src/utils/) and [src/services/](mdc:src/services/).
+- Type definitions are in [src/types/](mdc:src/types/).
+- Configuration files are at the project root (e.g., [package.json](mdc:package.json), [next.config.ts](mdc:next.config.ts)).
+- Static assets are in [public/](mdc:public/).
+
+Use this structure to quickly locate files and understand the codebase organization.

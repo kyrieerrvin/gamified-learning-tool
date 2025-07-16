@@ -7,6 +7,12 @@ import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { useGameStore } from '@/store/gameStore';
 import ClientOnly from '@/components/common/ClientOnly';
+import ResetTimer from '@/components/ui/ResetTimer';
+import DatabaseVerification from '@/components/debug/DatabaseVerification';
+import LevelCompletionTest from '@/components/debug/LevelCompletionTest';
+import DailyQuestsTest from '@/components/debug/DailyQuestsTest';
+import AchievementsTest from '@/components/debug/AchievementsTest';
+import StreaksTest from '@/components/debug/StreaksTest';
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -39,8 +45,20 @@ function DashboardContent() {
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className={`transition-all duration-1000 transform ${visibilityClasses} mb-8`}>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome, {user?.displayName || 'Learner'}!</h1>
-          <p className="text-gray-600">Choose a challenge or review your progress.</p>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome, {user?.displayName || 'Learner'}!</h1>
+              <p className="text-gray-600">Choose a challenge or review your progress.</p>
+            </div>
+            {/* Reset Timer */}
+            <div className="flex-shrink-0 w-full sm:w-auto">
+              <ResetTimer 
+                size="medium" 
+                showProgress={true}
+                className="w-full sm:w-auto lg:w-80"
+              />
+            </div>
+          </div>
         </div>
         
         {/* Challenge Cards */}
@@ -102,6 +120,20 @@ function DashboardContent() {
             </Link>
           </div>
         </div>
+        
+        {/* Debug Components (only in development) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className={`transition-all duration-1000 transform ${visibilityClasses} mt-8`}>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Debug & Testing</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <DatabaseVerification />
+              <LevelCompletionTest />
+              <DailyQuestsTest />
+              <AchievementsTest />
+              <StreaksTest />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

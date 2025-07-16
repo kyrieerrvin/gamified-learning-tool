@@ -7,29 +7,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
     
-    // User document rules
-    match /users/{userId} {
-      // Allow users to read only their own documents
-      allow read: if request.auth != null && request.auth.uid == userId;
+    // Game progress collection - single source of truth for all user data
+    match /gameProgress/{userId} {
+      // Allow users to read and write only their own game progress
+      allow read, write: if request.auth != null && request.auth.uid == userId;
       
-      // Allow users to create their own document
+      // Allow users to create their own game progress document
       allow create: if request.auth != null && 
                      request.auth.uid == userId && 
-                     request.resource.data.uid == userId;
-                     
-      // Allow users to update their own document with proper field validation
-      allow update: if request.auth != null && 
-                     request.auth.uid == userId &&
-                     request.resource.data.uid == userId;
-
-      // Challenge results subcollection
-      match /challengeResults/{resultId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
-        allow create: if request.auth != null && 
-                       request.auth.uid == userId && 
-                       request.resource.data.userId == userId;
-        allow update, delete: if false; // Results should be immutable once created
-      }
+                     request.resource.data.userId == userId;
     }
     
     // Admin access (for future use)

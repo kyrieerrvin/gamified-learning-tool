@@ -16,14 +16,14 @@ export function DatabaseSyncWrapper({ children }: { children: React.ReactNode })
     console.log('[App] Setting up auth state listener');
     
     // Listen for auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         console.log(`[App] User authenticated: ${user.uid}`);
         
         // Load user data from Firestore when user is authenticated
-        loadUserProgress();
+        await loadUserProgress();
         
-        // Check if streak needs to be reset
+        // Check if streak needs to be reset AFTER loading is complete
         checkStreakReset();
       } else {
         console.log('[App] No authenticated user');

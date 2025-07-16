@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/gameStore';
 import Link from 'next/link';
-import Hearts from '@/components/ui/Hearts';
+
 import { useUser } from '@/context/UserContext';
 
 export type GameType = 'make-sentence' | 'multiple-choice';
@@ -21,7 +21,7 @@ export default function ProgressionMap({ gameType, title, description }: Progres
   
   // Load user-specific progress when the user is logged in
   useEffect(() => {
-    if (userData?.uid) {
+    if (userData?.displayName) {
       console.log('User logged in, loading progress for:', userData.displayName);
       loadUserProgress();
     }
@@ -35,11 +35,18 @@ export default function ProgressionMap({ gameType, title, description }: Progres
   // Update levels state based on game progress
   useEffect(() => {
     const gameProgress = progress[gameType];
-    if (gameProgress) {
-      const levelsData = gameProgress.levelsCompleted.map((completed, index) => ({
-        completed,
-        accessible: canAccessLevel(gameType, index)
-      }));
+    if (gameProgress && gameProgress.sections) {
+      const levelsData: { completed: boolean; accessible: boolean }[] = [];
+      
+      gameProgress.sections.forEach((section, sectionIndex) => {
+        section.levels.forEach((level, levelIndex) => {
+          levelsData.push({
+            completed: level.isCompleted,
+            accessible: canAccessLevel(gameType, sectionIndex, levelIndex)
+          });
+        });
+      });
+      
       setLevels(levelsData);
     }
   }, [gameType, progress, canAccessLevel]);
@@ -51,7 +58,6 @@ export default function ProgressionMap({ gameType, title, description }: Progres
           <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-gray-600">{description}</p>
         </div>
-        <Hearts className="ml-4" />
       </div>
       
       <div className="relative py-8">

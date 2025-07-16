@@ -7,7 +7,7 @@ import {
   SentenceVerificationResult, 
   SentenceAttempt,
   MakeSentenceGameData
-} from '@/types/game';
+} from '@/types/game/index';
 import * as nlpService from '@/services/nlp';
 
 // Helper function to shuffle an array - with safety checks

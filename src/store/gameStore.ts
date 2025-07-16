@@ -38,6 +38,32 @@ export type DailyQuest = {
   expiresAt: string; // ISO date string
 };
 
+// User profile data (consolidated from UserService)
+// Note: uid is not stored since document ID is already the user ID
+export type UserProfile = {
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  joinDate: string;
+  lastActiveDate: string;
+  preferences: {
+    emailNotifications: boolean;
+    dailyReminder: boolean;
+  };
+};
+
+// Challenge result tracking
+export type ChallengeResult = {
+  id: string;
+  challengeType: 'make-sentence' | 'multiple-choice' | 'conversation';
+  score: number;
+  maxScore: number;
+  completedAt: string;
+  duration: number;
+  isCorrect: boolean;
+  gameType: string;
+};
+
 // Record of completed levels for progression tracking
 type LevelProgress = {
   [gameType: string]: {
@@ -47,6 +73,7 @@ type LevelProgress = {
     xp: number;
     quests: DailyQuest[];
     completedLevels: string[];
+    lastPlayedAt?: string;
   }
 };
 
@@ -59,17 +86,27 @@ export interface Achievement {
   gameType?: string; // Which game type this achievement was earned in
 }
 
-// GameState represents the global game state
+// GameState represents the global game state (consolidated data model)
 type GameState = {
+  // User profile
+  profile: UserProfile | null;
+  
+  // Game statistics
   score: number;
   streak: number;
   lastStreakDate: string;
   streakState: "none" | "inactive" | "active";
+  totalChallengesCompleted: number;
+  
+  // Game progress
   progress: LevelProgress;
   achievements: string[]; // For backward compatibility with existing users
   gameAchievements: {
     [gameType: string]: string[]; // Game-specific achievements by game type
   };
+  
+  // Challenge history
+  recentChallenges: ChallengeResult[];
   
   // Actions
   addPoints: (points: number, gameType: string) => void;
@@ -89,32 +126,26 @@ type GameState = {
   resetQuests: (gameType: string) => void;
   completeStreakBonusQuest: (gameType: string) => void;
   
+  // Challenge tracking
+  addChallengeResult: (result: ChallengeResult) => void;
+  
   // User specific data
   loadUserProgress: () => Promise<void>;
   saveUserProgress: () => Promise<void>;
-  migrateUserData: () => Promise<void>;
+  migrateUserData?: () => Promise<void>;
   checkStreakReset: () => void;
   checkStreakStatus: () => void;
   completeGame: (gameType: string, score: number, isCorrect: boolean) => void;
   ensureGameProgressExists: (gameType: string) => void;
+  
+  // Profile management
+  updateUserProfile: (updates: Partial<UserProfile>) => void;
 };
 
-// Helper to get today's date as a string in local time (YYYY-MM-DD format)
+// Helper to get today's date as ISO string for consistency
 const getTodayDateString = () => {
-  // Use a consistent date format for server/client to avoid hydration issues
-  if (typeof window === 'undefined') {
-    // Server-side: return a fixed value that will be replaced on client
-    return '2025-01-01'; // This will be immediately replaced on client
-  }
-  
-  // Get local date parts
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // +1 because months are 0-indexed
-  const day = String(now.getDate()).padStart(2, '0');
-  
-  // Format as YYYY-MM-DD to maintain compatibility with existing data
-  return `${year}-${month}-${day}`;
+  // Use consistent ISO format for all dates
+  return new Date().toISOString();
 };
 
 // Helper to check if two dates are consecutive days
@@ -143,25 +174,11 @@ const isSameDay = (dateStr1: string, dateStr2: string): boolean => {
   return dateStr1 === dateStr2;
 };
 
-// Helper to get tomorrow's date as a string in local time (YYYY-MM-DD format)
+// Helper to get tomorrow's date as ISO string for consistency
 const getTomorrowDateString = (): string => {
-  // Use a consistent date format for server/client to avoid hydration issues
-  if (typeof window === 'undefined') {
-    // Server-side: return a fixed value that will be replaced on client
-    return '2025-01-02'; // This will be immediately replaced on client
-  }
-  
-  // Get local date parts for tomorrow
-  const now = new Date();
-  const tomorrow = new Date(now);
+  const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  
-  const year = tomorrow.getFullYear();
-  const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
-  const day = String(tomorrow.getDate()).padStart(2, '0');
-  
-  // Format as YYYY-MM-DD to maintain compatibility with existing data
-  return `${year}-${month}-${day}`;
+  return tomorrow.toISOString();
 };
 
 // Generate sections with levels
@@ -190,6 +207,16 @@ const generateDailyQuests = (): DailyQuest[] => {
   const expiresAt = getTomorrowDateString();
   
   return [
+    {
+      id: 'daily-xp',
+      title: 'Earn 50 XP',
+      description: 'Earn 50 XP points from any game today',
+      reward: 25,
+      progress: 0,
+      target: 50,
+      isCompleted: false,
+      expiresAt
+    },
     {
       id: 'streak-bonus',
       title: 'Get 3 in a row correct',
@@ -230,13 +257,16 @@ export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
       // Initial state
+      profile: null,
       score: 0,
       streak: 0,
       lastStreakDate: '',
       streakState: 'none' as 'none' | 'inactive' | 'active',
+      totalChallengesCompleted: 0,
       progress: {},
       achievements: [],
       gameAchievements: {},
+      recentChallenges: [],
       
       // Basic game actions
       addPoints: (points, gameType) => set((state) => {
@@ -449,7 +479,7 @@ export const useGameStore = create<GameState>()(
               
               // Check for "Section Champion" achievement
               // A section is considered completed when all its levels are completed
-              const isSectionCompleted = section.levels.every(lvl => lvl.isCompleted);
+              const isSectionCompleted = section.levels.every((lvl: Level) => lvl.isCompleted);
               if (isSectionCompleted && !gameTypeAchievements.includes('section-champion')) {
                 // Add to game-specific achievements
                 gameTypeAchievements.push('section-champion');
@@ -479,7 +509,7 @@ export const useGameStore = create<GameState>()(
           // Update quest progress for game completion
           const updatedQuests = gameProgress.quests.map(quest => {
             // For the 'perfect-score' quest, count games with a score of at least 100 (including bonuses)
-            if (quest.id === 'perfect-score' && !quest.isCompleted && score >= 100) {
+            if (quest.id === 'perfect-score' && !quest.isCompleted && score !== undefined && score >= 100) {
               const newProgress = Math.min(quest.progress + 1, quest.target);
               const isCompleted = newProgress >= quest.target;
               
@@ -807,26 +837,47 @@ export const useGameStore = create<GameState>()(
         });
       },
       
+      // Challenge tracking
+      addChallengeResult: (result: ChallengeResult) => {
+        set((state) => {
+          const newChallenges = [...state.recentChallenges, result];
+          // Cap at 50 challenges to prevent document size issues
+          const cappedChallenges = newChallenges.slice(-50);
+          return { recentChallenges: cappedChallenges };
+        });
+      },
+      
       // Check if streak should be reset
       checkStreakReset: () => {
         set((state) => {
+          console.log('[StreakCheck] Current state:', { 
+            streak: state.streak, 
+            lastStreakDate: state.lastStreakDate, 
+            streakState: state.streakState 
+          });
+          
           // If there's no last streak date, no need to check
-          if (!state.lastStreakDate) return { ...state, streakState: 'none' };
+          if (!state.lastStreakDate) {
+            console.log('[StreakCheck] No last streak date, setting to none');
+            return { ...state, streakState: 'none' };
+          }
           
           const today = getTodayDateString();
           
           // If they already played today, streak is active
           if (isSameDay(state.lastStreakDate, today)) {
+            console.log('[StreakCheck] Played today, keeping streak active');
             return { ...state, streakState: 'active' };
           }
           
           // If they last played yesterday, streak is valid but inactive
           if (isConsecutiveDay(state.lastStreakDate, today)) {
+            console.log('[StreakCheck] Played yesterday, streak inactive but valid');
             return { ...state, streakState: 'inactive' };
           }
           
           // If it's been more than a day since last play, reset streak
-          console.log('Resetting streak due to inactivity');
+          console.log('[StreakCheck] Resetting streak due to inactivity');
           return {
             ...state,
             streak: 0,
@@ -930,7 +981,7 @@ export const useGameStore = create<GameState>()(
         
         // Check for "Streak Master" achievement - maintain a 7-day streak
         // Note: Streak Master is a global achievement, not game-specific
-        if (streakUpdates.streak >= 7 && !achievements.includes('streak-master')) {
+        if (streakUpdates.streak !== undefined && streakUpdates.streak >= 7 && !achievements.includes('streak-master')) {
           // Add directly to global achievements
           achievements.push('streak-master');
           
@@ -954,11 +1005,28 @@ export const useGameStore = create<GameState>()(
           [gameType]: updatedGameProgress
         };
         
+        // Create a challenge result record
+        const challengeResult: ChallengeResult = {
+          id: `${gameType}-${Date.now()}`,
+          challengeType: gameType as 'make-sentence' | 'multiple-choice' | 'conversation',
+          score,
+          maxScore: 100,
+          completedAt: new Date().toISOString(),
+          duration: 0, // TODO: Track actual duration
+          isCorrect,
+          gameType
+        };
+        
+        // Add to recent challenges
+        const updatedRecentChallenges = [...state.recentChallenges, challengeResult];
+        
         // Create the final state updates
         const gameUpdates = {
           progress: updatedProgress,
           achievements, // For backward compatibility
           gameAchievements: updatedGameAchievements,
+          totalChallengesCompleted: state.totalChallengesCompleted + 1,
+          recentChallenges: updatedRecentChallenges,
           ...streakUpdates
         };
         
@@ -984,22 +1052,28 @@ export const useGameStore = create<GameState>()(
           
           // Prepare data to save - ensure all fields exist
           const dataToSave = {
-            // User stats
+            // User profile
+            profile: get().profile,
+            
+            // Game statistics
             score: get().score || 0,
             streak: get().streak || 0,
             lastStreakDate: get().lastStreakDate || '',
             streakState: get().streakState || 'none',
+            totalChallengesCompleted: get().totalChallengesCompleted || 0,
             
             // Achievements
             achievements: get().achievements || [],
             gameAchievements: get().gameAchievements || {},
             
+            // Challenge history
+            recentChallenges: get().recentChallenges || [],
+            
             // Game progress data
             progress: get().progress || {},
             
             // Metadata
-            updatedAt: new Date().toISOString(),
-            userId: user.uid
+            updatedAt: new Date().toISOString()
           };
           
           // Log a summary of what's being saved
@@ -1040,12 +1114,15 @@ export const useGameStore = create<GameState>()(
             
             set(state => ({
               ...state,
+              profile: data.profile || null,
               score: data.score || 0,
               streak: data.streak || 0,
               lastStreakDate: data.lastStreakDate || '',
               streakState: data.streakState || 'none',
+              totalChallengesCompleted: data.totalChallengesCompleted || 0,
               achievements: data.achievements || [],
               gameAchievements: data.gameAchievements || {},
+              recentChallenges: data.recentChallenges || [],
               progress: data.progress || {}
             }));
             
@@ -1084,14 +1161,30 @@ export const useGameStore = create<GameState>()(
               }
             }
             
+            // Create initial user profile
+            const initialProfile: UserProfile = {
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+              joinDate: new Date().toISOString(),
+              lastActiveDate: new Date().toISOString(),
+              preferences: {
+                emailNotifications: false,
+                dailyReminder: true
+              }
+            };
+            
             // Create initial state to update locally
             const newUserData = {
+              profile: initialProfile,
               score: 0,
               streak: 0,
               lastStreakDate: '',
               streakState: 'none',
+              totalChallengesCompleted: 0,
               achievements: [],
               gameAchievements: {},
+              recentChallenges: [],
               progress: initialProgress,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
@@ -1144,6 +1237,16 @@ export const useGameStore = create<GameState>()(
           }
           return state;
         });
+      },
+      
+      // Profile management
+      updateUserProfile: (updates: Partial<UserProfile>) => {
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            ...updates
+          }
+        }));
       },
     }),
     {

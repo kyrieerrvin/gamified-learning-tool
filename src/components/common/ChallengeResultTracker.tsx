@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useUser } from '@/context/UserContext';
-import { ChallengeResult } from '@/types/user';
+import { ChallengeResult } from '@/store/gameStore';
 
 interface ChallengeResultTrackerProps {
   result: ChallengeResult | null;

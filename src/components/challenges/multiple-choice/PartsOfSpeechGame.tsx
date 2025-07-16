@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 import { API_ENDPOINTS } from '@/lib/config';
 import { v4 as uuidv4 } from 'uuid';
 import ChallengeResultTracker from '@/components/common/ChallengeResultTracker';
-import { ChallengeResult } from '@/types/user';
+import { ChallengeResult } from '@/store/gameStore';
 import { useUser } from '@/context/UserContext';
 import { fetchPartsOfSpeechGame } from '@/services/game';
 import { POSGameData, POSQuestion } from '@/types/game/index';
@@ -218,7 +218,7 @@ export default function PartsOfSpeechGame({
     // Create result record
     const result: ChallengeResult = {
       id: uuidv4(),
-      challengeType: 'multipleChoice',
+      challengeType: 'multiple-choice',
       score: finalScore,
       maxScore: 100,
       completedAt: new Date().toISOString(),
@@ -263,7 +263,7 @@ export default function PartsOfSpeechGame({
     // Create challenge result
     const result: ChallengeResult = {
       id: uuidv4(),
-      challengeType: 'multipleChoice',
+      challengeType: 'multiple-choice',
       score: finalScore,
       maxScore: 100,
       completedAt: new Date().toISOString(),

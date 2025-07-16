@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useGameStore } from '@/store/gameStore';
-import Hearts from '@/components/ui/Hearts';
+
 
 export default function ChallengeSelection() {
   // State to track which button is active
@@ -19,12 +19,21 @@ export default function ChallengeSelection() {
 
   // Calculate progress percentage for each game type
   const calculateProgress = (gameType: string) => {
-    if (!progress[gameType]) return 0;
+    if (!progress[gameType] || !progress[gameType].sections) return 0;
     
-    const completed = progress[gameType].levelsCompleted.filter(Boolean).length;
-    const total = progress[gameType].levelsCompleted.length;
+    let completed = 0;
+    let total = 0;
     
-    return (completed / total) * 100;
+    progress[gameType].sections.forEach(section => {
+      section.levels.forEach(level => {
+        total++;
+        if (level.isCompleted) {
+          completed++;
+        }
+      });
+    });
+    
+    return total > 0 ? (completed / total) * 100 : 0;
   };
 
   const challenges = [
@@ -55,7 +64,6 @@ export default function ChallengeSelection() {
     <div className="min-h-screen flex flex-col bg-gray-50 pt-10 px-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Choose a challenge</h1>
-        <Hearts />
       </div>
       
       <div className="flex flex-col space-y-6 max-w-md mx-auto w-full">
