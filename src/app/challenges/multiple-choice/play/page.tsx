@@ -24,26 +24,26 @@ export default function PlayMultipleChoicePage() {
   const sectionId = parseInt(searchParams.get('section') || '0');
   const levelId = parseInt(searchParams.get('level') || '0');
   
-  const { progress, canAccessLevel, completeLevel, updateData, data } = useGameProgress();
+  const { progress, canAccessLevel, completeLevel, updateData, data, loading: gameProgressLoading } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
   
-  // Check if level is accessible
+  // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
-    const checkAccess = () => {
-      const hasAccess = canAccessLevel('multiple-choice', sectionId, levelId);
-      
-      if (!hasAccess) {
-        // Redirect to challenges page if level is not accessible
-        router.push('/challenges/multiple-choice');
-      } else {
-        setLoading(false);
-      }
-    };
-    
-    checkAccess();
-  }, [sectionId, levelId, canAccessLevel, router]);
+    if (gameProgressLoading || !data) {
+      setLoading(true);
+      return;
+    }
+
+    const hasAccess = canAccessLevel('multiple-choice', sectionId, levelId);
+    if (!hasAccess) {
+      router.push('/challenges/multiple-choice');
+      return;
+    }
+
+    setLoading(false);
+  }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
   
   // Handle quest progress updates
   const updateQuestProgress = async (questId: string, progressAmount: number) => {

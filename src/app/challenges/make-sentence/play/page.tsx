@@ -13,26 +13,27 @@ export default function PlayMakeSentencePage() {
   const sectionId = parseInt(searchParams.get('section') || '0');
   const levelId = parseInt(searchParams.get('level') || '0');
   
-  const { progress, canAccessLevel, completeLevel, updateData, data } = useGameProgress();
+  const { progress, canAccessLevel, completeLevel, updateData, data, loading: gameProgressLoading } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
   
-  // Check if level is accessible
+  // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
-    const checkAccess = () => {
-      const hasAccess = canAccessLevel('make-sentence', sectionId, levelId);
-      
-      if (!hasAccess) {
-        // Redirect to challenges page if level is not accessible
-        router.push('/challenges/make-sentence');
-      } else {
-        setLoading(false);
-      }
-    };
-    
-    checkAccess();
-  }, [sectionId, levelId, canAccessLevel, router]);
+    // Wait until the game progress hook has finished loading and has data
+    if (gameProgressLoading || !data) {
+      setLoading(true);
+      return;
+    }
+
+    const hasAccess = canAccessLevel('make-sentence', sectionId, levelId);
+    if (!hasAccess) {
+      router.push('/challenges/make-sentence');
+      return;
+    }
+
+    setLoading(false);
+  }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
   
   // Handle quest progress updates
   const updateQuestProgress = async (questId: string, progressAmount: number) => {

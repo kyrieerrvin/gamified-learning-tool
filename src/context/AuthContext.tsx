@@ -8,7 +8,8 @@ import {
   signInWithPopup, 
   GoogleAuthProvider, 
   signOut as firebaseSignOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInWithRedirect
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useGameStore } from '@/store/gameStore';
@@ -131,6 +132,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
+      // Fallback to redirect flow when popup is blocked by the browser
+      if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/cancelled-popup-request') {
+        try {
+          const provider = new GoogleAuthProvider();
+          provider.addScope('email');
+          provider.addScope('profile');
+          provider.setCustomParameters({ prompt: 'select_account' });
+          await signInWithRedirect(auth, provider);
+          return; // Redirecting, no further action here
+        } catch (redirectError) {
+          console.error('Google redirect sign-in failed:', redirectError);
+          throw redirectError;
+        }
+      }
       if (error.code !== 'auth/popup-closed-by-user') {
         throw error;
       }
