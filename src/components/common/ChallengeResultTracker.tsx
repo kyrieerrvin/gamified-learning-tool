@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useUser } from '@/context/UserContext';
-import { ChallengeResult } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
+import { ChallengeResult } from '@/hooks/useGameProgress';
 
 interface ChallengeResultTrackerProps {
   result: ChallengeResult | null;
@@ -26,11 +29,13 @@ interface ChallengeResultTrackerProps {
  * const handleGameComplete = (score: number) => {
  *   setResult({
  *     id: uuidv4(),
- *     challengeType: 'multipleChoice',
+ *     challengeType: 'multiple-choice',
  *     score,
  *     maxScore: 100,
  *     completedAt: new Date().toISOString(),
- *     duration: gameDuration
+ *     duration: gameDuration,
+ *     isCorrect: score >= 80,
+ *     gameType: 'multiple-choice'
  *   });
  * }
  * 
@@ -42,15 +47,25 @@ interface ChallengeResultTrackerProps {
  * ```
  */
 export function ChallengeResultTracker({ result, onResultProcessed }: ChallengeResultTrackerProps) {
-  const { addChallengeResult, loading } = useUser();
+  const { user } = useAuth();
+  const { data, loading } = useGameProgress();
 
   useEffect(() => {
-    // Only process if result exists and is not null
-    if (result && !loading) {
+    // Only process if result exists and user is authenticated
+    if (result && user?.uid && !loading) {
       console.log('Processing challenge result:', result);
       
-      // Add result to Firestore
-      addChallengeResult(result)
+      // Add result to Firestore directly
+      const userDocRef = doc(db, 'gameProgress', user.uid);
+      
+      updateDoc(userDocRef, {
+        recentChallenges: arrayUnion({
+          ...result,
+          completedAt: new Date().toISOString()
+        }),
+        totalChallengesCompleted: (data?.totalChallengesCompleted || 0) + 1,
+        updatedAt: new Date().toISOString()
+      })
         .then(() => {
           console.log('Challenge result saved to Firestore');
           
@@ -63,7 +78,7 @@ export function ChallengeResultTracker({ result, onResultProcessed }: ChallengeR
           console.error('Error saving challenge result:', error);
         });
     }
-  }, [result, addChallengeResult, loading, onResultProcessed]);
+  }, [result, user?.uid, loading, data?.totalChallengesCompleted, onResultProcessed]);
 
   // This is a utility component that doesn't render anything
   return null;

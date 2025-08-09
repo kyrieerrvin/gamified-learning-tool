@@ -818,28 +818,14 @@ def create_cors_response(data):
     return response
 
 if __name__ == '__main__':
-    # Use exactly port 5000 - frontend expects this port
-    port = 5000
-    
-    # Check if port 5000 is in use
-    import socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    port_available = False
-    try:
-        sock.bind(('0.0.0.0', port))
-        port_available = True
-    except OSError:
-        logger.error(f"Port {port} is already in use! Please free up this port first.")
-        logger.error("You may need to kill the process using: lsof -i :5000 | grep LISTEN")
-        sys.exit(1)
-    finally:
-        sock.close()
-        
+    # Respect platform-provided PORT (Render/Railway/Fly), default to 5000 locally
+    port = int(os.environ.get('PORT', '5000'))
+
     # Log startup information
     logger.info(f"Using Python {sys.version}")
     logger.info(f"Model status: {MODEL_STATUS}")
     logger.info(f"Starting NLP API server on port {port}")
-    print(f"NLP API server running at: http://localhost:{port}")
-    
-    # Run the Flask app
-    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
+    print(f"NLP API server running at: http://0.0.0.0:{port}")
+
+    # Run the Flask app (no reloader in containers)
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)

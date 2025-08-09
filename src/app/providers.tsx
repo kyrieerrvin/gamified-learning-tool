@@ -2,8 +2,6 @@
 'use client';
 
 import { AuthProvider } from '@/context/AuthContext';
-import { UserProvider } from '@/context/UserContext';
-import GameProgressInitializer from '@/components/common/GameProgressInitializer';
 import ClientOnly from '@/components/common/ClientOnly';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -16,10 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }
     >
       <AuthProvider>
-        <UserProvider>
-          <GameProgressInitializer />
-          {children}
-        </UserProvider>
+        {children}
       </AuthProvider>
     </ClientOnly>
   );

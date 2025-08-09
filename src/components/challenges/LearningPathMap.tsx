@@ -3,7 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useGameStore, Section, Level } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
+
+// Import the types from useGameProgress
+interface Section {
+  id: number;
+  title: string;
+  description: string;
+  isLocked: boolean;
+  isCompleted: boolean;
+  levels: Level[];
+}
+
+interface Level {
+  id: number;
+  title: string;
+  isLocked: boolean;
+  isCompleted: boolean;
+  bestScore: number;
+  attempts: number;
+  lastPlayed: string | null;
+}
 
 interface LearningPathMapProps {
   gameType: 'make-sentence' | 'multiple-choice';
@@ -32,25 +52,12 @@ function toRoman(num: number): string {
 
 export default function LearningPathMap({ gameType, title = "Learning Path" }: LearningPathMapProps) {
   const router = useRouter();
-  const { progress, initializeGameProgress, canAccessLevel } = useGameStore();
-  const [isLoading, setIsLoading] = useState(true);
+  const { progress, canAccessLevel, loading } = useGameProgress();
   
   // Set primary color based on game type
   const primaryColor = gameType === 'make-sentence' ? 'green' : 'blue';
   
-  useEffect(() => {
-    // Initialize game progress for this game type
-    initializeGameProgress(gameType);
-    
-    // Small delay to ensure initialization is complete
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [gameType, initializeGameProgress]);
-  
-  if (isLoading) {
+  if (loading) {
     return <div className="p-6 text-center">Loading learning path...</div>;
   }
   

@@ -1,21 +1,17 @@
 // src/components/challenges/ChallengeSelection.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 
 
 export default function ChallengeSelection() {
   // State to track which button is active
   const [activeButton, setActiveButton] = useState<string | null>(null);
-  const { progress, initializeGameProgress } = useGameStore();
+  const { progress, data } = useGameProgress();
 
-  // Initialize game progress for both game types if needed
-  useEffect(() => {
-    initializeGameProgress('make-sentence');
-    initializeGameProgress('multiple-choice');
-  }, [initializeGameProgress]);
+  // Game progress is automatically initialized by the hook
 
   // Calculate progress percentage for each game type
   const calculateProgress = (gameType: string) => {

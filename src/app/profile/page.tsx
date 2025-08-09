@@ -2,15 +2,14 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useUser } from '@/context/UserContext';
 import { useGameStore } from '@/store/gameStore';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
-  const { userData, loading: userDataLoading } = useUser();
-  const { score, streak, totalChallengesCompleted, achievements, progress } = useGameStore();
+  // Remove UserContext usage and use profile from game store instead
+  const { score, streak, totalChallengesCompleted, achievements, progress, profile } = useGameStore();
   
   // Animation state
   const [isVisible, setIsVisible] = useState(false);
@@ -20,7 +19,7 @@ export default function ProfilePage() {
     setIsVisible(true);
   }, []);
 
-  const loading = authLoading || userDataLoading;
+  const loading = authLoading;
 
   if (loading) {
     return (
@@ -60,8 +59,8 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-semibold">{user?.displayName || "Tagalog Learner"}</h2>
                 <p className="text-gray-600">{user?.email}</p>
                 <p className="text-gray-500 text-sm mt-1">
-                  Member since {userData?.joinDate 
-                    ? new Date(userData.joinDate).toLocaleDateString() 
+                  Member since {profile?.joinDate 
+                    ? new Date(profile.joinDate).toLocaleDateString() 
                     : new Date().toLocaleDateString()}
                 </p>
               </div>
@@ -146,8 +145,8 @@ export default function ProfilePage() {
               </div>
             </div>
             <p className="text-gray-600 text-sm">
-              Last active: {userData?.lastActiveDate
-                ? new Date(userData.lastActiveDate).toLocaleDateString()
+              Last active: {profile?.lastActiveDate
+                ? new Date(profile.lastActiveDate).toLocaleDateString()
                 : 'Never'}
             </p>
           </div>

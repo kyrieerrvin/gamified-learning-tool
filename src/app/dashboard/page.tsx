@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import ClientOnly from '@/components/common/ClientOnly';
 import ResetTimer from '@/components/ui/ResetTimer';
 import DatabaseVerification from '@/components/debug/DatabaseVerification';
@@ -17,22 +17,16 @@ import StreaksTest from '@/components/debug/StreaksTest';
 function DashboardContent() {
   const { user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
-  const { loadUserProgress, checkAndRefreshQuests } = useGameStore();
+  const { data, loading } = useGameProgress();
 
   useEffect(() => {
-    loadUserProgress();
-    
     // Delay setting visibility to avoid transition on initial load
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
     
-    // Refresh quests for all game types
-    checkAndRefreshQuests('make-sentence');
-    checkAndRefreshQuests('multiple-choice');
-    
     return () => clearTimeout(timer);
-  }, [loadUserProgress, checkAndRefreshQuests]);
+  }, []);
 
   const visibilityClasses = isVisible 
     ? 'translate-y-0 opacity-100'

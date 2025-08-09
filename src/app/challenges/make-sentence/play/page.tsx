@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import MakeSentenceGame from '@/components/challenges/make-sentence/MakeSentenceGame';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 
 export default function PlayMakeSentencePage() {
@@ -13,7 +13,7 @@ export default function PlayMakeSentencePage() {
   const sectionId = parseInt(searchParams.get('section') || '0');
   const levelId = parseInt(searchParams.get('level') || '0');
   
-  const { progress, canAccessLevel, completeLevel, addPoints, addProgressToQuest } = useGameStore();
+  const { progress, canAccessLevel, completeLevel, updateData, data } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
@@ -34,28 +34,45 @@ export default function PlayMakeSentencePage() {
     checkAccess();
   }, [sectionId, levelId, canAccessLevel, router]);
   
+  // Handle quest progress updates
+  const updateQuestProgress = async (questId: string, progressAmount: number) => {
+    if (!data?.progress['make-sentence']?.quests) return;
+    
+    const quests = [...data.progress['make-sentence'].quests];
+    const quest = quests.find(q => q.id === questId);
+    
+    if (quest && !quest.isCompleted) {
+      quest.progress = Math.min(quest.progress + progressAmount, quest.target);
+      if (quest.progress >= quest.target) {
+        quest.isCompleted = true;
+      }
+      
+      await updateData({
+        progress: {
+          ...data.progress,
+          'make-sentence': {
+            ...data.progress['make-sentence'],
+            quests
+          }
+        }
+      });
+    }
+  };
+  
   // Handle game completion
-  const handleComplete = (score: number, levelCompleted: boolean) => {
+  const handleComplete = async (score: number, levelCompleted: boolean) => {
     setScore(score);
     setGameCompleted(true);
     
     // Complete the level in game store
-    completeLevel('make-sentence', sectionId, levelId, score);
-    
-    // Calculate correct XP (5 XP per correct answer)
-    const questionsCount = 10; // Standard number of questions per level
-    const correctAnswers = Math.floor((score / 100) * questionsCount);
-    const earnedXP = correctAnswers * 5;
-    
-    // Add XP to game progress (we now do this in the completeLevel function)
-    // addPoints(earnedXP, 'make-sentence');
+    await completeLevel('make-sentence', sectionId, levelId, score);
     
     // Update daily quest progress for game completion
-    addProgressToQuest('make-sentence', 'complete-games', 1);
+    await updateQuestProgress('complete-games', 1);
     
     // Add progress to perfect score quest if applicable
     if (score === 100) {
-      addProgressToQuest('make-sentence', 'perfect-score', 1);
+      await updateQuestProgress('perfect-score', 1);
     }
   };
   

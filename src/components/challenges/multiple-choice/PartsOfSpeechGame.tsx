@@ -2,13 +2,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 import { API_ENDPOINTS } from '@/lib/config';
 import { v4 as uuidv4 } from 'uuid';
 import ChallengeResultTracker from '@/components/common/ChallengeResultTracker';
-import { ChallengeResult } from '@/store/gameStore';
-import { useUser } from '@/context/UserContext';
+import { ChallengeResult } from '@/hooks/useGameProgress';
 import { fetchPartsOfSpeechGame } from '@/services/game';
 import { POSGameData, POSQuestion } from '@/types/game/index';
 
@@ -39,8 +38,8 @@ export default function PartsOfSpeechGame({
   const [score, setScore] = useState(0);
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(difficulty);
   
-  // Game store for managing global score and streak
-  const { addPoints, increaseStreak, completeStreakBonusQuest, completeLevel, completeGame } = useGameStore();
+  // New useGameProgress hook instead of old gameStore
+  const { addPoints, increaseStreak, completeLevel, updateData, data: gameData } = useGameProgress();
   
   // Track consecutive correct answers for streak bonus
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
@@ -52,9 +51,6 @@ export default function PartsOfSpeechGame({
   // Track game duration
   const [startTime, setStartTime] = useState<number | null>(null);
   const [gameEndTime, setGameEndTime] = useState<number | null>(null);
-  
-  // User context for saving game results
-  const { userData, addChallengeResult } = useUser();
   
   // Final challenge result
   const [challengeResult, setChallengeResult] = useState<ChallengeResult | null>(null);
@@ -127,7 +123,7 @@ export default function PartsOfSpeechGame({
   };
   
   // Handle option selection
-  const handleOptionSelect = (option: string) => {
+  const handleOptionSelect = async (option: string) => {
     setSelectedOption(option);
     
     const currentQuestion = getCurrentQuestion();
@@ -150,13 +146,33 @@ export default function PartsOfSpeechGame({
         setStreakBonusActive(true);
         totalPoints += 3; // Bonus points for streak
         
-        // Complete the streak-bonus quest for this specific game type
-        completeStreakBonusQuest('multiple-choice');
+        // Complete the streak-bonus quest manually
+        if (gameData?.progress['multiple-choice']?.quests) {
+          const quests = [...gameData.progress['multiple-choice'].quests];
+          const streakBonusQuest = quests.find(q => q.id === 'streak-bonus');
+          if (streakBonusQuest && !streakBonusQuest.isCompleted) {
+            streakBonusQuest.progress = Math.min(streakBonusQuest.progress + 1, streakBonusQuest.target);
+            if (streakBonusQuest.progress >= streakBonusQuest.target) {
+              streakBonusQuest.isCompleted = true;
+            }
+            
+            // Update the quests data
+            await updateData({
+              progress: {
+                ...gameData.progress,
+                'multiple-choice': {
+                  ...gameData.progress['multiple-choice'],
+                  quests
+                }
+              }
+            });
+          }
+        }
       }
       
       setScore(prevScore => prevScore + totalPoints);
-      addPoints(totalPoints, 'multiple-choice');
-      increaseStreak(); 
+      await addPoints(totalPoints, 'multiple-choice');
+      await increaseStreak(); 
       setFeedback('Tama! Magaling!');
     } else {
       // Don't reset streak on incorrect answers for daily streak
@@ -166,7 +182,7 @@ export default function PartsOfSpeechGame({
       
       // Subtract points for wrong answer, but don't go below 0
       setScore(prevScore => Math.max(0, prevScore - 5));
-      addPoints(-5, 'multiple-choice');
+      await addPoints(-5, 'multiple-choice');
       
       setFeedback(`Hindi tama. Ang tamang sagot ay "${currentQuestion.correctAnswer}".`);
       
@@ -207,7 +223,7 @@ export default function PartsOfSpeechGame({
   };
   
   // Handle game completion
-  const handleGameCompletion = () => {
+  const handleGameCompletion = async () => {
     if (gameOver) return; // Prevent multiple calls
     
     setGameOver(true);
@@ -222,22 +238,42 @@ export default function PartsOfSpeechGame({
       score: finalScore,
       maxScore: 100,
       completedAt: new Date().toISOString(),
-      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0
+      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0,
+      isCorrect: finalScore >= 80,
+      gameType: 'multiple-choice'
     };
     
     setChallengeResult(result);
     
     // Update database with game progress
-    if (typeof levelNumber === 'number') {
+    if (typeof levelNumber === 'number' && gameData) {
       // Map difficulty to section ID
       const sectionMap = { 'easy': 0, 'medium': 1, 'hard': 2 };
       const sectionId = sectionMap[difficultyLevel] || 0;
       
-      // First, complete the level in the database
-      completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
+      // Complete the level in the database
+      await completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
       
-      // Then mark the game as completed, updating streak and timestamps
-      completeGame('multiple-choice', finalScore, score > 0);
+      // Update quest progress for completing games
+      const quests = [...(gameData.progress['multiple-choice']?.quests || [])];
+      const completeGamesQuest = quests.find(q => q.id === 'complete-games');
+      if (completeGamesQuest && !completeGamesQuest.isCompleted) {
+        completeGamesQuest.progress = Math.min(completeGamesQuest.progress + 1, completeGamesQuest.target);
+        if (completeGamesQuest.progress >= completeGamesQuest.target) {
+          completeGamesQuest.isCompleted = true;
+        }
+        
+        // Update the quests data
+        await updateData({
+          progress: {
+            ...gameData.progress,
+            'multiple-choice': {
+              ...gameData.progress['multiple-choice'],
+              quests
+            }
+          }
+        });
+      }
       
       console.log(`[GameCompletion] Saved progress to database. Level: ${levelNumber}, Section: ${sectionId}`);
     }
@@ -251,7 +287,7 @@ export default function PartsOfSpeechGame({
   };
   
   // Finish the game and calculate final score
-  const finishGame = () => {
+  const finishGame = async () => {
     setGameEndTime(Date.now());
     setGameOver(true);
     
@@ -267,22 +303,42 @@ export default function PartsOfSpeechGame({
       score: finalScore,
       maxScore: 100,
       completedAt: new Date().toISOString(),
-      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0
+      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0,
+      isCorrect: finalScore >= 80,
+      gameType: 'multiple-choice'
     };
     
     setChallengeResult(result);
     
     // Update database with game progress
-    if (typeof levelNumber === 'number') {
+    if (typeof levelNumber === 'number' && gameData) {
       // Map difficulty to section ID
       const sectionMap = { 'easy': 0, 'medium': 1, 'hard': 2 };
       const sectionId = sectionMap[difficultyLevel] || 0;
       
-      // First, complete the level in the database
-      completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
+      // Complete the level in the database
+      await completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
       
-      // Then mark the game as completed, updating streak and timestamps
-      completeGame('multiple-choice', finalScore, score > 0);
+      // Update quest progress for completing games
+      const quests = [...(gameData.progress['multiple-choice']?.quests || [])];
+      const completeGamesQuest = quests.find(q => q.id === 'complete-games');
+      if (completeGamesQuest && !completeGamesQuest.isCompleted) {
+        completeGamesQuest.progress = Math.min(completeGamesQuest.progress + 1, completeGamesQuest.target);
+        if (completeGamesQuest.progress >= completeGamesQuest.target) {
+          completeGamesQuest.isCompleted = true;
+        }
+        
+        // Update the quests data
+        await updateData({
+          progress: {
+            ...gameData.progress,
+            'multiple-choice': {
+              ...gameData.progress['multiple-choice'],
+              quests
+            }
+          }
+        });
+      }
       
       console.log(`[GameCompletion] Saved progress to database. Level: ${levelNumber}, Section: ${sectionId}`);
     }

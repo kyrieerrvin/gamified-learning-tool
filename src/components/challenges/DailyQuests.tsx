@@ -2,32 +2,39 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useGameStore, DailyQuest as DailyQuestType } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import { cn } from '@/utils/cn';
+
+// Import the types from useGameProgress
+interface DailyQuest {
+  id: string;
+  title: string;
+  description: string;
+  reward: number;
+  progress: number;
+  target: number;
+  isCompleted: boolean;
+  expiresAt: string;
+}
 
 interface DailyQuestsProps {
   gameType: 'make-sentence' | 'multiple-choice';
 }
 
 export default function DailyQuests({ gameType }: DailyQuestsProps) {
-  const { progress, initializeGameProgress, completeQuest } = useGameStore();
-  const [quests, setQuests] = useState<DailyQuestType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { progress, updateData, data } = useGameProgress();
+  const [quests, setQuests] = useState<DailyQuest[]>([]);
   const [totalXP, setTotalXP] = useState(0);
   
   useEffect(() => {
-    // Initialize game progress for this game type
-    initializeGameProgress(gameType);
-    
     const checkProgress = () => {
       const gameProgress = progress[gameType];
       if (gameProgress) {
-        setQuests(gameProgress.quests);
+        setQuests(gameProgress.quests || []);
         setTotalXP(gameProgress.xp || 0);
-        setIsLoading(false);
         
         // Add debug log for daily-xp quest
-        const dailyXP = gameProgress.quests.find(q => q.id === 'daily-xp');
+        const dailyXP = gameProgress.quests?.find(q => q.id === 'daily-xp');
         console.log(`[DEBUG-DailyQuests] Game type: ${gameType}`);
         console.log(`[DEBUG-DailyQuests] Game XP: ${gameProgress.xp}`);
         if (dailyXP) {
@@ -38,14 +45,31 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
     };
     
     checkProgress();
-    
-    // Check again if progress changes
-    const intervalId = setInterval(checkProgress, 500);
-    
-    return () => clearInterval(intervalId);
-  }, [gameType, initializeGameProgress, progress]);
+  }, [gameType, progress]);
   
-  if (isLoading) {
+  // Handle quest completion
+  const handleCompleteQuest = async (questId: string) => {
+    if (!data?.progress[gameType]?.quests) return;
+    
+    const quests = [...data.progress[gameType].quests];
+    const quest = quests.find(q => q.id === questId);
+    
+    if (quest && !quest.isCompleted && quest.progress >= quest.target) {
+      quest.isCompleted = true;
+      
+      await updateData({
+        progress: {
+          ...data.progress,
+          [gameType]: {
+            ...data.progress[gameType],
+            quests
+          }
+        }
+      });
+    }
+  };
+  
+  if (!quests.length) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-duolingo-yellow"></div>
@@ -72,7 +96,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
       
       <div className="space-y-4">
         {quests.map((quest) => (
-          <QuestCard key={quest.id} quest={quest} gameType={gameType} onComplete={() => completeQuest(gameType, quest.id)} />
+          <QuestCard key={quest.id} quest={quest} gameType={gameType} onComplete={() => handleCompleteQuest(quest.id)} />
         ))}
       </div>
       
@@ -98,7 +122,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
 }
 
 interface QuestCardProps {
-  quest: DailyQuestType;
+  quest: DailyQuest;
   gameType: string;
   onComplete: () => void;
 }

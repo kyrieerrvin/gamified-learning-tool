@@ -250,3 +250,28 @@ For the Python backend, you can deploy to platforms like:
 - AWS Lambda
 
 Remember to update the `NEXT_PUBLIC_CALAMANCY_API_URL` environment variable to point to your deployed Python backend.
+
+## Deploying the NLP Flask API
+
+1) Build and run locally (optional):
+
+```bash
+docker build -t tagalog-nlp-api .
+docker run --rm -it -p 5000:5000 tagalog-nlp-api
+```
+
+2) Deploy the container to a host (choose one):
+- Render: create a Web Service from Dockerfile
+- Railway: deploy via Dockerfile
+- Fly.io: `fly launch` and deploy
+- Cloud Run: `gcloud run deploy --source . --allow-unauthenticated`
+
+3) Set the frontend to use the API:
+- In Vercel project → Settings → Environment Variables, set:
+  - `NEXT_PUBLIC_NLP_API_URL` = `https://<your-nlp-api-host>` (no trailing slash)
+
+4) Re-deploy the Vercel app to pick up the env var.
+
+Notes:
+- The Flask API listens on `PORT` (defaults to 5000).
+- The Next.js app falls back to JS/mock data if the API is unreachable, so user testing still works.

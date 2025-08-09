@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 import * as gameService from '@/services/game';
 import * as nlpService from '@/services/nlp';
@@ -41,7 +41,7 @@ export default function MakeSentenceGame({
   
   /************ All Custom/Library Hooks Next ************/
   // Global game store
-  const { addPoints, increaseStreak, completeStreakBonusQuest } = useGameStore();
+  const { addPoints, increaseStreak, data } = useGameProgress();
   
   /************ All Effect Hooks Last ************/
   // Load game data on component mount
@@ -142,8 +142,8 @@ export default function MakeSentenceGame({
           setStreakBonusActive(true);
           totalPoints += 3; // Bonus points for streak
           
-          // Complete the streak-bonus quest for this specific game type
-          completeStreakBonusQuest('make-sentence');
+          // TODO: Implement quest completion in new system
+          // completeStreakBonusQuest('make-sentence');
         }
         
         addPoints(totalPoints, 'make-sentence');

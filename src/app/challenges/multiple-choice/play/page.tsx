@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 
 // Dynamically import the game component to avoid module not found errors
@@ -24,7 +24,7 @@ export default function PlayMultipleChoicePage() {
   const sectionId = parseInt(searchParams.get('section') || '0');
   const levelId = parseInt(searchParams.get('level') || '0');
   
-  const { progress, canAccessLevel, completeLevel, addPoints, addProgressToQuest } = useGameStore();
+  const { progress, canAccessLevel, completeLevel, updateData, data } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
@@ -45,21 +45,46 @@ export default function PlayMultipleChoicePage() {
     checkAccess();
   }, [sectionId, levelId, canAccessLevel, router]);
   
+  // Handle quest progress updates
+  const updateQuestProgress = async (questId: string, progressAmount: number) => {
+    if (!data?.progress['multiple-choice']?.quests) return;
+    
+    const quests = [...data.progress['multiple-choice'].quests];
+    const quest = quests.find(q => q.id === questId);
+    
+    if (quest && !quest.isCompleted) {
+      quest.progress = Math.min(quest.progress + progressAmount, quest.target);
+      if (quest.progress >= quest.target) {
+        quest.isCompleted = true;
+      }
+      
+      await updateData({
+        progress: {
+          ...data.progress,
+          'multiple-choice': {
+            ...data.progress['multiple-choice'],
+            quests
+          }
+        }
+      });
+    }
+  };
+  
   // Handle game completion
-  const handleComplete = (score: number, levelCompleted: boolean) => {
+  const handleComplete = async (score: number, levelCompleted: boolean) => {
     setScore(score);
     setGameCompleted(true);
     
     // Complete level with the score to determine if next level should unlock
-    completeLevel('multiple-choice', sectionId, levelId, score);
+    await completeLevel('multiple-choice', sectionId, levelId, score);
     
     // Update perfect score quest only if perfect
     if (score === 100) {
-      addProgressToQuest('multiple-choice', 'perfect-score', 1);
+      await updateQuestProgress('perfect-score', 1);
     }
     
     // Always update complete-games quest - any completed game counts
-    addProgressToQuest('multiple-choice', 'complete-games', 1);
+    await updateQuestProgress('complete-games', 1);
     
     // Add additional debug log for XP tracking
     console.log(`[XP Debug - MultipleChoice] Score: ${score}, Level: ${levelId}, Section: ${sectionId}`);

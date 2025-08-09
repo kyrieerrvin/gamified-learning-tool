@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import Link from 'next/link';
-
-import { useUser } from '@/context/UserContext';
 
 export type GameType = 'make-sentence' | 'multiple-choice';
 
@@ -15,22 +13,8 @@ interface ProgressionMapProps {
 }
 
 export default function ProgressionMap({ gameType, title, description }: ProgressionMapProps) {
-  const { initializeGameProgress, canAccessLevel, progress, loadUserProgress } = useGameStore();
+  const { canAccessLevel, progress, profile } = useGameProgress();
   const [levels, setLevels] = useState<{ completed: boolean; accessible: boolean }[]>([]);
-  const { userData } = useUser();
-  
-  // Load user-specific progress when the user is logged in
-  useEffect(() => {
-    if (userData?.displayName) {
-      console.log('User logged in, loading progress for:', userData.displayName);
-      loadUserProgress();
-    }
-  }, [userData, loadUserProgress]);
-  
-  // Initialize progression data for this game type
-  useEffect(() => {
-    initializeGameProgress(gameType);
-  }, [gameType, initializeGameProgress]);
   
   // Update levels state based on game progress
   useEffect(() => {

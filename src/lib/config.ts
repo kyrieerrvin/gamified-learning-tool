@@ -40,10 +40,14 @@ API_SERVER_PORT = readDynamicPort();
 
 // This function gets executed both in server-side rendering and browser
 function getApiBaseUrl() {
+  // Prefer explicit env override in all environments
+  if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_NLP_API_URL) {
+    return process.env.NEXT_PUBLIC_NLP_API_URL;
+  }
+
   // If we're in the browser, check if there's a port override in localStorage
   if (typeof window !== 'undefined') {
     try {
-      // Extra check to ensure localStorage is available
       if (typeof localStorage !== 'undefined') {
         const savedPort = localStorage.getItem('nlp_api_port');
         if (savedPort) {
@@ -56,13 +60,13 @@ function getApiBaseUrl() {
     } catch (e) {
       console.warn('Failed to read port from localStorage:', e);
     }
-    
+
     // Use default port if no override
     return `http://localhost:${API_SERVER_PORT}`;
   }
   
-  // Server-side rendering case
-  return process.env.NEXT_PUBLIC_NLP_API_URL || `http://localhost:${API_SERVER_PORT}`;
+  // Server-side rendering case fallback
+  return `http://localhost:${API_SERVER_PORT}`;
 }
 
 // API Endpoints

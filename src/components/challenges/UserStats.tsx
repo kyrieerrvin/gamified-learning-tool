@@ -2,27 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import { cn } from '@/utils/cn';
-import { useUser } from '@/context/UserContext';
 
 interface UserStatsProps {
   gameType: 'make-sentence' | 'multiple-choice';
 }
 
 export default function UserStats({ gameType }: UserStatsProps) {
-  const { progress, initializeGameProgress, achievements, gameAchievements } = useGameStore();
-  const { userData } = useUser();
+  const { progress, achievements, gameAchievements, profile, loading } = useGameProgress();
   const [xp, setXP] = useState(0);
   const [completedLevels, setCompletedLevels] = useState(0);
   const [totalLevels, setTotalLevels] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [gameProgress, setGameProgress] = useState(progress[gameType]);
   
   useEffect(() => {
-    // Initialize game progress for this game type
-    initializeGameProgress(gameType);
-    
     // Set game progress for this specific game type
     setGameProgress(progress[gameType]);
     
@@ -36,14 +30,16 @@ export default function UserStats({ gameType }: UserStatsProps) {
         let completed = 0;
         let total = 0;
         
-        gameProgress.sections.forEach(section => {
-          section.levels.forEach(level => {
-            total++;
-            if (level.isCompleted) {
-              completed++;
-            }
+        if (gameProgress.sections) {
+          gameProgress.sections.forEach(section => {
+            section.levels.forEach(level => {
+              total++;
+              if (level.isCompleted) {
+                completed++;
+              }
+            });
           });
-        });
+        }
         
         setCompletedLevels(completed);
         setTotalLevels(total);
@@ -51,14 +47,12 @@ export default function UserStats({ gameType }: UserStatsProps) {
         // Update game progress
         setGameProgress(gameProgress);
       }
-      
-      setIsLoading(false);
     };
     
     checkProgress();
-  }, [gameType, progress, initializeGameProgress]);
+  }, [gameType, progress]);
   
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-duolingo-blue"></div>
@@ -76,10 +70,10 @@ export default function UserStats({ gameType }: UserStatsProps) {
         <div className="flex flex-col items-center">
           <div className="relative">
             <div className="w-16 h-16 rounded-full bg-gradient-to-r from-duolingo-blue to-duolingo-green flex items-center justify-center text-white text-2xl font-bold">
-              {userData?.displayName?.charAt(0) || 'U'}
+              {profile?.displayName?.charAt(0) || 'U'}
             </div>
           </div>
-          <p className="mt-3 font-medium text-gray-800 text-sm">{userData?.displayName || 'User'}</p>
+          <p className="mt-3 font-medium text-gray-800 text-sm">{profile?.displayName || 'User'}</p>
         </div>
         
         {/* Stats grid */}

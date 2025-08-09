@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import { cn } from '@/utils/cn';
 
 type QuestsListProps = {
@@ -10,17 +10,11 @@ type QuestsListProps = {
 };
 
 export function QuestsList({ gameType }: QuestsListProps) {
-  const { progress, checkAndRefreshQuests, initializeGameProgress, completeQuest } = useGameStore();
+  const { progress, updateData, data } = useGameProgress();
   const [quests, setQuests] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize game progress for this game type if needed
-    initializeGameProgress(gameType);
-    
-    // Check and refresh quests if needed
-    checkAndRefreshQuests(gameType);
-    
     // Update local quests state when progress changes
     const updateQuests = () => {
       if (progress && progress[gameType] && progress[gameType].quests) {
@@ -32,10 +26,27 @@ export function QuestsList({ gameType }: QuestsListProps) {
     };
     
     updateQuests();
-  }, [gameType, progress, checkAndRefreshQuests, initializeGameProgress]);
+  }, [gameType, progress]);
 
-  const handleClaimReward = (questId: string) => {
-    completeQuest(gameType, questId);
+  const handleClaimReward = async (questId: string) => {
+    if (!data?.progress[gameType]?.quests) return;
+    
+    const quests = [...data.progress[gameType].quests];
+    const quest = quests.find(q => q.id === questId);
+    
+    if (quest && !quest.isCompleted && quest.progress >= quest.target) {
+      quest.isCompleted = true;
+      
+      await updateData({
+        progress: {
+          ...data.progress,
+          [gameType]: {
+            ...data.progress[gameType],
+            quests
+          }
+        }
+      });
+    }
   };
 
   if (isLoading) {

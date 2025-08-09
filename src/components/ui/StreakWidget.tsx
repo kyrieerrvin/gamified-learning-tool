@@ -1,17 +1,13 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 
 export default function StreakWidget() {
-  const { streak, streakState, checkStreakReset, checkStreakStatus } = useGameStore();
+  const { streak, streakState, data } = useGameProgress();
   
-  useEffect(() => {
-    // Check streak status on component mount
-    checkStreakReset();
-    checkStreakStatus();
-  }, [checkStreakReset, checkStreakStatus]);
+  // Streak status is automatically handled by the real-time hook
 
   // Get tooltip text based on streak state
   const getTooltipText = () => {
