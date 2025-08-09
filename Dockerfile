@@ -16,7 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy app code
 COPY app.py ./
-COPY tl_tocylog_trf ./tl_tocylog_trf
+# Optional: copy local model if available
+# COPY tl_tocylog_trf ./tl_tocylog_trf
 
 # Environment
 ENV PORT=5000

@@ -101,9 +101,13 @@ MAKE_SENTENCE_WORDS = [
 # Load the ToCylog NLP model
 try:
     logger.info("Loading toCylog model...")
-    nlp = spacy.load("./tl_tocylog_trf")
-    logger.info("✅ ToCylog model loaded successfully!")
-    MODEL_STATUS = "loaded"
+    # Try to load local model if folder exists; otherwise skip
+    if os.path.isdir("./tl_tocylog_trf"):
+        nlp = spacy.load("./tl_tocylog_trf")
+        logger.info("✅ ToCylog model loaded successfully!")
+        MODEL_STATUS = "loaded"
+    else:
+        raise FileNotFoundError("tl_tocylog_trf model folder not found")
 except Exception as e:
     logger.error(f"Error loading model with specified version: {str(e)}")
     logger.error("❌ Failed to load ToCylog model. Using fallback POS tagging logic.")
