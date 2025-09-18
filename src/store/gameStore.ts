@@ -208,19 +208,9 @@ const generateDailyQuests = (): DailyQuest[] => {
   
   return [
     {
-      id: 'daily-xp',
-      title: 'Earn 50 XP',
-      description: 'Earn 50 XP points from any game today',
-      reward: 25,
-      progress: 0,
-      target: 50,
-      isCompleted: false,
-      expiresAt
-    },
-    {
       id: 'streak-bonus',
-      title: 'Get 3 in a row correct',
-      description: 'Answer 3 questions correctly in a row',
+      title: 'Get 3 Correct in a Row',
+      description: 'Answer three questions correctly in a row',
       reward: 10,
       progress: 0,
       target: 1, // Just needs to be achieved once
@@ -288,19 +278,7 @@ export const useGameStore = create<GameState>()(
         console.log(`[XP Debug] New total XP: ${updatedGameProgress.xp}`);
         
         // Update daily quest progress for XP - DIRECTLY use the game's total XP value for consistency
-        const updatedQuests = gameProgress.quests.map(quest => {
-          if (quest.id === 'daily-xp' && !quest.isCompleted) {
-            // Simply use the same newXP value we calculated for total XP
-            const isCompleted = newXP >= quest.target;
-            
-            return {
-              ...quest,
-              progress: newXP,  // Use exact same XP value as the game total
-              isCompleted
-            };
-          }
-          return quest;
-        });
+        const updatedQuests = gameProgress.quests;
         
         const newState = {
           score: state.score + points,
@@ -519,20 +497,7 @@ export const useGameStore = create<GameState>()(
                 isCompleted
               };
             }
-            // Always update daily XP quest regardless of score
-            else if (quest.id === 'daily-xp' && !quest.isCompleted && score !== undefined) {
-              // Instead of using gameProgress.xp (total XP), use the points earned in this game session
-              // This prevents inconsistency between quest progress and actual XP earned today
-              const pointsEarned = Math.floor(score / 10); // Convert score to XP points
-              const newProgress = Math.min(quest.progress + pointsEarned, quest.target);
-              const isCompleted = newProgress >= quest.target;
-              
-              return {
-                ...quest,
-                progress: newProgress,  // Use exact same XP value as the game total
-                isCompleted
-              };
-            }
+            
             return quest;
           });
           

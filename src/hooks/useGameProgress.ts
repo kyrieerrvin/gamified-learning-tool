@@ -172,8 +172,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'streak-bonus',
-      title: 'Streak Bonus',
-      description: 'Play any game to maintain your streak',
+      title: 'Get 3 Correct in a Row',
+      description: 'Answer three questions correctly in a row',
       reward: 10,
       progress: 0,
       target: 1,

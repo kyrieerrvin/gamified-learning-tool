@@ -41,7 +41,7 @@ export default function MakeSentenceGame({
   
   /************ All Custom/Library Hooks Next ************/
   // Global game store
-  const { addPoints, increaseStreak, data } = useGameProgress();
+  const { addPoints, increaseStreak, data, updateData } = useGameProgress();
   
   /************ All Effect Hooks Last ************/
   // Load game data on component mount
@@ -142,8 +142,26 @@ export default function MakeSentenceGame({
           setStreakBonusActive(true);
           totalPoints += 3; // Bonus points for streak
           
-          // TODO: Implement quest completion in new system
-          // completeStreakBonusQuest('make-sentence');
+          // Complete the streak-bonus quest for make-sentence
+          if (data?.progress['make-sentence']?.quests) {
+            const quests = [...data.progress['make-sentence'].quests];
+            const streakBonusQuest = quests.find(q => q.id === 'streak-bonus');
+            if (streakBonusQuest && !streakBonusQuest.isCompleted) {
+              streakBonusQuest.progress = Math.min(streakBonusQuest.progress + 1, streakBonusQuest.target);
+              if (streakBonusQuest.progress >= streakBonusQuest.target) {
+                streakBonusQuest.isCompleted = true;
+              }
+              await updateData({
+                progress: {
+                  ...data.progress,
+                  'make-sentence': {
+                    ...data.progress['make-sentence'],
+                    quests
+                  }
+                }
+              });
+            }
+          }
         }
         
         addPoints(totalPoints, 'make-sentence');

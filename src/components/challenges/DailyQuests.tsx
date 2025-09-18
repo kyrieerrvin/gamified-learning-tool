@@ -30,17 +30,9 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
     const checkProgress = () => {
       const gameProgress = progress[gameType];
       if (gameProgress) {
-        setQuests(gameProgress.quests || []);
+        const filtered = (gameProgress.quests || []).filter(q => q.id !== 'daily-xp');
+        setQuests(filtered);
         setTotalXP(gameProgress.xp || 0);
-        
-        // Add debug log for daily-xp quest
-        const dailyXP = gameProgress.quests?.find(q => q.id === 'daily-xp');
-        console.log(`[DEBUG-DailyQuests] Game type: ${gameType}`);
-        console.log(`[DEBUG-DailyQuests] Game XP: ${gameProgress.xp}`);
-        if (dailyXP) {
-          console.log(`[DEBUG-DailyQuests] Daily XP quest: ${dailyXP.progress}/${dailyXP.target}`);
-          console.log(`[DEBUG-DailyQuests] Difference: ${dailyXP.progress - gameProgress.xp}`);
-        }
       }
     };
     
@@ -87,7 +79,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
     <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800">Daily Quests</h2>
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <span className="text-xs bg-duolingo-yellow text-duolingo-darkYellow font-bold py-1 px-2 rounded-full">
             {completedQuests}/{quests.length} Completed
           </span>

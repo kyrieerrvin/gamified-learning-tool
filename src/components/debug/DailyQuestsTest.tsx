@@ -55,23 +55,7 @@ export default function DailyQuestsTest() {
           status: 'info'
         });
         
-        // Test 2: Add progress to daily-xp quest
-        const dailyXpQuest = initialQuests.find(q => q.id === 'daily-xp');
-        if (dailyXpQuest && !dailyXpQuest.isCompleted) {
-          addPoints(25, gameType); // Add 25 XP
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
-          const afterXpState = progress[gameType];
-          const afterXpQuest = afterXpState?.quests?.find(q => q.id === 'daily-xp');
-          
-          results.push({
-            test: `${gameType} - Daily XP Quest Progress`,
-            before: { progress: dailyXpQuest.progress, xp: initialState?.xp || 0 },
-            after: { progress: afterXpQuest?.progress || 0, xp: afterXpState?.xp || 0 },
-            expected: { progress: 25, xp: 25 },
-            status: afterXpQuest?.progress === 25 ? 'success' : 'error'
-          });
-        }
+        // Note: 'daily-xp' quest removed; skip its test
         
         // Test 3: Complete perfect-score quest
         const perfectScoreQuest = initialQuests.find(q => q.id === 'perfect-score');
