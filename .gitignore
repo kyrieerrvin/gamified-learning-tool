@@ -42,4 +42,9 @@ next-env.d.ts
 
 # Large model files
 /tl_tocylog_trf/
+tl_tocylog_trf/
 # If specific parts of the model directory should be included, add them back with !
+
+# Python caches
+__pycache__/
+*.pyc
