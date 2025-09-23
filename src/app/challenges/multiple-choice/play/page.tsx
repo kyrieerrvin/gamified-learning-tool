@@ -21,8 +21,8 @@ const PartsOfSpeechGame = dynamic(
 export default function PlayMultipleChoicePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const sectionId = parseInt(searchParams.get('section') || '0');
-  const levelId = parseInt(searchParams.get('level') || '0');
+  const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Difficult, 2: Hard)
+  const levelId = parseInt(searchParams.get('level') || '0'); // Challenge index within the level (0..9)
   
   const { progress, canAccessLevel, completeLevel, updateData, data, loading: gameProgressLoading } = useGameProgress();
   const [loading, setLoading] = useState(true);
@@ -210,15 +210,14 @@ export default function PlayMultipleChoicePage() {
         <div>
           <h2 className="text-2xl font-bold">Bahagi ng Pangungusap</h2>
           <p className="text-gray-600">
-            Section {sectionId + 1}, Level {levelId + 1}: Tukuyin ang bahagi ng pangungusap sa Tagalog.
+            Level {sectionId + 1}, Challenge {levelId + 1}: Tukuyin ang bahagi ng pangungusap sa Tagalog.
           </p>
         </div>
       </div>
       
       <PartsOfSpeechGame
         key={`${sectionId}-${levelId}`} // Add key to force component refresh when params change
-        difficulty="medium"
-        levelNumber={sectionId * 5 + levelId} // Convert section and level to overall level number
+        levelNumber={sectionId * 10 + levelId} // Convert Level (group) and Challenge index to overall index
         onComplete={handleComplete}
       />
     </div>

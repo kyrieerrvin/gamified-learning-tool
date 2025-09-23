@@ -14,15 +14,13 @@ import { POSGameData, POSQuestion } from '@/types/game/index';
 // Interface for component props
 interface PartsOfSpeechGameProps {
   levelNumber?: number;
-  difficulty?: 'easy' | 'medium' | 'hard';
   onComplete?: (score: number, levelCompleted: boolean) => void;
 }
 
-type DifficultyLevel = 'easy' | 'medium' | 'hard';
+type GradeLevel = 'G1_2' | 'G3_4' | 'G5_6';
 
 export default function PartsOfSpeechGame({ 
   levelNumber = 0,
-  difficulty = 'medium',
   onComplete
 }: PartsOfSpeechGameProps) {
   // State for the game
@@ -36,7 +34,7 @@ export default function PartsOfSpeechGame({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [score, setScore] = useState(0);
-  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(difficulty);
+  const [gradeLevel, setGradeLevel] = useState<GradeLevel | null>(null);
   
   // New useGameProgress hook instead of old gameStore
   const { addPoints, increaseStreak, completeLevel, updateData, data: gameData } = useGameProgress();
@@ -60,25 +58,18 @@ export default function PartsOfSpeechGame({
     setStartTime(Date.now());
   }, []);
   
-  // Determine difficulty based on level number
+  // Select grade level from user profile; wait until available
   useEffect(() => {
-    let newDifficulty: DifficultyLevel = 'easy';
-    
-    if (levelNumber <= 1) {
-      newDifficulty = 'easy';
-    } else if (levelNumber <= 3) {
-      newDifficulty = 'medium';
-    } else {
-      newDifficulty = 'hard';
-    }
-    
-    setDifficultyLevel(newDifficulty);
-  }, [levelNumber]);
+    if (!gameData || !gameData.profile || !gameData.profile.gradeLevel) return;
+    const g = gameData.profile.gradeLevel as GradeLevel;
+    setGradeLevel(g);
+  }, [gameData?.profile?.gradeLevel]);
   
   // Initialize game data
   useEffect(() => {
+    if (!gradeLevel) return;
     loadGameData();
-  }, [difficultyLevel]);
+  }, [gradeLevel]);
   
   async function loadGameData() {
     setLoading(true);
@@ -86,7 +77,8 @@ export default function PartsOfSpeechGame({
     
     try {
       // Fetch game data from the NLP API
-      const gameData = await fetchPartsOfSpeechGame(difficultyLevel);
+      if (!gradeLevel) return;
+      const gameData = await fetchPartsOfSpeechGame(undefined as any, gradeLevel as any);
       console.log('Loaded POS game data from API:', gameData);
       setData(gameData);
     } catch (err) {
@@ -247,12 +239,12 @@ export default function PartsOfSpeechGame({
     
     // Update database with game progress
     if (typeof levelNumber === 'number' && gameData) {
-      // Map difficulty to section ID
-      const sectionMap = { 'easy': 0, 'medium': 1, 'hard': 2 };
-      const sectionId = sectionMap[difficultyLevel] || 0;
+      // Derive section (level group) and challenge index from overall index
+      const sectionId = Math.floor(levelNumber / 10); // 0,1,2
+      const challengeIndex = levelNumber % 10; // 0..9
       
-      // Complete the level in the database
-      await completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
+      // Complete the specific challenge in the database
+      await completeLevel('multiple-choice', sectionId, challengeIndex, finalScore);
       
       // Update quest progress for completing games
       const quests = [...(gameData.progress['multiple-choice']?.quests || [])];
@@ -275,7 +267,7 @@ export default function PartsOfSpeechGame({
         });
       }
       
-      console.log(`[GameCompletion] Saved progress to database. Level: ${levelNumber}, Section: ${sectionId}`);
+      console.log(`[GameCompletion] Saved progress to database. LevelGroup: ${sectionId}, Challenge: ${challengeIndex}`);
     }
     
     // Call the onComplete callback with the final score
@@ -312,12 +304,12 @@ export default function PartsOfSpeechGame({
     
     // Update database with game progress
     if (typeof levelNumber === 'number' && gameData) {
-      // Map difficulty to section ID
-      const sectionMap = { 'easy': 0, 'medium': 1, 'hard': 2 };
-      const sectionId = sectionMap[difficultyLevel] || 0;
+      // Derive section (level group) and challenge index from overall index
+      const sectionId = Math.floor(levelNumber / 10); // 0,1,2
+      const challengeIndex = levelNumber % 10; // 0..9
       
-      // Complete the level in the database
-      await completeLevel('multiple-choice', sectionId, levelNumber, finalScore);
+      // Complete the specific challenge in the database
+      await completeLevel('multiple-choice', sectionId, challengeIndex, finalScore);
       
       // Update quest progress for completing games
       const quests = [...(gameData.progress['multiple-choice']?.quests || [])];
@@ -340,7 +332,7 @@ export default function PartsOfSpeechGame({
         });
       }
       
-      console.log(`[GameCompletion] Saved progress to database. Level: ${levelNumber}, Section: ${sectionId}`);
+      console.log(`[GameCompletion] Saved progress to database. LevelGroup: ${sectionId}, Challenge: ${challengeIndex}`);
     }
     
     // Call the onComplete callback with the final score

@@ -22,6 +22,8 @@ function logConnectionInfo(apiUrl: string) {
 export async function GET(request: NextRequest) {
   // Get query parameters
   const searchParams = request.nextUrl.searchParams;
+  // Accept grade as the new selector (fallback to difficulty for backward compat)
+  const grade = searchParams.get('grade');
   const difficulty = searchParams.get('difficulty') || 'medium';
   
   try {
@@ -51,7 +53,9 @@ export async function GET(request: NextRequest) {
     
     // Make request to the Flask backend with CalamanCy NLP
     // Use the correct endpoint path for the Flask API
-    const apiUrl = `${API_ENDPOINTS.API_BASE_URL}/api/pos-game?difficulty=${difficulty}`;
+    const apiUrl = grade
+      ? `${API_ENDPOINTS.API_BASE_URL}/api/pos-game?grade=${grade}`
+      : `${API_ENDPOINTS.API_BASE_URL}/api/pos-game?difficulty=${difficulty}`;
     console.log(`Making request to: ${apiUrl}`);
     
     // Log detailed connection info for debugging

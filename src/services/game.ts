@@ -5,6 +5,7 @@
 
 import { apiGet, apiPost } from '@/utils/api';
 import { MakeSentenceGameData, SentenceVerificationResult, SentenceAttempt } from '@/types/game';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import * as nlpService from '@/services/nlp';
 import { API_ENDPOINTS } from '@/lib/config';
 import { POSGameData } from '@/types/game/index';
@@ -14,13 +15,17 @@ import { POSGameData } from '@/types/game/index';
  * @param count Number of questions to fetch
  * @returns Game data with words
  */
-export async function fetchMakeSentenceGame(count: number = 10): Promise<MakeSentenceGameData> {
+export async function fetchMakeSentenceGame(count: number = 10, gradeLevel?: 'G1_2' | 'G3_4' | 'G5_6'): Promise<MakeSentenceGameData> {
   try {
-    // Call the API to get words
-    const response = await apiGet<{words: Array<{word: string, description: string}>}>('/api/challenges/make-sentence/words');
+    // Call the API to get words, forwarding the grade level
+    const endpoint = gradeLevel
+      ? `/api/challenges/make-sentence/words?grade=${gradeLevel}`
+      : '/api/challenges/make-sentence/words';
+    const response = await apiGet<{words: Array<{word: string, description: string}>}>(endpoint);
+    const sourceWords = response.words;
     
     // Take only the requested number of words
-    const words = response.words.slice(0, count);
+    const words = sourceWords.slice(0, count);
     
     // Initialize game data
     return {
@@ -165,10 +170,11 @@ export function skipMakeSentenceQuestion(gameData: MakeSentenceGameData): MakeSe
  * @param difficulty The difficulty level ('easy', 'medium', 'hard')
  * @returns Game data for multiple choice POS game
  */
-export async function fetchPartsOfSpeechGame(difficulty: string = 'medium'): Promise<POSGameData> {
+export async function fetchPartsOfSpeechGame(_difficulty?: string, grade?: 'G1_2' | 'G3_4' | 'G5_6'): Promise<POSGameData> {
   try {
-    // Call the API to get POS game data
-    const response = await apiGet<POSGameData>(`/api/challenges/pos-game?difficulty=${difficulty}`);
+    // Call the API to get POS game data; grade takes precedence
+    const url = grade ? `/api/challenges/pos-game?grade=${grade}` : `/api/challenges/pos-game?difficulty=medium`;
+    const response = await apiGet<POSGameData>(url);
     console.log('Successfully fetched POS game data from API');
     return response;
   } catch (error) {

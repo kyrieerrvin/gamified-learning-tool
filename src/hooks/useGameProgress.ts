@@ -42,6 +42,7 @@ export type UserProfile = {
   photoURL: string | null;
   joinDate: string;
   lastActiveDate: string;
+  gradeLevel?: 'G1_2' | 'G3_4' | 'G5_6' | null;
   preferences: {
     emailNotifications: boolean;
     dailyReminder: boolean;
@@ -122,18 +123,19 @@ const isConsecutiveDay = (lastDateStr: string, todayStr: string): boolean => {
   return Math.round(daysDiff) === 1;
 };
 
-// Generate initial sections
+// Generate 3 Levels (Easy, Difficult, Hard) each with 10 challenges
 const generateSections = (): Section[] => {
   const sections: Section[] = [];
+  const levelNames = ['Easy', 'Difficult', 'Hard'];
   
-  for (let sectionId = 0; sectionId < 5; sectionId++) {
+  for (let sectionId = 0; sectionId < 3; sectionId++) {
     const levels: Level[] = [];
     
-    for (let levelId = 0; levelId < 5; levelId++) {
+    for (let levelId = 0; levelId < 10; levelId++) {
       levels.push({
         id: levelId,
-        title: `Level ${levelId + 1}`,
-        isLocked: !(sectionId === 0 && levelId === 0), // Only first level unlocked
+        title: `Challenge ${levelId + 1}`,
+        isLocked: !(sectionId === 0 && levelId === 0), // Only first challenge unlocked
         isCompleted: false,
         bestScore: 0,
         attempts: 0,
@@ -143,9 +145,9 @@ const generateSections = (): Section[] => {
     
     sections.push({
       id: sectionId,
-      title: `Section ${sectionId + 1}`,
-      description: `Complete all levels in section ${sectionId + 1}`,
-      isLocked: sectionId !== 0, // Only first section unlocked
+      title: `Level ${sectionId + 1}: ${levelNames[sectionId] || ''}`.trim(),
+      description: `Complete all challenges in ${levelNames[sectionId] || `Level ${sectionId + 1}`}`,
+      isLocked: sectionId !== 0, // Only first level unlocked
       isCompleted: false,
       levels
     });
@@ -212,6 +214,7 @@ const getInitialData = (user: any): GameProgressData => {
       photoURL: user?.photoURL || null,
       joinDate: new Date().toISOString(),
       lastActiveDate: new Date().toISOString(),
+      gradeLevel: null,
       preferences: {
         emailNotifications: false,
         dailyReminder: true,
@@ -271,7 +274,51 @@ export const useGameProgress = () => {
           if (doc.exists()) {
             const docData = doc.data() as GameProgressData;
             console.log('[GameProgress] Real-time data received:', docData);
-            setData(docData);
+
+            // Migration: ensure 3 Levels with 10 challenges each for both games
+            const needsMigration = (progress: any): boolean => {
+              if (!progress || !progress.sections) return true;
+              if (progress.sections.length !== 3) return true;
+              for (const s of progress.sections) {
+                if (!s.levels || s.levels.length !== 10) return true;
+              }
+              return false;
+            };
+
+            const updatedProgress: any = { ...docData.progress };
+            let didMigrate = false;
+
+            for (const gameType of ['make-sentence', 'multiple-choice']) {
+              const gp = docData.progress?.[gameType];
+              if (!gp || needsMigration(gp)) {
+                didMigrate = true;
+                const sections = generateSections();
+                // Unlock first level and first challenge
+                if (sections.length > 0) {
+                  sections[0].isLocked = false;
+                  if (sections[0].levels.length > 0) sections[0].levels[0].isLocked = false;
+                }
+                updatedProgress[gameType] = {
+                  sections,
+                  xp: gp?.xp || 0,
+                  quests: gp?.quests || [],
+                  currentSection: 0,
+                  currentLevel: 0,
+                  completedLevels: []
+                };
+              }
+            }
+
+            if (didMigrate) {
+              console.log('[GameProgress] Migrating progress to 3 levels × 10 challenges structure');
+              await updateDoc(userDocRef, {
+                progress: updatedProgress,
+                updatedAt: new Date().toISOString()
+              });
+              setData({ ...docData, progress: updatedProgress });
+            } else {
+              setData(docData);
+            }
           } else {
             // Create initial data if document doesn't exist
             console.log('[GameProgress] No document found, creating initial data');

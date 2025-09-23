@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { useGameProgress } from '@/hooks/useGameProgress';
+import { useRouter } from 'next/navigation';
 import ClientOnly from '@/components/common/ClientOnly';
 import ResetTimer from '@/components/ui/ResetTimer';
 import DatabaseVerification from '@/components/debug/DatabaseVerification';
@@ -18,6 +19,7 @@ function DashboardContent() {
   const { user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const { data, loading } = useGameProgress();
+  const router = useRouter();
 
   useEffect(() => {
     // Delay setting visibility to avoid transition on initial load
@@ -27,6 +29,13 @@ function DashboardContent() {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Redirect to onboarding if no grade level set (first-time users)
+  useEffect(() => {
+    if (!loading && user && data && (!data.profile || !data.profile.gradeLevel)) {
+      router.replace('/onboarding/grade');
+    }
+  }, [loading, user, data, router]);
 
   const visibilityClasses = isVisible 
     ? 'translate-y-0 opacity-100'

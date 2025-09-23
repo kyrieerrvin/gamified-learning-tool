@@ -57,6 +57,23 @@ POS_OPTIONS = {
     "SYM": "Simbolo (Symbol)",
 }
 
+# Prefer model tag over coarse POS when available
+def resolve_pos(token):
+    """Return a stable POS key for a spaCy token based on model outputs.
+    Uses fine-grained tag (token.tag_) if it exists in POS_OPTIONS; otherwise
+    falls back to coarse tag (token.pos_)."""
+    try:
+        if hasattr(token, 'tag_') and token.tag_ in POS_OPTIONS:
+            return token.tag_
+        if token.pos_ in POS_OPTIONS:
+            return token.pos_
+        # Some models store POS in token.tag_ only
+        if hasattr(token, 'tag_') and token.tag_:
+            return token.tag_
+    except Exception:
+        pass
+    return token.pos_ or "X"
+
 # Sample sentences for different difficulty levels
 SAMPLE_SENTENCES = {
     "easy": [
@@ -83,20 +100,199 @@ SAMPLE_SENTENCES = {
 }
 
 # Sample words for Make a Sentence game
-MAKE_SENTENCE_WORDS = [
-    {"word": "Bayanihan", "description": "Pagtulong ng maraming tao sa isa't isa upang matapos ang isang gawain"},
-    {"word": "Pagmamahal", "description": "Malalim na pakiramdam ng malasakit at pagpapahalaga"},
-    {"word": "Kalayaan", "description": "Katayuan ng pagiging malaya o hindi nakatali sa limitasyon"},
-    {"word": "Matatag", "description": "Malakas at hindi madaling masira o matumba"},
-    {"word": "Kalikasan", "description": "Ang natural na kapaligiran at lahat ng buhay na nilalang"},
-    {"word": "Kasiyahan", "description": "Masayang pakiramdam o kalagayan"},
-    {"word": "Pakikipagkapwa", "description": "Pakikitungo sa ibang tao bilang kapantay"},
-    {"word": "Pagtitiwala", "description": "Pananalig sa kakayahan o katapatan ng ibang tao"},
-    {"word": "Kahusayan", "description": "Kagalingan o kahigitan sa isang larangan"},
-    {"word": "Katatagan", "description": "Lakas ng loob sa harap ng mga hamon"},
-    {"word": "Mapagkumbaba", "description": "Walang kayabangan; mahinahon"},
-    {"word": "Mapagbigay", "description": "Bukas-palad o handang tumulong"}
-]
+# MAKE_SENTENCE_WORDS = [
+#     {"word": "Bayanihan", "description": "Pagtulong ng maraming tao sa isa't isa upang matapos ang isang gawain"},
+#     {"word": "Pagmamahal", "description": "Malalim na pakiramdam ng malasakit at pagpapahalaga"},
+#     {"word": "Kalayaan", "description": "Katayuan ng pagiging malaya o hindi nakatali sa limitasyon"},
+#     {"word": "Matatag", "description": "Malakas at hindi madaling masira o matumba"},
+#     {"word": "Kalikasan", "description": "Ang natural na kapaligiran at lahat ng buhay na nilalang"},
+#     {"word": "Kasiyahan", "description": "Masayang pakiramdam o kalagayan"},
+#     {"word": "Pakikipagkapwa", "description": "Pakikitungo sa ibang tao bilang kapantay"},
+#     {"word": "Pagtitiwala", "description": "Pananalig sa kakayahan o katapatan ng ibang tao"},
+#     {"word": "Kahusayan", "description": "Kagalingan o kahigitan sa isang larangan"},
+#     {"word": "Katatagan", "description": "Lakas ng loob sa harap ng mga hamon"},
+#     {"word": "Mapagkumbaba", "description": "Walang kayabangan; mahinahon"},
+#     {"word": "Mapagbigay", "description": "Bukas-palad o handang tumulong"}
+# ]
+
+# Hardcoded grade-based word pools (from grade text files)
+GRADE_WORDS = {
+    'G1_2': [
+        {"word": "Bata", "description": ""},
+        {"word": "Aklat", "description": ""},
+        {"word": "Saging", "description": ""},
+        {"word": "Kabayo", "description": ""},
+        {"word": "Bote", "description": ""},
+        {"word": "Lolo", "description": ""},
+        {"word": "Puno", "description": ""},
+        {"word": "Pera", "description": ""},
+        {"word": "Ako", "description": ""},
+        {"word": "Ikaw", "description": ""},
+        {"word": "Siya", "description": ""},
+        {"word": "Baka", "description": ""},
+        {"word": "Aso", "description": ""},
+        {"word": "Pusa", "description": ""},
+        {"word": "Umaga", "description": ""},
+        {"word": "Tubig", "description": ""},
+        {"word": "Malungkot", "description": ""},
+        {"word": "Tatay", "description": ""},
+        {"word": "Nanay", "description": ""},
+        {"word": "Lapis", "description": ""},
+        {"word": "Papel", "description": ""},
+        {"word": "Upuan", "description": ""},
+        {"word": "Damit", "description": ""},
+        {"word": "Bola", "description": ""},
+        {"word": "Mansanas", "description": ""},
+        {"word": "Pantasa", "description": ""},
+        {"word": "Bulaklak", "description": ""},
+        {"word": "Kutsara", "description": ""},
+        {"word": "Unan", "description": ""},
+        {"word": "Tinidor", "description": ""},
+        {"word": "Mundo", "description": ""},
+        {"word": "Klima", "description": ""},
+        {"word": "Basura", "description": ""},
+        {"word": "Pamaypay", "description": ""},
+        {"word": "Salamin", "description": ""},
+        {"word": "Payong", "description": ""},
+        {"word": "Balat", "description": ""},
+        {"word": "Nagbabasa", "description": ""},
+        {"word": "Nagsusulat", "description": ""},
+        {"word": "Naglalaro", "description": ""},
+        {"word": "Nagsusuklay", "description": ""},
+        {"word": "Nagsasayaw", "description": ""},
+        {"word": "Naghihilamos", "description": ""},
+        {"word": "Nagsisipilyo", "description": ""},
+        {"word": "Naglilinis", "description": ""},
+        {"word": "Umiiyak", "description": ""},
+        {"word": "Tumatawa", "description": ""},
+        {"word": "Lumalakad", "description": ""},
+        {"word": "Kaibigan", "description": ""},
+        {"word": "Paaralan", "description": ""},
+        {"word": "Mangga", "description": ""},
+        {"word": "Sapatos", "description": ""},
+        {"word": "Palayan", "description": ""},
+        {"word": "Dagat", "description": ""},
+        {"word": "Ilog", "description": ""},
+        {"word": "Halamanan", "description": ""},
+        {"word": "Palaruan", "description": ""},
+        {"word": "Eskuwela", "description": ""},
+        {"word": "Ulam", "description": ""},
+    ],
+    'G3_4': [
+        {"word": "Timpalak", "description": ""},
+        {"word": "Saklolo", "description": ""},
+        {"word": "Kudong", "description": ""},
+        {"word": "Sumukob", "description": ""},
+        {"word": "Paglalako", "description": ""},
+        {"word": "Matalik", "description": ""},
+        {"word": "Mamamayan", "description": ""},
+        {"word": "Lungsod", "description": ""},
+        {"word": "Angkan", "description": ""},
+        {"word": "Simbolo", "description": ""},
+        {"word": "Aktibo", "description": ""},
+        {"word": "Lalawigan", "description": ""},
+        {"word": "Salat", "description": ""},
+        {"word": "Nagtatalo", "description": ""},
+        {"word": "Alkalde", "description": ""},
+        {"word": "Mapagmataas", "description": ""},
+        {"word": "Lawa", "description": ""},
+        {"word": "Katamtaman", "description": ""},
+        {"word": "Bukod-tangi", "description": ""},
+        {"word": "Mithiin", "description": ""},
+        {"word": "Lihim", "description": ""},
+        {"word": "Punyagi", "description": ""},
+        {"word": "Taboy", "description": ""},
+        {"word": "Gusali", "description": ""},
+        {"word": "Sambit", "description": ""},
+        {"word": "Silid-Aralan", "description": ""},
+        {"word": "Taob", "description": ""},
+        {"word": "Kumpas", "description": ""},
+        {"word": "Modelo", "description": ""},
+        {"word": "Hudyat", "description": ""},
+        {"word": "Anunsyo", "description": ""},
+        {"word": "Entablado", "description": ""},
+        {"word": "Estudyante", "description": ""},
+        {"word": "Pinuno", "description": ""},
+        {"word": "Disenyo", "description": ""},
+        {"word": "Mungkahi", "description": ""},
+        {"word": "Kultura", "description": ""},
+        {"word": "Siyudad", "description": ""},
+        {"word": "Paksa", "description": ""},
+        {"word": "Sining", "description": ""},
+        {"word": "Estilo", "description": ""},
+        {"word": "Lansangan", "description": ""},
+        {"word": "Kagubatan", "description": ""},
+        {"word": "Ektarya", "description": ""},
+        {"word": "Pamayanan", "description": ""},
+        {"word": "Pahayagan", "description": ""},
+        {"word": "Kalamidad", "description": ""},
+        {"word": "Troso", "description": ""},
+        {"word": "Alintana", "description": ""},
+        {"word": "Prusisyon", "description": ""},
+        {"word": "Marupok", "description": ""},
+        {"word": "Kusang-loob", "description": ""},
+        {"word": "Malasakit", "description": ""},
+        {"word": "Istasyon", "description": ""},
+        {"word": "Tanaw", "description": ""},
+        {"word": "Pulo", "description": ""},
+        {"word": "Kanluran", "description": ""},
+        {"word": "Timog", "description": ""},
+        {"word": "Silangan", "description": ""},
+    ],
+    'G5_6': [
+        {"word": "Diwang", "description": ""},
+        {"word": "Deboto", "description": ""},
+        {"word": "Patalastas", "description": ""},
+        {"word": "Kastigo", "description": ""},
+        {"word": "Paligsahan", "description": ""},
+        {"word": "Imbestiga", "description": ""},
+        {"word": "Anomalya", "description": ""},
+        {"word": "Nayon", "description": ""},
+        {"word": "Dalampasigan", "description": ""},
+        {"word": "Kuwardeno", "description": ""},
+        {"word": "Kalawakan", "description": ""},
+        {"word": "Bestida", "description": ""},
+        {"word": "Lungga", "description": ""},
+        {"word": "Liksik", "description": ""},
+        {"word": "Takipsilim", "description": ""},
+        {"word": "Madaling-araw", "description": ""},
+        {"word": "Guniguni", "description": ""},
+        {"word": "Malumanay", "description": ""},
+        {"word": "Wagas", "description": ""},
+        {"word": "Balabal", "description": ""},
+        {"word": "Taas-noo", "description": ""},
+        {"word": "Alsa", "description": ""},
+        {"word": "Pinsala", "description": ""},
+        {"word": "Pabrika", "description": ""},
+        {"word": "Daigdig", "description": ""},
+        {"word": "Probisyon", "description": ""},
+        {"word": "Dinamita", "description": ""},
+        {"word": "Pamahalaan", "description": ""},
+        {"word": "Suliranin", "description": ""},
+        {"word": "Tungkulin", "description": ""},
+        {"word": "Sarat", "description": ""},
+        {"word": "Bihira", "description": ""},
+        {"word": "Kayumanggi", "description": ""},
+        {"word": "Resistensiya", "description": ""},
+        {"word": "Temperatura", "description": ""},
+        {"word": "Himlay", "description": ""},
+        {"word": "Bayanihan", "description": ""},
+        {"word": "Biyaya", "description": ""},
+        {"word": "Sangkap", "description": ""},
+        {"word": "Tutol", "description": ""},
+        {"word": "Parokya", "description": ""},
+        {"word": "Dambana", "description": ""},
+        {"word": "Paroroonan", "description": ""},
+        {"word": "Liblib", "description": ""},
+        {"word": "Payak", "description": ""},
+        {"word": "Bantog", "description": ""},
+        {"word": "Salamuha", "description": ""},
+        {"word": "Daungan", "description": ""},
+        {"word": "Bansag", "description": ""},
+        {"word": "Epidemenya", "description": ""},
+        {"word": "Bahagdan", "description": ""},
+    ],
+}
 
 # Load the ToCylog NLP model
 try:
@@ -126,10 +322,10 @@ def generate_pos_questions(sentence, num_questions=5):
         try:
             # Process the sentence with ToCylog
             doc = nlp(sentence)
-            logger.info(f"ToCylog tokens for '{sentence}': {[(token.text, token.pos_) for token in doc]}")
+            logger.info(f"ToCylog tokens for '{sentence}': {[(token.text, resolve_pos(token)) for token in doc]}")
             
             # Get tokens with relevant POS tags
-            tokens = [token for token in doc if token.pos_ in POS_OPTIONS]
+            tokens = [token for token in doc if resolve_pos(token) in POS_OPTIONS]
             
             # If we don't have enough tokens, return what we have
             if not tokens:
@@ -143,7 +339,7 @@ def generate_pos_questions(sentence, num_questions=5):
                 selected_tokens = random.sample(tokens, min(num_questions, len(tokens)))
             
             for i, token in enumerate(selected_tokens, 1):
-                correct_pos = token.pos_
+                correct_pos = resolve_pos(token)
                 correct_answer = POS_OPTIONS[correct_pos]
                 
                 # Enhanced explanation using morphological features if available
@@ -356,7 +552,8 @@ def verify_sentence_usage(target_word, sentence):
         # For a valid sentence, we need at least one verb and noun
         pos_counts = {}
         for token in doc:
-            pos_counts[token.pos_] = pos_counts.get(token.pos_, 0) + 1
+            key = resolve_pos(token)
+            pos_counts[key] = pos_counts.get(key, 0) + 1
         
         # Enhanced checking for sentence structural completeness
         has_verb = pos_counts.get('VERB', 0) > 0
@@ -439,7 +636,7 @@ def verify_pos_answer(word, sentence, selected_answer):
         
         # Use the first matching token
         token = matching_tokens[0]
-        correct_pos = token.pos_
+        correct_pos = resolve_pos(token)
         correct_answer = POS_OPTIONS.get(correct_pos)
                 
         if correct_answer:
@@ -521,7 +718,8 @@ def get_pos_game():
     
     try:
         # Get query parameters
-        difficulty = request.args.get('difficulty', 'medium')
+        grade = request.args.get('grade')
+        difficulty = request.args.get('difficulty', 'medium')  # kept for backward compat
         custom_sentence = request.args.get('sentence')
         
         # Use custom sentence if provided, otherwise select from samples
@@ -529,9 +727,20 @@ def get_pos_game():
             sentence = custom_sentence
             logger.info(f"Using custom sentence: '{sentence}'")
         else:
-            sentences = SAMPLE_SENTENCES.get(difficulty, SAMPLE_SENTENCES['medium'])
+            # Placeholder: map grade to sentence pools (replace later)
+            if grade in ['G1_2', 'G3_4', 'G5_6']:
+                # Simple mapping: use easy/medium/hard as proxy for now
+                diff_map = {
+                    'G1_2': 'easy',
+                    'G3_4': 'medium',
+                    'G5_6': 'hard'
+                }
+                mapped = diff_map.get(grade, 'medium')
+                sentences = SAMPLE_SENTENCES.get(mapped, SAMPLE_SENTENCES['medium'])
+            else:
+                sentences = SAMPLE_SENTENCES.get(difficulty, SAMPLE_SENTENCES['medium'])
             sentence = random.choice(sentences)
-            logger.info(f"Selected random {difficulty} sentence: '{sentence}'")
+            logger.info(f"Selected random sentence (grade={grade or 'n/a'}, diff={difficulty}): '{sentence}'")
         
         # Generate questions for the sentence
         questions = generate_pos_questions(sentence, num_questions=10)
@@ -552,6 +761,7 @@ def get_pos_game():
             "questions": questions,
             "source": "ToCylog" if nlp else "fallback",
             "difficulty": difficulty,
+            "grade": grade,
             "timestamp": int(time.time())
         }
         
@@ -591,7 +801,7 @@ def analyze_text():
         
         # Extract tokens with POS and enhanced information
         for token in doc:
-            pos = token.pos_
+            pos = resolve_pos(token)
             description = POS_OPTIONS.get(pos, pos)
             
             token_info = {
@@ -617,10 +827,16 @@ def analyze_text():
             tokens.append(token_info)
         
         # Add sentence-level analysis
+        # Build POS counts using resolved POS
+        pos_counts = {}
+        for token in doc:
+            key = resolve_pos(token)
+            pos_counts[key] = pos_counts.get(key, 0) + 1
+
         sentence_analysis = {
             "has_subject": any(token.dep_ == 'nsubj' for token in doc),
             "has_predicate": any(token.dep_ == 'ROOT' for token in doc),
-            "pos_counts": {pos: tokens.count(pos) for pos in set(token.pos_ for token in doc)}
+            "pos_counts": pos_counts
         }
         
         return create_cors_response({
@@ -751,8 +967,16 @@ def get_sentence_words():
         return handle_preflight_request()
     
     try:
-        # Get all words and shuffle them
-        words = MAKE_SENTENCE_WORDS.copy()
+        # Optional grade level filter (real pools loaded from files)
+        grade = request.args.get('grade')
+
+        # Select pool based on grade or default to full list
+        if grade in GRADE_WORDS and len(GRADE_WORDS[grade]) > 0:
+            words = GRADE_WORDS[grade].copy()
+        else:
+            # If no grade provided, default to G3_4 to avoid old pool
+            default_grade = 'G3_4'
+            words = GRADE_WORDS.get(default_grade, [])[:]
         random.shuffle(words)
         
         # Return the words

@@ -76,7 +76,8 @@ export async function testPOSTagging(sentence: string): Promise<{
  * @returns Promise with game data
  */
 export async function fetchMakeSentenceGame(
-  count: number = 10
+  count: number = 10,
+  grade?: 'G1_2' | 'G3_4' | 'G5_6'
 ): Promise<MakeSentenceGameData> {
   try {
     console.log(`Fetching Make a Sentence game with ${count} words`);
@@ -84,14 +85,14 @@ export async function fetchMakeSentenceGame(
     // Fetch words list from API or use fallback
     let words;
     try {
-      words = await nlpService.fetchSentenceWords();
+      words = await nlpService.fetchSentenceWords(grade);
     } catch (error) {
       console.warn('Error fetching sentence words from API, using fallback data');
       const { FALLBACK_SENTENCE_WORDS } = await import('@/data/mock/fallbackData');
       words = FALLBACK_SENTENCE_WORDS;
     }
     
-    // Safely shuffle the words (our updated function handles null/undefined safely)
+    // Safely shuffle the words and take a unique set for the challenge
     const shuffled = shuffleArray(words);
     const selectedWords = shuffled.slice(0, Math.min(count, shuffled.length));
     

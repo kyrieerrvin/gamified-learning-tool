@@ -46,6 +46,8 @@ export type UserProfile = {
   photoURL: string | null;
   joinDate: string;
   lastActiveDate: string;
+  // New: grade level onboarding selection; null until user picks one
+  gradeLevel?: 'G1_2' | 'G3_4' | 'G5_6' | null;
   preferences: {
     emailNotifications: boolean;
     dailyReminder: boolean;
@@ -1133,6 +1135,7 @@ export const useGameStore = create<GameState>()(
               photoURL: user.photoURL,
               joinDate: new Date().toISOString(),
               lastActiveDate: new Date().toISOString(),
+              gradeLevel: null,
               preferences: {
                 emailNotifications: false,
                 dailyReminder: true

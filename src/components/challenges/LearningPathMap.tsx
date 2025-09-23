@@ -54,20 +54,24 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
   const router = useRouter();
   const { progress, canAccessLevel, loading } = useGameProgress();
   
-  // Set primary color based on game type
-  const primaryColor = gameType === 'make-sentence' ? 'green' : 'blue';
+  // Map Level groups to colors: Easy→green, Difficult→orange, Hard→red
+  const getLevelColor = (sectionIndex: number): 'green' | 'orange' | 'red' => {
+    if (sectionIndex === 0) return 'green';
+    if (sectionIndex === 1) return 'orange';
+    return 'red';
+  };
   
   if (loading) {
     return <div className="p-6 text-center">Loading learning path...</div>;
   }
   
-  // Get sections from the game progress
+  // Get sections (now "Levels") from the game progress
   const sections = progress[gameType]?.sections || [];
   
   if (!sections || sections.length === 0) {
     return (
       <div className="p-6 text-center">
-        <h3 className="text-xl font-bold mb-4">No learning sections available yet</h3>
+        <h3 className="text-xl font-bold mb-4">No levels available yet</h3>
         <p className="text-gray-600 mb-6">Check back soon for new content!</p>
       </div>
     );
@@ -137,44 +141,65 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
       <div className="learning-path relative py-8" style={{ position: 'relative', overflow: 'hidden' }}>
         {/* Removed vertical line */}
         
-        {sections.map((section, sectionIndex) => {
+        {sections.slice(0, 3).map((section, sectionIndex) => {
           // Find the latest unlocked level in this section
           const latestUnlockedLevelId = section.isLocked ? -1 : 
             section.levels
               .filter(level => !level.isLocked && canAccessLevel(gameType, section.id, level.id))
               .reduce((latest, current) => current.id > latest ? current.id : latest, -1);
+          // Static Tailwind classes (no dynamic strings) to ensure colors compile
+          const headerBgClass = sectionIndex === 0
+            ? 'bg-green-500'
+            : sectionIndex === 1
+              ? 'bg-orange-500'
+              : 'bg-red-500';
+          const badgeTextClass = sectionIndex === 0
+            ? 'text-green-500'
+            : sectionIndex === 1
+              ? 'text-orange-500'
+              : 'text-red-500';
+          const completedBgClass = sectionIndex === 0
+            ? 'bg-green-500'
+            : sectionIndex === 1
+              ? 'bg-orange-500'
+              : 'bg-red-500';
+          const unlockedClasses = sectionIndex === 0
+            ? 'border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
+            : sectionIndex === 1
+              ? 'border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white'
+              : 'border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white';
           
           return (
             <div key={section.id} className="mb-16">
-              {/* Section divider */}
+              {/* Level divider */}
               <div className="flex justify-center items-center mb-6">
                 <div className="h-[1px] bg-gray-300 flex-grow"></div>
                 <div className="px-4 text-gray-500 font-semibold whitespace-nowrap">
-                  SECTION {toRoman(sectionIndex + 1)}
+                  {toRoman(sectionIndex + 1)}
                 </div>
                 <div className="h-[1px] bg-gray-300 flex-grow"></div>
               </div>
               
-              {/* Section card */}
+              {/* Level card */}
               <div className="bg-white rounded-xl shadow overflow-hidden max-w-xl mx-auto">
-                {/* Section header */}
-                <div className={`p-4 bg-${primaryColor}-${section.isLocked ? '200' : '500'} text-white`}>
+                {/* Level header */}
+                <div className={`p-4 ${headerBgClass} text-white`}>
                   <div className="flex items-center">
-                    <div className={`w-10 h-10 rounded-full bg-white text-${primaryColor}-${section.isLocked ? '300' : '500'} flex items-center justify-center text-lg font-bold mr-3`}>
+                    <div className={`w-10 h-10 rounded-full bg-white ${badgeTextClass} flex items-center justify-center text-lg font-bold mr-3`}>
                       {toRoman(sectionIndex + 1)}
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold">{section.title}</h3>
+                      <h3 className="text-lg font-bold">{['Easy', 'Difficult', 'Hard'][sectionIndex] || section.title}</h3>
                       <div className="text-sm opacity-80">
-                        {section.levels.filter(l => l.isCompleted).length} of {section.levels.length} levels completed
+                        {section.levels.filter(l => l.isCompleted).length} of {section.levels.length} challenges completed
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Levels grid */}
+                {/* Challenges grid */}
                 <div className="p-4">
-                  <div className="grid grid-cols-5 gap-3">
+                  <div className="grid grid-cols-5 gap-4 md:gap-6 justify-items-center w-full">
                     {section.levels.map((level) => {
                       // Determine if this level is accessible
                       const isAccessible = !section.isLocked && canAccessLevel(gameType, section.id, level.id);
@@ -187,7 +212,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                       
                       if (level.isCompleted) {
                         // Completed level
-                        btnClasses += ` bg-${primaryColor}-500 text-white`;
+                          btnClasses += ` ${completedBgClass} text-white`;
                         levelContent = (
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -195,7 +220,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                         );
                       } else if (isAccessible) {
                         // Unlocked level
-                        btnClasses += ` border-2 border-${primaryColor}-500 text-${primaryColor}-500 hover:bg-${primaryColor}-500 hover:text-white cursor-pointer`;
+                          btnClasses += ` ${unlockedClasses} cursor-pointer`;
                       } else {
                         // Locked level
                         btnClasses += " bg-gray-200 text-gray-400 cursor-not-allowed";
@@ -214,8 +239,8 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                         router.push(`/challenges/${gameType}/play?section=${section.id}&level=${level.id}`);
                       };
                       
-                      return (
-                        <div key={level.id} className="relative">
+                         return (
+                           <div key={level.id} className="relative">
                           <button
                             onClick={handleLevelClick} 
                             disabled={!isAccessible}

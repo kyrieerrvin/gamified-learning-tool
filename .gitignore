@@ -1,50 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# Large model files
+# Ignore local NLP model directories and artifacts
+# Root-level model
 /tl_tocylog_trf/
-tl_tocylog_trf/
-# If specific parts of the model directory should be included, add them back with !
 
-# Python caches
+# Conversation app model
+/conversation/tl_tocylog_trf/
+
+# Common large/binary NLP artifacts (defensive)
+**/vocab/
+**/vectors/
+**/*.bin
+**/*.spacy
+
+# Node and Python typical ignores (kept minimal)
+/node_modules/
 __pycache__/
-*.pyc
+
+# OS files
+.DS_Store

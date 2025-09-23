@@ -7,8 +7,10 @@ import { API_ENDPOINTS } from '@/lib/config';
  */
 export async function GET(request: NextRequest) {
   try {
-    // Create a URL for the API request - no difficulty parameter needed
-    const url = `${API_ENDPOINTS.API_BASE_URL}/api/make-sentence/words`;
+    // Forward user's grade level if provided
+    const grade = request.nextUrl.searchParams.get('grade') || '';
+    // Create a URL for the API request with optional grade
+    const url = `${API_ENDPOINTS.API_BASE_URL}/api/make-sentence/words${grade ? `?grade=${encodeURIComponent(grade)}` : ''}`;
     console.log(`Fetching Make a Sentence words from: ${url}`);
     
     // Set a timeout for the fetch request

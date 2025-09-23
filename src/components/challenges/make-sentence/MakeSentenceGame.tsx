@@ -44,15 +44,19 @@ export default function MakeSentenceGame({
   const { addPoints, increaseStreak, data, updateData } = useGameProgress();
   
   /************ All Effect Hooks Last ************/
-  // Load game data on component mount
+  // Load game data when grade level is available
   useEffect(() => {
     const loadGame = async () => {
       try {
+        // Wait for user profile to load to get grade level
+        if (!data || !data.profile || !data.profile.gradeLevel) {
+          return;
+        }
         setLoading(true);
         setError(null);
-        
-        const data = await gameService.fetchMakeSentenceGame(questionsCount);
-        setGameData(data);
+        const grade = data.profile.gradeLevel as any;
+        const game = await gameService.fetchMakeSentenceGame(questionsCount, grade);
+        setGameData(game);
       } catch (err) {
         console.error('Error loading game:', err);
         setError('Hindi ma-load ang laro. Pakisubukang muli.');
@@ -60,9 +64,8 @@ export default function MakeSentenceGame({
         setLoading(false);
       }
     };
-    
     loadGame();
-  }, [questionsCount]);
+  }, [questionsCount, data?.profile?.gradeLevel]);
   
   // Handle completion callback - this hook MUST be called in EVERY render
   useEffect(() => {
@@ -224,8 +227,10 @@ export default function MakeSentenceGame({
       setConsecutiveCorrect(0);
       setStreakBonusActive(false);
       
-      const data = await gameService.fetchMakeSentenceGame(questionsCount);
-      setGameData(data);
+      if (!data || !data.profile || !data.profile.gradeLevel) return;
+      const grade = data.profile.gradeLevel as any;
+      const game = await gameService.fetchMakeSentenceGame(questionsCount, grade);
+      setGameData(game);
     } catch (err) {
       console.error('Error restarting game:', err);
       setError('Hindi ma-restart ang laro. Pakisubukang muli.');
