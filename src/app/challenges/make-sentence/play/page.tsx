@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import MakeSentenceGame from '@/components/challenges/make-sentence/MakeSentenceGame';
+import SentenceTileGame from '@/components/challenges/make-sentence/SentenceTileGame';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 
@@ -169,34 +170,43 @@ export default function PlayMakeSentencePage() {
   }
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header with back button */}
-      <div className="flex items-center mb-8">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => router.push('/challenges/make-sentence')}
-          className="mr-4 text-gray-600 hover:text-gray-900 bg-white p-2 rounded-full shadow hover:shadow-md transition-all"
-          aria-label="Go back to learning path"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-        </motion.button>
-        
-        <div>
-          <h2 className="text-2xl font-bold">Paggawa ng Pangungusap</h2>
-          <p className="text-gray-600">
-            Level {sectionId + 1}, Challenge {levelId + 1}: Gumawa ng pangungusap gamit ang salitang binigay.
-          </p>
+    <div className="min-h-screen flex flex-col">
+      <div className="container mx-auto px-4 py-8 flex flex-col flex-1">
+      {/* Temporary progress bar header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <button
+            onClick={() => router.push('/challenges/make-sentence')}
+            className="text-gray-600 hover:text-gray-900"
+            aria-label="Go back"
+          >
+            ← Back
+          </button>
+          <div className="text-sm text-gray-600">Level {sectionId + 1} · Challenge {levelId + 1}</div>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="bg-duolingo-green h-2 rounded-full" style={{ width: '15%' }}></div>
         </div>
       </div>
       
-      <MakeSentenceGame 
-        questionsCount={10} 
-        levelNumber={sectionId * 10 + levelId} // Convert Level (group) and Challenge index to overall index
-        onComplete={handleComplete}
-      />
+      {/* Centered game area */}
+      <div className="flex-1 flex items-center justify-center">
+        {/* Temporary: Use the new tile-based game for Easy (0) and Difficult (1) sections */}
+        {(sectionId === 0 || sectionId === 1) ? (
+          <SentenceTileGame
+            sampleSentence="Ang bata ay mahilig mag laro sa ulan."
+            focusWord="bata"
+            onComplete={handleComplete}
+          />
+        ) : (
+          <MakeSentenceGame 
+            questionsCount={10} 
+            levelNumber={sectionId * 10 + levelId}
+            onComplete={handleComplete}
+          />
+        )}
+      </div>
+      </div>
     </div>
   );
 }

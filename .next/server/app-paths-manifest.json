@@ -1,0 +1,9 @@
+{
+  "/api/analyze/route": "app/api/analyze/route.js",
+  "/api/challenges/make-sentence/words/route": "app/api/challenges/make-sentence/words/route.js",
+  "/challenges/make-sentence/page": "app/challenges/make-sentence/page.js",
+  "/challenges/make-sentence/play/page": "app/challenges/make-sentence/play/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js"
+}
