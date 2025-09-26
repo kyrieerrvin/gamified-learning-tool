@@ -10,7 +10,7 @@ import Image from 'next/image';
 // Next.js supports static image imports from anywhere in the project
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - allow importing asset
-import mascot from '../../../../placeholder.png';
+import mascot from '../../../../assets/bata.gif';
 
 interface SentenceTileGameProps {
   sampleSentence?: string;
@@ -155,11 +155,10 @@ export default function SentenceTileGame({
 
       <LayoutGroup>
         {/* Answer area (top) - selected tiles with shared layoutIds for FLIP */}
-        <div className="mb-2 text-sm text-gray-500">Ilagay dito ang iyong sagot</div>
         <div className="min-h-[68px] flex flex-wrap gap-4 mb-8">
           <AnimatePresence initial={false}>
             {selectedIds.length === 0 ? (
-              <span className="text-gray-400">Pumili ng mga salita sa ibaba…</span>
+              <span className="text-gray-400">Pumili ng mga salita sa baba upang bumuo ng pangungusap.</span>
             ) : (
               selectedIds.map(id => {
                 const token = tokens.find(t => t.id === id)!;

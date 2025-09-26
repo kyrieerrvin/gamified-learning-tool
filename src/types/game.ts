@@ -30,6 +30,9 @@ export interface SentenceVerificationResult {
   isCorrect: boolean;
   containsWord: boolean;
   feedback: string;
+  // Optional fields used by some UIs/APIs
+  word?: string;
+  sentence?: string;
 }
 
 // Multiple Choice game data

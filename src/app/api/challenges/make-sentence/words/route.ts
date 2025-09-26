@@ -44,21 +44,12 @@ export async function GET(request: NextRequest) {
       // Use expanded fallback data with 10 unique words
       return NextResponse.json({
         words: [
-          { word: "Bayanihan", description: "Pagtulong ng maraming tao sa isa't isa upang matapos ang isang gawain" },
-          { word: "Pagmamahal", description: "Malalim na pakiramdam ng malasakit at pagpapahalaga" },
-          { word: "Kalayaan", description: "Katayuan ng pagiging malaya o hindi nakatali sa limitasyon" },
-          { word: "Matatag", description: "Malakas at hindi madaling masira o matumba" },
-          { word: "Kalikasan", description: "Ang natural na kapaligiran at lahat ng buhay na nilalang" },
-          { word: "Kasiyahan", description: "Masayang pakiramdam o kalagayan" },
-          { word: "Pakikipagkapwa", description: "Pakikitungo sa ibang tao bilang kapantay" },
-          { word: "Pagtitiwala", description: "Pananalig sa kakayahan o katapatan ng ibang tao" },
-          { word: "Kahusayan", description: "Kagalingan o kahigitan sa isang larangan" },
-          { word: "Katatagan", description: "Lakas ng loob sa harap ng mga hamon" },
-          { word: "Mapagkumbaba", description: "Walang kayabangan; mahinahon" },
-          { word: "Mapagbigay", description: "Bukas-palad o handang tumulong" }
+          { id: 'bata', word: 'Bata', grade: 'G1_2', imageUrl: '/Bata.gif', sentences: ['Ang bata ay mahilig mag laro sa ulan.'] },
+          { id: 'aklat', word: 'Aklat', grade: 'G1_2', imageUrl: '/images/aklat.png', sentences: ['May bagong aklat sa silid-aklatan.'] },
+          { id: 'timpalak', word: 'Timpalak', grade: 'G3_4', imageUrl: '/images/timpalak.png', sentences: ['Sumali sila sa timpalak sa paaralan.'] }
         ],
-        count: 12,
-        source: "fallback"
+        count: 3,
+        source: 'fallback'
       });
     }
   } catch (error: any) {

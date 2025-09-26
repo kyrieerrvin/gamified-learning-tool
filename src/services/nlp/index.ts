@@ -118,6 +118,14 @@ export async function analyzeSentence(sentence: string): Promise<{
   sentence: string;
   tokens: POSToken[];
   method: string;
+  metrics?: {
+    processing_ms?: number;
+    memory?: {
+      rss_before_mb?: number;
+      rss_after_mb?: number;
+      delta_mb?: number;
+    } | null;
+  };
 }> {
   try {
     // Try proxy endpoint first
@@ -129,6 +137,14 @@ export async function analyzeSentence(sentence: string): Promise<{
         sentence: string;
         tokens: POSToken[];
         method: string;
+        metrics?: {
+          processing_ms?: number;
+          memory?: {
+            rss_before_mb?: number;
+            rss_after_mb?: number;
+            delta_mb?: number;
+          } | null;
+        };
       }, { sentence: string }>(proxyUrl, { sentence });
     } catch (proxyError) {
       console.warn("Next.js proxy route failed for sentence analysis, trying direct API:", proxyError);
@@ -139,6 +155,14 @@ export async function analyzeSentence(sentence: string): Promise<{
         sentence: string;
         tokens: POSToken[];
         method: string;
+        metrics?: {
+          processing_ms?: number;
+          memory?: {
+            rss_before_mb?: number;
+            rss_after_mb?: number;
+            delta_mb?: number;
+          } | null;
+        };
       }, { sentence: string }>(directUrl, { sentence });
     }
   } catch (error) {
@@ -276,10 +300,10 @@ export async function fetchSentenceWords(grade?: 'G1_2' | 'G3_4' | 'G5_6'): Prom
     
     // Fallback words
     return [
-      { word: 'ako', description: 'I or me (pronoun)' },
-      { word: 'kumain', description: 'to eat (verb)' },
-      { word: 'ng', description: 'of (particle)' },
-      { word: 'kanin', description: 'rice (noun)' }
+      { id: 'ako', word: 'ako', description: 'I or me (pronoun)' },
+      { id: 'kumain', word: 'kumain', description: 'to eat (verb)' },
+      { id: 'ng', word: 'ng', description: 'of (particle)' },
+      { id: 'kanin', word: 'kanin', description: 'rice (noun)' }
     ];
   }
 }

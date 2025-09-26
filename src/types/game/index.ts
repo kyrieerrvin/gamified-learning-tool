@@ -59,8 +59,14 @@ export interface POSAnswerVerification {
  * Represents a word for the Make a Sentence game
  */
 export interface SentenceWord {
+  id: string;
   word: string;
-  description: string;
+  grade?: 'G1_2' | 'G3_4' | 'G5_6';
+  description?: string;
+  imageUrl?: string;
+  svgUrl?: string;
+  sentences?: string[]; // candidate sentences this word appears in
+  tags?: string[];
 }
 
 /**

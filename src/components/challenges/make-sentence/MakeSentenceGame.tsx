@@ -6,6 +6,11 @@ import Button from '@/components/ui/Button';
 import * as gameService from '@/services/game';
 import * as nlpService from '@/services/nlp';
 import { SentenceVerificationResult, MakeSentenceGameData } from '@/types/game';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - allow importing asset
+import mascot from '../../../../talking.gif';
 
 interface MakeSentenceGameProps {
   questionsCount?: number;
@@ -314,113 +319,92 @@ export default function MakeSentenceGame({
   }
   
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 max-w-2xl mx-auto">
-      {/* Game header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-center mb-4">Paggawa ng Pangungusap</h1>
-        
-        {/* Game progress */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-500">Progress</span>
-            <span className="text-sm font-medium">{gameData.currentIndex + 1} of {gameData.totalQuestions}</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${getProgressPercentage()}%` }}
-            ></div>
-          </div>
-        </div>
-        
-        {/* Score */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-right">
-            <span className="text-sm text-gray-500">Score: </span>
-            <span className="text-lg font-bold text-blue-600">{gameData.score}</span>
-            {streakBonusActive && <span className="text-red-500 ml-1">🔥</span>}
-          </div>
-        </div>
-      </div>
-      
-      {/* Current word */}
+    <div className="w-full flex flex-col items-center">
+      {/* Character + speech bubble ABOVE the card (free-floating) */}
       {currentWord && !currentResult && (
-        <div className="mb-6">
-          <div className="p-4 bg-blue-50 rounded-lg mb-4">
-            <div className="text-sm text-gray-600 mb-1">Gamiting ang salitang:</div>
-            <div className="text-xl font-bold text-blue-800">{currentWord.word}</div>
-            <div className="text-sm text-gray-600 mt-2">{currentWord.description}</div>
+        <div className="max-w-5xl w-full mx-auto mb-4">
+          <div className="flex items-start gap-5">
+            <div className="shrink-0">
+              <Image src={mascot} alt="Mascot" width={256} height={128} className="" />
+            </div>
+            <div className="relative inline-block max-w-4xl bg-blue-50 rounded-2xl p-6 text-blue-900 font-sans">
+              <div className="text-lg md:text-2xl font-semibold tracking-tight">Gamitin ang salitang</div>
+              <div className="mt-3 inline-block px-5 py-2 rounded-full bg-blue-600 text-white font-extrabold text-lg md:text-xl">{currentWord.word}</div>
+              {currentWord.description && (
+                <div className="mt-3 text-base md:text-lg text-blue-700">{currentWord.description}</div>
+              )}
+              <div className="text-lg md:text-2xl font-semibold tracking-tight">sa isang pangungusap.</div>
+              <div className="absolute -left-2 top-8 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-blue-50" />
+            </div>
           </div>
-          
-          <p className="text-gray-700 mb-6">
-            Gumawa ng isang pangungusap na gumagamit ng salitang <strong>{currentWord.word}</strong>.
-          </p>
-          
-          {/* Input form */}
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <textarea 
-                ref={inputRef}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                rows={3}
-                placeholder="Isulat ang iyong pangungusap dito..."
-                value={inputSentence}
-                onChange={(e) => setInputSentence(e.target.value)}
-                disabled={isSubmitting}
-                autoFocus
-              />
-            </div>
-            
-            <div className="flex gap-3">
-              <Button 
-                type="submit" 
-                className="flex-1"
-                loading={isSubmitting}
-                disabled={isSubmitting || !inputSentence.trim()}
-              >
-                I-check ang Pangungusap
-              </Button>
-            </div>
-          </form>
         </div>
       )}
+
+      {/* The main card: ONLY the input box and the button */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="bg-white rounded-2xl shadow-lg p-8 max-w-5xl w-full mx-auto -mt-6"
+      >
+        {currentWord && !currentResult && (
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <textarea
+              ref={inputRef}
+              className="w-full p-6 rounded-2xl bg-gray-50 border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-lg md:text-xl font-sans"
+              rows={6}
+              placeholder="Isulat ang iyong pangungusap dito…"
+              value={inputSentence}
+              onChange={(e) => setInputSentence(e.target.value)}
+              disabled={isSubmitting}
+              autoFocus
+            />
+
+            <div className="mt-8 flex justify-end">
+              <motion.div whileTap={{ scale: 0.97 }} whileHover={{ scale: 1.02 }}>
+                <Button
+                  type="submit"
+                  className="rounded-[28px] px-10 py-4 bg-[#3B82F6] hover:bg-[#2563EB] text-white font-extrabold shadow-md text-base md:text-lg font-sans tracking-tight"
+                  loading={isSubmitting}
+                  disabled={isSubmitting || !inputSentence.trim()}
+                >
+                  I-check
+                </Button>
+              </motion.div>
+            </div>
+          </form>
+        )}
       
       {/* Feedback after submission */}
       {currentResult && (
         <div className="mb-6">
-          <div className="p-4 bg-blue-50 rounded-lg mb-4">
-            <div className="text-sm text-gray-600 mb-1">Gamiting ang salitang:</div>
-            <div className="text-xl font-bold text-blue-800">{currentResult.word}</div>
+          {/* Keep results inside card only */}
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            {(currentResult as any).sentence}
           </div>
-          
-          <div className="mb-4">
-            <div className="text-sm text-gray-600 mb-1">Iyong pangungusap:</div>
-            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-              {currentResult.sentence}
-            </div>
-          </div>
-          
-          {/* Feedback */}
-          <div className={`mb-6 p-4 rounded-lg ${
-            currentResult.isCorrect 
-              ? 'bg-green-50 text-green-800 border border-green-200' 
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}>
+
+          {/* Feedback with playful animation */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0, boxShadow: currentResult.isCorrect ? '0 0 0 0 rgba(34,197,94,0)' : undefined }}
+            className={`mb-6 p-4 rounded-lg ${
+              currentResult.isCorrect
+                ? 'bg-green-50 text-green-800 border border-green-200'
+                : 'bg-red-50 text-red-800 border border-red-200'
+            }`}
+          >
             <div className="font-semibold mb-1">
               {currentResult.isCorrect ? '✓ Tama!' : '✗ May Problema'}
             </div>
             <div>{currentResult.feedback}</div>
-          </div>
-          
+          </motion.div>
+
           {/* Next button */}
-          <Button 
-            onClick={handleNextWord} 
-            className="w-full"
-          >
-            {gameData.currentIndex < gameData.totalQuestions - 1 
-              ? 'Susunod na Salita' 
-              : 'Tapusin ang Laro'}
-          </Button>
+          <div className="flex justify-end">
+            <Button onClick={handleNextWord} className="rounded-[24px] px-6 py-3">
+              {gameData.currentIndex < gameData.totalQuestions - 1 ? 'Susunod na Salita' : 'Tapusin ang Laro'}
+            </Button>
+          </div>
         </div>
       )}
       
@@ -440,12 +424,13 @@ export default function MakeSentenceGame({
                 }`}
               >
                 <div className="font-medium">{item.word}</div>
-                <div className="mt-1">{item.sentence}</div>
+                <div className="mt-1">{(item as any).sentence || (item as any).userSentence}</div>
               </div>
             ))}
           </div>
         </div>
       )}
+      </motion.div>
     </div>
   );
 }

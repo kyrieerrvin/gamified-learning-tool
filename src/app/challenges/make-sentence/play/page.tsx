@@ -7,6 +7,7 @@ import MakeSentenceGame from '@/components/challenges/make-sentence/MakeSentence
 import SentenceTileGame from '@/components/challenges/make-sentence/SentenceTileGame';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
+import { apiGet } from '@/utils/api';
 
 export default function PlayMakeSentencePage() {
   const router = useRouter();
@@ -18,6 +19,10 @@ export default function PlayMakeSentencePage() {
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
+  // Sentence Tile Game multi-round support for sections 0 (Easy) and 1 (Difficult)
+  const [tileRounds, setTileRounds] = useState<Array<{ sentence: string; focusWord: string }>>([]);
+  const [tileIndex, setTileIndex] = useState(0);
+  const [tileScore, setTileScore] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -35,6 +40,50 @@ export default function PlayMakeSentencePage() {
 
     setLoading(false);
   }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
+
+  // Prepare 5 rounds for SentenceTileGame for Easy/Difficult based on grade-level words
+  useEffect(() => {
+    const loadTileRounds = async () => {
+      // Only for Easy (0) and Difficult (1)
+      if (!(sectionId === 0 || sectionId === 1)) return;
+      // Need profile/grade
+      if (!data?.profile?.gradeLevel) return;
+      try {
+        const grade = data.profile.gradeLevel as 'G1_2' | 'G3_4' | 'G5_6';
+        const endpoint = grade ? `/api/challenges/make-sentence/words?grade=${grade}` : '/api/challenges/make-sentence/words';
+        const resp = await apiGet<{ words: Array<any>; count: number }>(endpoint);
+        const words = Array.isArray(resp?.words) ? resp.words : [];
+        // Build candidates with available sentences
+        const candidates: Array<{ sentence: string; focusWord: string }> = [];
+        for (const w of words) {
+          const wordText = (w.word || '').toString();
+          // Prefer explicit easy/difficult fields if available (from backend JSON), else use sentences[0/1]
+          const easy = (w.easy || (Array.isArray(w.sentences) ? w.sentences[0] : '')) || '';
+          const difficult = (w.difficult || (Array.isArray(w.sentences) ? w.sentences[1] : '')) || '';
+          if (sectionId === 0 && easy) {
+            candidates.push({ sentence: easy, focusWord: wordText });
+          } else if (sectionId === 1 && difficult) {
+            candidates.push({ sentence: difficult, focusWord: wordText });
+          }
+          if (candidates.length >= 8) break; // collect a few extra to sample from
+        }
+        // Take first 5 (or fewer if not enough)
+        const selected = candidates.slice(0, 5);
+        setTileRounds(selected);
+        setTileIndex(0);
+        setTileScore(0);
+      } catch (e) {
+        // Fallback: static sample
+        const fallback = [
+          { sentence: 'Ang bata ay mahilig mag laro sa ulan.', focusWord: 'bata' }
+        ];
+        setTileRounds(fallback);
+        setTileIndex(0);
+        setTileScore(0);
+      }
+    };
+    loadTileRounds();
+  }, [sectionId, data?.profile?.gradeLevel]);
   
   // Handle quest progress updates
   const updateQuestProgress = async (questId: string, progressAmount: number) => {
@@ -75,6 +124,25 @@ export default function PlayMakeSentencePage() {
     // Add progress to perfect score quest if applicable
     if (score === 100) {
       await updateQuestProgress('perfect-score', 1);
+    }
+  };
+
+  // Handle per-round completion for SentenceTileGame (20 points per correct sentence, 5 rounds -> 100)
+  const handleTileRoundComplete = async () => {
+    const newScore = tileScore + 20;
+    const nextIndex = tileIndex + 1;
+    if (nextIndex >= 5 || nextIndex >= tileRounds.length) {
+      // Finish level
+      setScore(newScore);
+      setGameCompleted(true);
+      await completeLevel('make-sentence', sectionId, levelId, newScore);
+      await updateQuestProgress('complete-games', 1);
+      if (newScore === 100) {
+        await updateQuestProgress('perfect-score', 1);
+      }
+    } else {
+      setTileScore(newScore);
+      setTileIndex(nextIndex);
     }
   };
   
@@ -191,16 +259,19 @@ export default function PlayMakeSentencePage() {
       
       {/* Centered game area */}
       <div className="flex-1 flex items-center justify-center">
-        {/* Temporary: Use the new tile-based game for Easy (0) and Difficult (1) sections */}
         {(sectionId === 0 || sectionId === 1) ? (
-          <SentenceTileGame
-            sampleSentence="Ang bata ay mahilig mag laro sa ulan."
-            focusWord="bata"
-            onComplete={handleComplete}
-          />
+          tileRounds.length > 0 ? (
+            <SentenceTileGame
+              sampleSentence={tileRounds[Math.min(tileIndex, tileRounds.length - 1)].sentence}
+              focusWord={tileRounds[Math.min(tileIndex, tileRounds.length - 1)].focusWord}
+              onComplete={() => handleTileRoundComplete()}
+            />
+          ) : (
+            <div className="text-gray-600">Naglo-load ng mga pangungusap…</div>
+          )
         ) : (
           <MakeSentenceGame 
-            questionsCount={10} 
+            questionsCount={10}
             levelNumber={sectionId * 10 + levelId}
             onComplete={handleComplete}
           />

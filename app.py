@@ -16,6 +16,21 @@ import os
 import socket
 import time
 import spacy
+import json
+from typing import Optional
+
+# Optional memory measurement tools
+try:
+    import psutil  # type: ignore
+    _HAVE_PSUTIL = True
+except Exception:
+    _HAVE_PSUTIL = False
+
+try:
+    import resource  # type: ignore
+    _HAVE_RESOURCE = True
+except Exception:
+    _HAVE_RESOURCE = False
 
 # Configure logging
 logging.basicConfig(
@@ -52,7 +67,6 @@ POS_OPTIONS = {
     "CCONJ": "Pangatnig na Nagtutugma (Coordinating Conjunction)",
     "SCONJ": "Pangatnig na Nagpapailalim (Subordinating Conjunction)",
     "INTJ": "Pandamdam (Interjection)",
-    "X": "Iba Pa (Other)",
     "PUNCT": "Bantas (Punctuation)",
     "SYM": "Simbolo (Symbol)",
 }
@@ -116,183 +130,337 @@ SAMPLE_SENTENCES = {
 # ]
 
 # Hardcoded grade-based word pools (from grade text files)
-GRADE_WORDS = {
-    'G1_2': [
-        {"word": "Bata", "description": ""},
-        {"word": "Aklat", "description": ""},
-        {"word": "Saging", "description": ""},
-        {"word": "Kabayo", "description": ""},
-        {"word": "Bote", "description": ""},
-        {"word": "Lolo", "description": ""},
-        {"word": "Puno", "description": ""},
-        {"word": "Pera", "description": ""},
-        {"word": "Ako", "description": ""},
-        {"word": "Ikaw", "description": ""},
-        {"word": "Siya", "description": ""},
-        {"word": "Baka", "description": ""},
-        {"word": "Aso", "description": ""},
-        {"word": "Pusa", "description": ""},
-        {"word": "Umaga", "description": ""},
-        {"word": "Tubig", "description": ""},
-        {"word": "Malungkot", "description": ""},
-        {"word": "Tatay", "description": ""},
-        {"word": "Nanay", "description": ""},
-        {"word": "Lapis", "description": ""},
-        {"word": "Papel", "description": ""},
-        {"word": "Upuan", "description": ""},
-        {"word": "Damit", "description": ""},
-        {"word": "Bola", "description": ""},
-        {"word": "Mansanas", "description": ""},
-        {"word": "Pantasa", "description": ""},
-        {"word": "Bulaklak", "description": ""},
-        {"word": "Kutsara", "description": ""},
-        {"word": "Unan", "description": ""},
-        {"word": "Tinidor", "description": ""},
-        {"word": "Mundo", "description": ""},
-        {"word": "Klima", "description": ""},
-        {"word": "Basura", "description": ""},
-        {"word": "Pamaypay", "description": ""},
-        {"word": "Salamin", "description": ""},
-        {"word": "Payong", "description": ""},
-        {"word": "Balat", "description": ""},
-        {"word": "Nagbabasa", "description": ""},
-        {"word": "Nagsusulat", "description": ""},
-        {"word": "Naglalaro", "description": ""},
-        {"word": "Nagsusuklay", "description": ""},
-        {"word": "Nagsasayaw", "description": ""},
-        {"word": "Naghihilamos", "description": ""},
-        {"word": "Nagsisipilyo", "description": ""},
-        {"word": "Naglilinis", "description": ""},
-        {"word": "Umiiyak", "description": ""},
-        {"word": "Tumatawa", "description": ""},
-        {"word": "Lumalakad", "description": ""},
-        {"word": "Kaibigan", "description": ""},
-        {"word": "Paaralan", "description": ""},
-        {"word": "Mangga", "description": ""},
-        {"word": "Sapatos", "description": ""},
-        {"word": "Palayan", "description": ""},
-        {"word": "Dagat", "description": ""},
-        {"word": "Ilog", "description": ""},
-        {"word": "Halamanan", "description": ""},
-        {"word": "Palaruan", "description": ""},
-        {"word": "Eskuwela", "description": ""},
-        {"word": "Ulam", "description": ""},
-    ],
-    'G3_4': [
-        {"word": "Timpalak", "description": ""},
-        {"word": "Saklolo", "description": ""},
-        {"word": "Kudong", "description": ""},
-        {"word": "Sumukob", "description": ""},
-        {"word": "Paglalako", "description": ""},
-        {"word": "Matalik", "description": ""},
-        {"word": "Mamamayan", "description": ""},
-        {"word": "Lungsod", "description": ""},
-        {"word": "Angkan", "description": ""},
-        {"word": "Simbolo", "description": ""},
-        {"word": "Aktibo", "description": ""},
-        {"word": "Lalawigan", "description": ""},
-        {"word": "Salat", "description": ""},
-        {"word": "Nagtatalo", "description": ""},
-        {"word": "Alkalde", "description": ""},
-        {"word": "Mapagmataas", "description": ""},
-        {"word": "Lawa", "description": ""},
-        {"word": "Katamtaman", "description": ""},
-        {"word": "Bukod-tangi", "description": ""},
-        {"word": "Mithiin", "description": ""},
-        {"word": "Lihim", "description": ""},
-        {"word": "Punyagi", "description": ""},
-        {"word": "Taboy", "description": ""},
-        {"word": "Gusali", "description": ""},
-        {"word": "Sambit", "description": ""},
-        {"word": "Silid-Aralan", "description": ""},
-        {"word": "Taob", "description": ""},
-        {"word": "Kumpas", "description": ""},
-        {"word": "Modelo", "description": ""},
-        {"word": "Hudyat", "description": ""},
-        {"word": "Anunsyo", "description": ""},
-        {"word": "Entablado", "description": ""},
-        {"word": "Estudyante", "description": ""},
-        {"word": "Pinuno", "description": ""},
-        {"word": "Disenyo", "description": ""},
-        {"word": "Mungkahi", "description": ""},
-        {"word": "Kultura", "description": ""},
-        {"word": "Siyudad", "description": ""},
-        {"word": "Paksa", "description": ""},
-        {"word": "Sining", "description": ""},
-        {"word": "Estilo", "description": ""},
-        {"word": "Lansangan", "description": ""},
-        {"word": "Kagubatan", "description": ""},
-        {"word": "Ektarya", "description": ""},
-        {"word": "Pamayanan", "description": ""},
-        {"word": "Pahayagan", "description": ""},
-        {"word": "Kalamidad", "description": ""},
-        {"word": "Troso", "description": ""},
-        {"word": "Alintana", "description": ""},
-        {"word": "Prusisyon", "description": ""},
-        {"word": "Marupok", "description": ""},
-        {"word": "Kusang-loob", "description": ""},
-        {"word": "Malasakit", "description": ""},
-        {"word": "Istasyon", "description": ""},
-        {"word": "Tanaw", "description": ""},
-        {"word": "Pulo", "description": ""},
-        {"word": "Kanluran", "description": ""},
-        {"word": "Timog", "description": ""},
-        {"word": "Silangan", "description": ""},
-    ],
-    'G5_6': [
-        {"word": "Diwang", "description": ""},
-        {"word": "Deboto", "description": ""},
-        {"word": "Patalastas", "description": ""},
-        {"word": "Kastigo", "description": ""},
-        {"word": "Paligsahan", "description": ""},
-        {"word": "Imbestiga", "description": ""},
-        {"word": "Anomalya", "description": ""},
-        {"word": "Nayon", "description": ""},
-        {"word": "Dalampasigan", "description": ""},
-        {"word": "Kuwardeno", "description": ""},
-        {"word": "Kalawakan", "description": ""},
-        {"word": "Bestida", "description": ""},
-        {"word": "Lungga", "description": ""},
-        {"word": "Liksik", "description": ""},
-        {"word": "Takipsilim", "description": ""},
-        {"word": "Madaling-araw", "description": ""},
-        {"word": "Guniguni", "description": ""},
-        {"word": "Malumanay", "description": ""},
-        {"word": "Wagas", "description": ""},
-        {"word": "Balabal", "description": ""},
-        {"word": "Taas-noo", "description": ""},
-        {"word": "Alsa", "description": ""},
-        {"word": "Pinsala", "description": ""},
-        {"word": "Pabrika", "description": ""},
-        {"word": "Daigdig", "description": ""},
-        {"word": "Probisyon", "description": ""},
-        {"word": "Dinamita", "description": ""},
-        {"word": "Pamahalaan", "description": ""},
-        {"word": "Suliranin", "description": ""},
-        {"word": "Tungkulin", "description": ""},
-        {"word": "Sarat", "description": ""},
-        {"word": "Bihira", "description": ""},
-        {"word": "Kayumanggi", "description": ""},
-        {"word": "Resistensiya", "description": ""},
-        {"word": "Temperatura", "description": ""},
-        {"word": "Himlay", "description": ""},
-        {"word": "Bayanihan", "description": ""},
-        {"word": "Biyaya", "description": ""},
-        {"word": "Sangkap", "description": ""},
-        {"word": "Tutol", "description": ""},
-        {"word": "Parokya", "description": ""},
-        {"word": "Dambana", "description": ""},
-        {"word": "Paroroonan", "description": ""},
-        {"word": "Liblib", "description": ""},
-        {"word": "Payak", "description": ""},
-        {"word": "Bantog", "description": ""},
-        {"word": "Salamuha", "description": ""},
-        {"word": "Daungan", "description": ""},
-        {"word": "Bansag", "description": ""},
-        {"word": "Epidemenya", "description": ""},
-        {"word": "Bahagdan", "description": ""},
-    ],
-}
+# GRADE_WORDS = {
+#     'G1_2': [
+#         { "id": "bata",       "word": "Bata",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "aklat",      "word": "Aklat",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "saging",     "word": "Saging",     "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "kabayo",     "word": "Kabayo",     "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "bote",       "word": "Bote",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "lolo",       "word": "Lolo",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "puno",       "word": "Puno",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "pera",       "word": "Pera",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "ako",        "word": "Ako",        "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "ikaw",       "word": "Ikaw",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "siya",       "word": "Siya",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "baka",       "word": "Baka",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "aso",        "word": "Aso",        "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "pusa",       "word": "Pusa",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "umaga",      "word": "Umaga",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "tubig",      "word": "Tubig",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "malungkot",  "word": "Malungkot",  "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "tatay",      "word": "Tatay",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "nanay",      "word": "Nanay",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "lapis",      "word": "Lapis",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "papel",      "word": "Papel",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "upuan",      "word": "Upuan",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "damit",      "word": "Damit",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "bola",       "word": "Bola",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "mansanas",   "word": "Mansanas",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "pantasa",    "word": "Pantasa",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "bulaklak",   "word": "Bulaklak",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "kutsara",    "word": "Kutsara",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "unan",       "word": "Unan",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "tinidor",    "word": "Tinidor",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "mundo",      "word": "Mundo",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "klima",      "word": "Klima",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "basura",     "word": "Basura",     "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "pamaypay",   "word": "Pamaypay",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "salamin",    "word": "Salamin",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "payong",     "word": "Payong",     "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "balat",      "word": "Balat",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "nagbabasa",  "word": "Nagbabasa",  "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "nagsusulat", "word": "Nagsusulat", "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "naglalaro",  "word": "Naglalaro",  "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "nagsusuklay","word": "Nagsusuklay","description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "nagsasayaw", "word": "Nagsasayaw", "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "naghihilamos","word": "Naghihilamos","description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "nagsisipilyo","word": "Nagsisipilyo","description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "naglilinis", "word": "Naglilinis", "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "umiiyak",    "word": "Umiiyak",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "tumatawa",   "word": "Tumatawa",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "lumalakad",  "word": "Lumalakad",  "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "kaibigan",   "word": "Kaibigan",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "paaralan",   "word": "Paaralan",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "mangga",     "word": "Mangga",     "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "sapatos",    "word": "Sapatos",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "palayan",    "word": "Palayan",    "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "dagat",      "word": "Dagat",      "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "ilog",       "word": "Ilog",       "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "halamanan",  "word": "Halamanan",  "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "palaruan",   "word": "Palaruan",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "eskuyla",    "word": "Eskuwela",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "ulam",       "word": "Ulam",       "description": "", "imageUrl": "", "sentences": [] },
+#     ],
+#     'G3_4': [
+#         { "id": "timpalak",   "word": "Timpalak",   "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "saklolo",    "word": "Saklolo",    "description": "", "imageUrl": "", "sentences": [] },
+#         {"word": "Kudong", "description": ""},
+#         {"word": "Sumukob", "description": ""},
+#         {"word": "Paglalako", "description": ""},
+#         {"word": "Matalik", "description": ""},
+#         {"word": "Mamamayan", "description": ""},
+#         {"word": "Lungsod", "description": ""},
+#         {"word": "Angkan", "description": ""},
+#         {"word": "Simbolo", "description": ""},
+#         {"word": "Aktibo", "description": ""},
+#         {"word": "Lalawigan", "description": ""},
+#         {"word": "Salat", "description": ""},
+#         {"word": "Nagtatalo", "description": ""},
+#         {"word": "Alkalde", "description": ""},
+#         {"word": "Mapagmataas", "description": ""},
+#         {"word": "Lawa", "description": ""},
+#         {"word": "Katamtaman", "description": ""},
+#         {"word": "Bukod-tangi", "description": ""},
+#         {"word": "Mithiin", "description": ""},
+#         {"word": "Lihim", "description": ""},
+#         {"word": "Punyagi", "description": ""},
+#         {"word": "Taboy", "description": ""},
+#         {"word": "Gusali", "description": ""},
+#         {"word": "Sambit", "description": ""},
+#         {"word": "Silid-Aralan", "description": ""},
+#         {"word": "Taob", "description": ""},
+#         {"word": "Kumpas", "description": ""},
+#         {"word": "Modelo", "description": ""},
+#         {"word": "Hudyat", "description": ""},
+#         {"word": "Anunsyo", "description": ""},
+#         {"word": "Entablado", "description": ""},
+#         {"word": "Estudyante", "description": ""},
+#         {"word": "Pinuno", "description": ""},
+#         {"word": "Disenyo", "description": ""},
+#         {"word": "Mungkahi", "description": ""},
+#         {"word": "Kultura", "description": ""},
+#         {"word": "Siyudad", "description": ""},
+#         {"word": "Paksa", "description": ""},
+#         {"word": "Sining", "description": ""},
+#         {"word": "Estilo", "description": ""},
+#         {"word": "Lansangan", "description": ""},
+#         {"word": "Kagubatan", "description": ""},
+#         {"word": "Ektarya", "description": ""},
+#         {"word": "Pamayanan", "description": ""},
+#         {"word": "Pahayagan", "description": ""},
+#         {"word": "Kalamidad", "description": ""},
+#         {"word": "Troso", "description": ""},
+#         {"word": "Alintana", "description": ""},
+#         {"word": "Prusisyon", "description": ""},
+#         {"word": "Marupok", "description": ""},
+#         {"word": "Kusang-loob", "description": ""},
+#         {"word": "Malasakit", "description": ""},
+#         {"word": "Istasyon", "description": ""},
+#         {"word": "Tanaw", "description": ""},
+#         {"word": "Pulo", "description": ""},
+#         {"word": "Kanluran", "description": ""},
+#         {"word": "Timog", "description": ""},
+#         {"word": "Silangan", "description": ""},
+#     ],
+#     'G5_6': [
+#         { "id": "diwang",     "word": "Diwang",     "description": "", "imageUrl": "", "sentences": [] },
+#         { "id": "deboto",     "word": "Deboto",     "description": "", "imageUrl": "", "sentences": [] },
+#         {"word": "Patalastas", "description": ""},
+#         {"word": "Kastigo", "description": ""},
+#         {"word": "Paligsahan", "description": ""},
+#         {"word": "Imbestiga", "description": ""},
+#         {"word": "Anomalya", "description": ""},
+#         {"word": "Nayon", "description": ""},
+#         {"word": "Dalampasigan", "description": ""},
+#         {"word": "Kuwardeno", "description": ""},
+#         {"word": "Kalawakan", "description": ""},
+#         {"word": "Bestida", "description": ""},
+#         {"word": "Lungga", "description": ""},
+#         {"word": "Liksik", "description": ""},
+#         {"word": "Takipsilim", "description": ""},
+#         {"word": "Madaling-araw", "description": ""},
+#         {"word": "Guniguni", "description": ""},
+#         {"word": "Malumanay", "description": ""},
+#         {"word": "Wagas", "description": ""},
+#         {"word": "Balabal", "description": ""},
+#         {"word": "Taas-noo", "description": ""},
+#         {"word": "Alsa", "description": ""},
+#         {"word": "Pinsala", "description": ""},
+#         {"word": "Pabrika", "description": ""},
+#         {"word": "Daigdig", "description": ""},
+#         {"word": "Probisyon", "description": ""},
+#         {"word": "Dinamita", "description": ""},
+#         {"word": "Pamahalaan", "description": ""},
+#         {"word": "Suliranin", "description": ""},
+#         {"word": "Tungkulin", "description": ""},
+#         {"word": "Sarat", "description": ""},
+#         {"word": "Bihira", "description": ""},
+#         {"word": "Kayumanggi", "description": ""},
+#         {"word": "Resistensiya", "description": ""},
+#         {"word": "Temperatura", "description": ""},
+#         {"word": "Himlay", "description": ""},
+#         {"word": "Bayanihan", "description": ""},
+#         {"word": "Biyaya", "description": ""},
+#         {"word": "Sangkap", "description": ""},
+#         {"word": "Tutol", "description": ""},
+#         {"word": "Parokya", "description": ""},
+#         {"word": "Dambana", "description": ""},
+#         {"word": "Paroroonan", "description": ""},
+#         {"word": "Liblib", "description": ""},
+#         {"word": "Payak", "description": ""},
+#         {"word": "Bantog", "description": ""},
+#         {"word": "Salamuha", "description": ""},
+#         {"word": "Daungan", "description": ""},
+#         {"word": "Bansag", "description": ""},
+#         {"word": "Epidemenya", "description": ""},
+#         {"word": "Bahagdan", "description": ""},
+#     ],
+# }
+
+# Optional external JSON sources for grade-based word pools
+# You can override these paths with environment variables G1_2_JSON_PATH, G3_4_JSON_PATH, G5_6_JSON_PATH
+# Default to repo-relative paths; allow override via env vars
+DEFAULT_G1_2_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade_level_1-2_words.json')
+DEFAULT_G3_4_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade_level_3-4_words.json')
+DEFAULT_G5_6_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade_level_5-6_words.json')
+G1_2_JSON_PATH = os.environ.get('G1_2_JSON_PATH', DEFAULT_G1_2_JSON)
+G3_4_JSON_PATH = os.environ.get('G3_4_JSON_PATH', DEFAULT_G3_4_JSON)
+G5_6_JSON_PATH = os.environ.get('G5_6_JSON_PATH', DEFAULT_G5_6_JSON)
+
+def load_g1_2_words_from_json():
+    """Load Grade 1-2 words from external JSON file if available.
+
+    Expected JSON format (array of objects):
+    {
+      "word": "Bata",
+      "easy": "...",
+      "difficult": "..."
+    }
+
+    Returns list of normalized-like raw entries to be normalized later.
+    """
+    try:
+        if not os.path.isfile(G1_2_JSON_PATH):
+            raise FileNotFoundError(f"G1_2 JSON not found at {G1_2_JSON_PATH}")
+
+        with open(G1_2_JSON_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        words = []
+        for item in data:
+            try:
+                word_text = (item.get('word') or '').strip()
+                easy_sentence = (item.get('easy') or '').strip()
+                difficult_sentence = (item.get('difficult') or '').strip()
+                sentences = [s for s in [easy_sentence, difficult_sentence] if s]
+                if not word_text:
+                    continue
+                words.append({
+                    "id": word_text.lower().replace(' ', '-'),
+                    "word": word_text,
+                    "description": "",
+                    "imageUrl": "",
+                    "sentences": sentences,
+                    "easy": easy_sentence,
+                    "difficult": difficult_sentence,
+                    "grade": 'G1_2'
+                })
+            except Exception:
+                continue
+
+        logger.info(f"Loaded {len(words)} G1_2 words from JSON file")
+        return words
+    except Exception as e:
+        logger.warning(f"Failed to load G1_2 words from JSON: {str(e)}")
+        return None
+
+def load_g3_4_words_from_json():
+    """Load Grade 3-4 words from external JSON file if available."""
+    try:
+        if not os.path.isfile(G3_4_JSON_PATH):
+            raise FileNotFoundError(f"G3_4 JSON not found at {G3_4_JSON_PATH}")
+
+        with open(G3_4_JSON_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        words = []
+        for item in data:
+            try:
+                word_text = (item.get('word') or '').strip()
+                easy_sentence = (item.get('easy') or '').strip()
+                difficult_sentence = (item.get('difficult') or '').strip()
+                sentences = [s for s in [easy_sentence, difficult_sentence] if s]
+                if not word_text:
+                    continue
+                words.append({
+                    "id": word_text.lower().replace(' ', '-'),
+                    "word": word_text,
+                    "description": item.get('description') or "",
+                    "imageUrl": item.get('imageUrl') or "",
+                    "sentences": sentences,
+                    "easy": easy_sentence,
+                    "difficult": difficult_sentence,
+                    "grade": 'G3_4'
+                })
+            except Exception:
+                continue
+
+        logger.info(f"Loaded {len(words)} G3_4 words from JSON file")
+        return words
+    except Exception as e:
+        logger.warning(f"Failed to load G3_4 words from JSON: {str(e)}")
+        return None
+
+def load_g5_6_words_from_json():
+    """Load Grade 5-6 words from external JSON file if available."""
+    try:
+        if not os.path.isfile(G5_6_JSON_PATH):
+            raise FileNotFoundError(f"G5_6 JSON not found at {G5_6_JSON_PATH}")
+
+        with open(G5_6_JSON_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        words = []
+        for item in data:
+            try:
+                word_text = (item.get('word') or '').strip()
+                easy_sentence = (item.get('easy') or '').strip()
+                difficult_sentence = (item.get('difficult') or '').strip()
+                sentences = [s for s in [easy_sentence, difficult_sentence] if s]
+                if not word_text:
+                    continue
+                words.append({
+                    "id": word_text.lower().replace(' ', '-'),
+                    "word": word_text,
+                    "description": item.get('description') or "",
+                    "imageUrl": item.get('imageUrl') or "",
+                    "sentences": sentences,
+                    "easy": easy_sentence,
+                    "difficult": difficult_sentence,
+                    "grade": 'G5_6'
+                })
+            except Exception:
+                continue
+
+        logger.info(f"Loaded {len(words)} G5_6 words from JSON file")
+        return words
+    except Exception as e:
+        logger.warning(f"Failed to load G5_6 words from JSON: {str(e)}")
+        return None
+
+# Normalize word entries to a consistent schema used by the frontend
+# Ensures every item has (in order): id, word, description, imageUrl, sentences
+def normalize_word_item(raw, grade_key):
+    try:
+        item = dict(raw) if isinstance(raw, dict) else {"word": str(raw)}
+    except Exception:
+        item = {"word": str(raw)}
+
+    word_text = (item.get("word") or "").strip()
+    slug = (item.get("id") or word_text.lower().replace(" ", "-")).strip()
+    description = item.get("description") or ""
+    # We default to empty string because images will be provided as GIFs later
+    image_url = item.get("imageUrl") or ""
+    sentences = item.get("sentences") or []
+
+    return {
+        "id": slug or word_text.lower(),
+        "word": word_text,
+        "description": description,
+        "imageUrl": image_url,
+        "sentences": sentences,
+    }
 
 # Load the ToCylog NLP model
 try:
@@ -795,6 +963,27 @@ def analyze_text():
                 "error": "ToCylog model is not loaded. Using fallback POS tagging."
             }), 500
         
+        # --- Measure performance and memory ---
+        def _get_rss_mb() -> Optional[float]:
+            try:
+                if _HAVE_PSUTIL:
+                    proc = psutil.Process(os.getpid())
+                    return float(proc.memory_info().rss) / (1024.0 * 1024.0)
+                if _HAVE_RESOURCE:
+                    usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                    # ru_maxrss is bytes on macOS, kilobytes on Linux
+                    if sys.platform == 'darwin':
+                        rss_bytes = float(usage)
+                    else:
+                        rss_bytes = float(usage) * 1024.0
+                    return rss_bytes / (1024.0 * 1024.0)
+            except Exception:
+                return None
+            return None
+
+        rss_before_mb = _get_rss_mb()
+        start_ts = time.perf_counter()
+
         # Process the sentence
         doc = nlp(sentence)
         tokens = []
@@ -839,12 +1028,32 @@ def analyze_text():
             "pos_counts": pos_counts
         }
         
-        return create_cors_response({
+        end_ts = time.perf_counter()
+        rss_after_mb = _get_rss_mb()
+        processing_ms = int((end_ts - start_ts) * 1000)
+        memory_metrics = None
+        try:
+            if rss_before_mb is not None and rss_after_mb is not None:
+                memory_metrics = {
+                    "rss_before_mb": round(rss_before_mb, 2),
+                    "rss_after_mb": round(rss_after_mb, 2),
+                    "delta_mb": round(rss_after_mb - rss_before_mb, 2)
+                }
+        except Exception:
+            memory_metrics = None
+
+        response_payload = {
             "sentence": sentence,
             "tokens": tokens,
             "analysis": sentence_analysis,
-            "method": "ToCylog"
-        })
+            "method": "ToCylog",
+            "metrics": {
+                "processing_ms": processing_ms,
+                "memory": memory_metrics
+            }
+        }
+
+        return create_cors_response(response_payload)
     
     except Exception as e:
         logger.error(f"Error analyzing text: {str(e)}", exc_info=True)
@@ -971,18 +1180,41 @@ def get_sentence_words():
         grade = request.args.get('grade')
 
         # Select pool based on grade or default to full list
-        if grade in GRADE_WORDS and len(GRADE_WORDS[grade]) > 0:
+        if grade == 'G1_2':
+            # Prefer external JSON source for Grade 1-2
+            json_words = load_g1_2_words_from_json()
+            if json_words and len(json_words) > 0:
+                words = json_words
+            else:
+                words = GRADE_WORDS.get('G1_2', []).copy()
+        elif grade == 'G3_4':
+            json_words = load_g3_4_words_from_json()
+            if json_words and len(json_words) > 0:
+                words = json_words
+            else:
+                words = GRADE_WORDS.get('G3_4', []).copy()
+        elif grade == 'G5_6':
+            json_words = load_g5_6_words_from_json()
+            if json_words and len(json_words) > 0:
+                words = json_words
+            else:
+                words = GRADE_WORDS.get('G5_6', []).copy()
+        elif grade in GRADE_WORDS and len(GRADE_WORDS[grade]) > 0:
             words = GRADE_WORDS[grade].copy()
         else:
             # If no grade provided, default to G3_4 to avoid old pool
             default_grade = 'G3_4'
+            grade = default_grade
             words = GRADE_WORDS.get(default_grade, [])[:]
-        random.shuffle(words)
+
+        # Normalize all entries to a consistent schema
+        normalized = [normalize_word_item(w, grade) for w in words]
+        random.shuffle(normalized)
         
         # Return the words
         return create_cors_response({
-            "words": words,
-            "count": len(words)
+            "words": normalized,
+            "count": len(normalized)
         })
         
     except Exception as e:
