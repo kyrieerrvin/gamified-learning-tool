@@ -1,0 +1,296 @@
+[
+  {
+    "word": "Diwang",
+    "easy": "Ang pista ay puno ng diwang.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa masayang diwang ng pista.",
+    "difficult": "Masayang diwang ang nadama ng lahat habang nanonood ng parada."
+  },
+  {
+    "word": "Deboto",
+    "easy": "Ang matandang babae ay isang tapat na deboto.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang deboto sa simbahan.",
+    "difficult": "Ang deboto ay laging nagsisimba tuwing Linggo."
+  },
+  {
+    "word": "Patalastas",
+    "easy": "Nabasa ko ang bagong patalastas tungkol sa tindahan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang patalastas sa telebisyon.",
+    "difficult": "Nakita ko sa telebisyon ang patalastas ng bagong tsokolate."
+  },
+  {
+    "word": "Kastigo",
+    "easy": "Ang hindi pagsunod sa batas ay may kaukulang kastigo",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa parusang kastigo.",
+    "difficult": "Tumanggap siya ng kastigo matapos lumabag sa patakaran ng paaralan."
+  },
+  {
+    "word": "Paligsahan",
+    "easy": "Mayroong paligsahan ng sayawan sa plaza.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paligsahan sa sportsfest.",
+    "difficult": "Sabik na sumali si Mario sa paligsahan ng basketball sa kanilang eskwela."
+  },
+  {
+    "word": "Imbestiga",
+    "easy": "Dumating ang pulis upang imbestiga ang kaso.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa imbestiga ng guro.",
+    "difficult": "Inimbestiga ng guro kung sino ang nagbura ng sagot sa pisara."
+  },
+  {
+    "word": "Anomalya",
+    "easy": "Ang katiwala ay nadawit sa isang anomalya.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa anomalya sa pagsusulit.",
+    "difficult": "Napansin ng guro ang anomalya dahil magkapareho ang lahat ng sagot ng dalawang estudyante."
+  },
+  {
+    "word": "Nayon",
+    "easy": "Tahimik ang maliit na nayon sa bulubundukin.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa nayon.",
+    "difficult": "Maraming puno at bukirin sa nayon nina Liza."
+  },
+  {
+    "word": "Dalampasigan",
+    "easy": "Nagsisigawan ang mga bata sa dalampasigan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa dalampasigan.",
+    "difficult": "Naglaro ng habulan ang mga bata sa dalampasigan."
+  },
+  {
+    "word": "Kuwardeno",
+    "easy": "Nawala ang kuwardeno ni Marco kaya nahirapan siyang mag-aral para sa pagsusulit.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagsasagot sa kuwardeno.",
+    "difficult": "Maayos na naisulat ni Ana ang kanyang sagot sa kuwardeno."
+  },
+  {
+    "word": "Kalawakan",
+    "easy": "Tanaw mula sa teleskopyo ang malalayo at maliwanag na tala sa kalawakan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kalawakan.",
+    "difficult": "Nakatingala sila sa kalawakan upang pagmasdan ang mga bituin."
+  },
+  {
+    "word": "Bestida",
+    "easy": "Ipinamana ng lola kay Carla ang lumang bestida na maingat niyang iningatan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bestida.",
+    "difficult": "Isinuot ni Maria ang bestida sa kaarawan ng kanyang pinsan."
+  },
+  {
+    "word": "Lungga",
+    "easy": "Doon nagtago ang daga sa kanyang lungga.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa lungga.",
+    "difficult": "Ang pusa ay sumiksik sa kanyang lungga upang matulog."
+  },
+  {
+    "word": "Liksik",
+    "easy": "Ang matagumpay na eksperimento ay bunga ng masusing liksik ng mga estudyante.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa liksik.",
+    "difficult": "Gumawa ng liksik ang mga mag-aaral tungkol sa alamat ng kanilang lugar."
+  },
+  {
+    "word": "Takipsilim",
+    "easy": "Dumidilim na dahil takipsilim na.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa takipsilim.",
+    "difficult": "Naglalaro pa rin sila sa labas kahit takipsilim na."
+  },
+  {
+    "word": "Guniguni",
+    "easy": "Minsan, may mga bagay na bunga lang ng guniguni.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa guniguni.",
+    "difficult": "Ang batang natakot ay guniguni lang pala ang nakita."
+  },
+  {
+    "word": "Malumanay",
+    "easy": "Nagsalita siya sa paraan na malumanay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa malumanay na boses.",
+    "difficult": "Malumanay siyang umaawit ng kanta."
+  },
+  {
+    "word": "Wagas",
+    "easy": "Ang kanilang pagmamahalan ay tunay at wagas.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa wagas na pagkakaibigan.",
+    "difficult": "Wagas ang pagkakaibigan nina Pedro at Juan."
+  },
+  {
+    "word": "Balabal",
+    "easy": "Ang balabal ng hari ay gawa sa mamahaling tela at balahibo.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa balabal.",
+    "difficult": "Isinuot niya ang balabal dahil malamig ang panahon."
+  },
+  {
+    "word": "Alsa",
+    "easy": "Nagkaroon ng alsa ang mga manggagawa upang ipaglaban ang kanilang karapatan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa alsa.",
+    "difficult": "Nagsimula ang alsa ng mga estudyante nang ipagbawal ang paglalaro sa quadrangle."
+  },
+  {
+    "word": "Pinsala",
+    "easy": "Nakakaranas ng pinsala ang kalikasan dahil sa labis na pagputol ng puno.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pinsala ng lindol.",
+    "difficult": "Malaking pinsala ang iniwan ng lindol sa mga gusali."
+  },
+  {
+    "word": "Pabrika",
+    "easy": "Nagbuga ng usok ang malaking pabrika na nakaaapekto sa kalikasan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pabrika.",
+    "difficult": "Maraming nagtatrabaho sa pabrika ng damit sa lungsod."
+  },
+  {
+    "word": "Daigdig",
+    "easy": "Malawak ang karagatan at kagubatan na bumabalot sa ating daigdig.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa daigdig.",
+    "difficult": "Ang daigdig ay dapat alagaan dahil ito ang ating tahanan."
+  },
+  {
+    "word": "Probisyon",
+    "easy": "Nagbaon sila ng sapat na probisyon para sa paglalakbay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa probisyon.",
+    "difficult": "May probisyon ang paaralan na nagbabawal magkalat."
+  },
+  {
+    "word": "Dinamita",
+    "easy": "Delikado ang maling paggamit ng dinamita.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa dinamita.",
+    "difficult": "Mapanganib maglaro ng dinamita kaya ipinagbawal ito ng barangay."
+  },
+  {
+    "word": "Pamahalaan",
+    "easy": "Ang pamahalaan ang namumuno sa bansa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa papel ng pamahalaan.",
+    "difficult": "Tinutulungan ng pamahalaan ang mga nasalanta ng bagyo."
+  },
+  {
+    "word": "Suliranin",
+    "easy": "May mga mag-aaral na may iba’t ibang suliranin.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa suliranin sa paaralan.",
+    "difficult": "Malaking suliranin ang kakulangan ng upuan sa silid-aralan."
+  },
+  {
+    "word": "Tungkulin",
+    "easy": "Ang tungkulin ng isang sundalo ay ipagtanggol ang kanyang bayan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa tungkulin ng estudyante.",
+    "difficult": "Tungkulin ng estudyante ang mag-aral nang mabuti."
+  },
+  {
+    "word": "Sarat",
+    "easy": "Tinukso si Pedro dahil sa kanyang sarat na ilong, ngunit hindi niya ito ikinahiya.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa sarat na ilong.",
+    "difficult": "Sarat ang ilong ng bata ngunit kaakit-akit pa rin siya."
+  },
+  {
+    "word": "Bihira",
+    "easy": "Si Jonathan ay bihira magsalita, ngunit lagi siyang nakikinig.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bihirang bisita.",
+    "difficult": "Bihira lamang dumalaw ang tiyuhin nila mula Maynila."
+  },
+  {
+    "word": "Kayumanggi",
+    "easy": "Ang mga dahon ng puno ay naging kayumanggi noong taglagas.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kulay kayumanggi.",
+    "difficult": "Kayumanggi ang balat ng magsasakang laging nasa bukid."
+  },
+  {
+    "word": "Resistensiya",
+    "easy": "Regular na ehersisyo ang sekreto sa matibay na resistensiya.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa resistensiya ng katawan.",
+    "difficult": "Malakas ang resistensiya niya dahil mahilig siyang kumain ng gulay."
+  },
+  {
+    "word": "Temperatura",
+    "easy": "Mainit ang temperatura ngayong araw.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa temperatura ng panahon.",
+    "difficult": "Bumaba ang temperatura kagabi kaya’t malamig ang hangin."
+  },
+  {
+    "word": "Himlay",
+    "easy": "Matapos ang mahabang lakad, naghimlay si Lito sa ilalim ng puno.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa himlay.",
+    "difficult": "Payapang himlay ang nakitang itsura ng sanggol sa duyan."
+  },
+  {
+    "word": "Bayanihan",
+    "easy": "Ang pagtutulungan ay tinatawag na bayanihan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bayanihan.",
+    "difficult": "Nagpakita ng bayanihan ang mga kapitbahay nang magtulungan silang itayo ang bahay."
+  },
+  {
+    "word": "Biyaya",
+    "easy": "Ang bawat bagong araw ay biyaya na dapat ipagpasalamat.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa biyaya.",
+    "difficult": "Ang ulan ay biyaya para sa mga nagtatanim ng palay."
+  },
+  {
+    "word": "Sangkap",
+    "easy": "Ang bawang ay isang mahalagang sangkap sa pagluluto.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa sangkap sa pagluluto.",
+    "difficult": "Kumpleto na ang sangkap para makapagluto ng adobo si Nanay."
+  },
+  {
+    "word": "Tutol",
+    "easy": "Siya ay tutol sa bagong patakaran.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagtutol.",
+    "difficult": "Tutol si Lito na gumala dahil may takdang-aralin pa siya."
+  },
+  {
+    "word": "Parokya",
+    "easy": "Ang mga tao ay nagtipon sa parokya.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa parokya.",
+    "difficult": "Maraming tao ang nagsisimba sa parokya tuwing Linggo."
+  },
+  {
+    "word": "Dambana",
+    "easy": "Tahimik na nagdasal si Maria sa harap ng dambana.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa dambana.",
+    "difficult": "Nag-alay sila ng kandila at bulaklak sa dambana ng kanilang patron."
+  },
+  {
+    "word": "Paroroonan",
+    "easy": "Ang Maynila ang aming paroroonan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paroroonan.",
+    "difficult": "Hindi alam ng bata ang paroroonan ng kanyang nawawalang aso."
+  },
+  {
+    "word": "Liblib",
+    "easy": "Liblib ang lugar kaya bihira itong mapuntahan ng mga tao.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa liblib na lugar.",
+    "difficult": "Nakatira sila sa isang liblib na lugar."
+  },
+  {
+    "word": "Payak",
+    "easy": "Ang kanyang pananamit ay simple at payak.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa payak na pamumuhay.",
+    "difficult": "Payak ang kanilang pamumuhay ngunit masaya sila bilang pamilya."
+  },
+  {
+    "word": "Bantog",
+    "easy": "Bantog ang Mayon Volcano sa kanyang halos perpektong hugis.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bantog na tao.",
+    "difficult": "Bantog na bayani si Jose Rizal sa kasaysayan ng Pilipinas."
+  },
+  {
+    "word": "Salamuha",
+    "easy": "Mahalaga ang salamuha sa lipunan upang mapalakas ang pagkakaisa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa salamuha.",
+    "difficult": "Mahilig si Anna na makisalamuha sa kanyang mga kamag-aral."
+  },
+  {
+    "word": "Daungan",
+    "easy": "Ang daungan ay puno ng iba’t ibang uri ng sasakyang-dagat.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa daungan.",
+    "difficult": "Dumating na ang barko sa daungan kahapon ng umaga."
+  },
+  {
+    "word": "Bansag",
+    "easy": "Ang kanyang bansag ay “Batang Henyo.”",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bansag.",
+    "difficult": "“Ginoo Presidente” ang bansag ng mga kaklase kay Mark dahil laging siya ang namumuno sa grupo."
+  },
+  {
+    "word": "Epidemenya",
+    "easy": "Nagsagawa ng libreng bakuna ang pamahalaan upang maiwasan ang epidemya.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa epidemenya.",
+    "difficult": "Maraming estudyante ang nagkasakit dahil sa epidemenya ng trangkaso."
+  },
+  {
+    "word": "Bahagdan",
+    "easy": "Ang anim ay kalahating bahagdan ng labindalawa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bahagdan.",
+    "difficult": "Tumaas ng sampung bahagdan ang marka ni Liza sa pagsusulit."
+  }
+]

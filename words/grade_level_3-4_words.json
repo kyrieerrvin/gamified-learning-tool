@@ -1,0 +1,362 @@
+[
+  {
+    "word": "Timpalak",
+    "easy": "Mayroong timpalak sa paaralan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa timpalak sa paaralan.",
+    "difficult": "Nagwagi si Maribel sa timpalak ng pagguhit sa kanilang paaralan."
+  },
+  {
+    "word": "Saklolo",
+    "easy": "Sumigaw siya ng saklolo nang makita ang apoy.",
+    "difficult_instruction": "Gumawa ng pangungusap na nagpapakita kung paano humihingi ng saklolo.",
+    "difficult": "Sumigaw ng saklolo ang bata nang makita ang sunog sa bahay."
+  },
+  {
+    "word": "Kudong",
+    "easy": "Dala ni Tatay ang kudong sa bukid.",
+    "difficult_instruction": "Gumawa ng pangungusap na naglalarawan kung saan ginagamit ang kudong.",
+    "difficult": "Ang kudong ay ginagamit ng mga katutubo bilang tradisyonal na panakip sa ulo lalo na sa mga espesyal na okasyon."
+  },
+  {
+    "word": "Sumukob",
+    "easy": "Sumukob kami sa bubong upang hindi mabasa.",
+    "difficult_instruction": "Gumawa ng pangungusap na gumagamit ng salitang sumukob sa ulan.",
+    "difficult": "Sumukob ang mga bata sa tindahan upang hindi mabasa ng ulan."
+  },
+  {
+    "word": "Paglalako",
+    "easy": "Si Mang Juan ay kumikita mula sa paglalako ng prutas sa paligid ng baryo.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa hirap ng paglalako.",
+    "difficult": "Ang hirap ng paglalako ay nakikita sa pawis at pagod ng mga nagtitinda sa kalsada."
+  },
+  {
+    "word": "Matalik",
+    "easy": "Ang matalik na pagkakaibigan ay nagdadala ng saya at tiwala.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa matalik na kaibigan.",
+    "difficult": "Laging kasama ni Karlo ang kanyang matalik na kaibigan sa paglalaro."
+  },
+  {
+    "word": "Mamamayan",
+    "easy": "Ang bawat mamamayan ay may tungkulin sa bansa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa tungkulin ng isang mamamayan.",
+    "difficult": "Ang bawat mamamayan ay may tungkuling magbayad ng buwis nang tama."
+  },
+  {
+    "word": "Lungsod",
+    "easy": "Maraming gusali at sasakyan sa lungsod.",
+    "difficult_instruction": "Gumawa ng pangungusap na naglalarawan ng isang lungsod.",
+    "difficult": "Matao at masigla ang lungsod ng Maynila tuwing gabi."
+  },
+  {
+    "word": "Angkan",
+    "easy": "Sama-sama ang buong angkan sa salu-salo.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagkakaisa ng isang angkan.",
+    "difficult": "Nagtipon ang buong angkan para sa pista ng bayan."
+  },
+  {
+    "word": "Simbolo",
+    "easy": "Ang watawat ay isang simbolo ng kalayaan.",
+    "difficult_instruction": "Gumawa ng pangungusap na nagpapakita ng kahalagahan ng isang simbolo.",
+    "difficult": "Ang krus ay simbolo ng pananampalataya ng mga Kristiyano."
+  },
+  {
+    "word": "Aktibo",
+    "easy": "Si Mark ay aktibo na sumasagot sa klase.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagiging aktibo sa sports.",
+    "difficult": "Si Mark ay laging aktibo sa sports kaya marami siyang nagiging kaibigan."
+  },
+  {
+    "word": "Lalawigan",
+    "easy": "Ang Bohol ay isang lalawigan sa Visayas.",
+    "difficult_instruction": "Gumawa ng pangungusap na naglalarawan ng isang lalawigan.",
+    "difficult": "Tahimik at berde ang lalawigan ng Quezon dahil sa malalawak na bukirin."
+  },
+  {
+    "word": "Salat",
+    "easy": "Masaya sila kahit salat sa yaman.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pamilyang salat sa yaman ngunit masaya.",
+    "difficult": "Salat man sa yaman, masaya ang pamilya Santos dahil nagmamahalan sila."
+  },
+  {
+    "word": "Nagtatalo",
+    "easy": "Ang dalawang bata ay nagtatalo sa laruan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa dalawang batang nagtatalo.",
+    "difficult": "Nagtatalo sina Rico at Ben kung sino ang unang maglalaro ng bola."
+  },
+  {
+    "word": "Alkalde",
+    "easy": "Ang alkalde ang nangunguna sa proyekto ng bayan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa proyekto ng isang alkalde.",
+    "difficult": "Ipinatayo ng alkalde ang bagong tulay sa barangay."
+  },
+  {
+    "word": "Mapagmataas",
+    "easy": "Siya ay mapagmataas at hindi nakikipaglaro.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang taong mapagmataas.",
+    "difficult": "Ayaw makinig ng batang mapagmataas dahil iniisip niya na siya lang ang laging tama."
+  },
+  {
+    "word": "Lawa",
+    "easy": "Namimitas sila ng isda sa lawa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pangingisda sa isang lawa.",
+    "difficult": "Nanguha ng tilapia ang mga mangingisda sa lawa ng Laguna."
+  },
+  {
+    "word": "Katamtaman",
+    "easy": "Ang panahon ngayon ay katamtaman na malamig.",
+    "difficult_instruction": "Gumawa ng pangungusap gamit ang salitang katamtaman na naglalarawan ng panahon.",
+    "difficult": "Katamtaman ang lakas ng hangin kaya komportable ang maglakad sa labas."
+  },
+  {
+    "word": "Bukod-tangi",
+    "easy": "Si Miguel ay bukod-tangi sa pagkanta.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang batang bukod-tangi sa talento.",
+    "difficult": "Bukod-tangi ang batang si Mark sa talento sa pagsayaw kaya madalas siyang maimbitahan sa programa."
+  },
+  {
+    "word": "Mithiin",
+    "easy": "Ang mithiin ko ay maging guro balang araw.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mithiin ng isang mag-aaral.",
+    "difficult": "Mithiin ng bawat mag-aaral na magkaroon ng magandang kinabukasan."
+  },
+  {
+    "word": "Lihim",
+    "easy": "May lihim siyang hindi sinasabi sa lahat.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang lihim na itinago.",
+    "difficult": "Itinago ni Jessa ang kanyang lihim na sulat sa ilalim ng unan."
+  },
+  {
+    "word": "Punyagi",
+    "easy": "Dahil sa kanyang punyagi, nanalo siya sa paligsahan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa punyagi ng isang atleta.",
+    "difficult": "Punyagi ng isang atleta ang nagtulak sa kanya na mag-ensayo araw-araw."
+  },
+  {
+    "word": "Taboy",
+    "easy": "Taboy niya ang pusa gamit ang walis.",
+    "difficult_instruction": "Gumawa ng pangungusap kung paano tinaboy ang aso sa bakuran.",
+    "difficult": "Tinaboy ni Mang Glen ang aso gamit ang palakpak ng kamay."
+  },
+  {
+    "word": "Gusali",
+    "easy": "Mataas ang gusali sa gitna ng siyudad.",
+    "difficult_instruction": "Gumawa ng pangungusap na naglalarawan ng isang mataas na gusali.",
+    "difficult": "Makikita mula sa malayo ang mataas na gusali sa siyudad."
+  },
+  {
+    "word": "Sambit",
+    "easy": "Ang sambit ng guro ay “Mag-aral kayong mabuti.”",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa sambit ng isang magulang.",
+    "difficult": "Sambit ni tatay kay Pedro na maging mabait sa lahat ng tao."
+  },
+  {
+    "word": "Silid-Aralan",
+    "easy": "Galak na galak gumuhit ang mga mag-aaral sa loob ng silid-aralan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga gawain sa silid-aralan.",
+    "difficult": "Nagwawalis at nag-aayos ng upuan ang mga mag-aaral sa silid-aralan."
+  },
+  {
+    "word": "Taob",
+    "easy": "Taob ang bote ng tubig sa mesa kaya nabasa ang papel.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bangkang taob.",
+    "difficult": "Naging taob ang bangka dahil sa malakas na hangin sa dagat."
+  },
+  {
+    "word": "Kumpas",
+    "easy": "Gumamit siya ng kumpas ng kamay sa pagsayaw.",
+    "difficult_instruction": "Gumawa ng pangungusap na gumagamit ng salitang kumpas ng kamay.",
+    "difficult": "Ginamit ng guro ang kumpas ng kamay upang patahimikin ang klase."
+  },
+  {
+    "word": "Modelo",
+    "easy": "Ginawa ni Carlo ang isang modelo ng bahay gamit ang karton.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang modelo ng kabutihan.",
+    "difficult": "Si Ate Lea ay modelo ng kabutihan sa kanilang pamayanan."
+  },
+  {
+    "word": "Hudyat",
+    "easy": "Ang tunog ng kampana ang naging hudyat ng pagtatapos ng klase.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa hudyat ng simula ng palaro.",
+    "difficult": "Ang pito ng referee ang hudyat ng pagsisimula ng laro."
+  },
+  {
+    "word": "Anunsyo",
+    "easy": "May anunsyo sa radyo tungkol sa bagyong paparating.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang anunsyo sa paaralan.",
+    "difficult": "Nagkaroon ng anunsyo tungkol sa bagong iskedyul ng klase."
+  },
+  {
+    "word": "Entablado",
+    "easy": "Maganda ang dekorasyon ng entablado para sa programa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagtatanghal sa entablado.",
+    "difficult": "Umakyat ang mga bata sa entablado para sa kanilang sayaw."
+  },
+  {
+    "word": "Estudyante",
+    "easy": "May dalang maraming aklat ang estudyante.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang masipag na estudyante.",
+    "difficult": "Si Lorie ay isang masipag na estudyante na laging nag-aaral sa gabi."
+  },
+  {
+    "word": "Pinuno",
+    "easy": "Ang pinuno ng klase ang nag-ulat ng kanilang proyekto.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa tungkulin ng isang pinuno.",
+    "difficult": "Ang pinuno ng barangay ay nangunguna sa paglilinis ng komunidad."
+  },
+  {
+    "word": "Disenyo",
+    "easy": "Natuwa si Marcus sa disenyo ng kanyang notebook.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang disenyo ng bahay.",
+    "difficult": "Maganda ang disenyo ng bahay na gawa sa kahoy at bato."
+  },
+  {
+    "word": "Mungkahi",
+    "easy": "Ang mungkahi ni Mika ay gumawa sila ng poster tungkol sa kalinisan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mungkahi ng isang guro.",
+    "difficult": "Ipinatupad ang mungkahi ng guro na magtanim ng halaman sa bakuran ng paaralan."
+  },
+  {
+    "word": "Kultura",
+    "easy": "Ang pagsasayaw ng tinikling ay bahagi ng ating kultura.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kultura ng mga Pilipino.",
+    "difficult": "Ang bayanihan ay bahagi ng kultura ng mga Pilipino."
+  },
+  {
+    "word": "Siyudad",
+    "easy": "Nakatira si Joey sa isang siyudad na malapit sa dagat.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa buhay sa siyudad.",
+    "difficult": "Mabilis ang takbo ng buhay sa siyudad kumpara sa probinsya."
+  },
+  {
+    "word": "Paksa",
+    "easy": "Nagbigay ang guro ng bagong paksa para sa sanaysay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paksa ng talakayan sa klase.",
+    "difficult": "Ang paksa ng talakayan sa klase ay tungkol sa kalikasan."
+  },
+  {
+    "word": "Sining",
+    "easy": "Ang paggawa ng masining na parol ay bahagi ng ating sining at kultura.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa sining ng pagpipinta.",
+    "difficult": "Ang sining ng pagpipinta ay nagpapakita ng damdamin ng tao."
+  },
+  {
+    "word": "Estilo",
+    "easy": "May sariling estilo si Juan sa pagsusulat ng tula.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa estilo ng pananamit.",
+    "difficult": "May kakaibang estilo ng pananamit si Daniel tuwing pista."
+  },
+  {
+    "word": "Lansangan",
+    "easy": "May mga ilaw sa lansangan tuwing gabi.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa malinis na lansangan.",
+    "difficult": "Nakangiti ang mga residente dahil malinis ang kanilang lansangan."
+  },
+  {
+    "word": "Kagubatan",
+    "easy": "Naligaw si Pedro sa gitna ng kagubatan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga hayop sa kagubatan.",
+    "difficult": "Maraming ibon at usa ang naninirahan sa kagubatan."
+  },
+  {
+    "word": "Ektarya",
+    "easy": "May isang ektarya ng palayan si Tatay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang ektarya ng palayan.",
+    "difficult": "Nakaani ng maraming bigas ang magsasaka mula sa isang ektarya ng palayan."
+  },
+  {
+    "word": "Pamayanan",
+    "easy": "Mapayapa ang aming pamayanan sa gabi.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mapayapang pamayanan.",
+    "difficult": "Mapayapa ang pamayanan dahil nagtutulungan ang lahat ng tao."
+  },
+  {
+    "word": "Pahayagan",
+    "easy": "Nabasa ko ang balita sa pahayagan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa balita sa pahayagan.",
+    "difficult": "Nabasa ni Lorie sa pahayagan ang tungkol sa bagong batas."
+  },
+  {
+    "word": "Kalamidad",
+    "easy": "Ang bagyo ay isang uri ng kalamidad na nararanasan sa ating bansa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kalamidad na lindol.",
+    "difficult": "Nayanig ang buong barangay nang dumating ang kalamidad na lindol."
+  },
+  {
+    "word": "Troso",
+    "easy": "Malalaking troso ang ibinaba mula sa trak.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paggamit ng troso.",
+    "difficult": "Ginamit ng karpintero ang troso sa paggawa ng mesa."
+  },
+  {
+    "word": "Alintana",
+    "easy": "Naglaba si Nanay na walang alintana ang bigat ng mga damit.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa taong walang alintana sa init.",
+    "difficult": "Walang alintana si Mang Rene sa init habang siya’y naglalakad."
+  },
+  {
+    "word": "Prusisyon",
+    "easy": "Maraming tao ang nanood ng prusisyon sa kalsada.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa prusisyon sa pista.",
+    "difficult": "Mahaba ang prusisyon sa pista ng bayan tuwing Mayo."
+  },
+  {
+    "word": "Marupok",
+    "easy": "Nabali ang marupok na sanga ng puno.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa marupok na gamit.",
+    "difficult": "Nabasag agad ang marupok na baso sa mesa."
+  },
+  {
+    "word": "Kusang-loob",
+    "easy": "Kusang-loob na nagbigay ng upuan ang bata sa matanda.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kusang-loob na pagtulong.",
+    "difficult": "Kusang-loob na tumulong si Joy sa paglilinis ng kapaligiran."
+  },
+  {
+    "word": "Malasakit",
+    "easy": "Pinahalagahan ng guro ang malasakit ng kanyang mga estudyante sa isa’t isa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa malasakit sa kapwa.",
+    "difficult": "Ipinakita ni Carlo ang malasakit sa kapwa sa pagtulong sa mahihirap."
+  },
+  {
+    "word": "Istasyon",
+    "easy": "Bumaba si Barbara sa istasyon ng bus.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa istasyon ng tren.",
+    "difficult": "Dumating ang mga pasahero sa istasyon ng tren nang maaga."
+  },
+  {
+    "word": "Tanaw",
+    "easy": "Masarap tanawin ang paglubog ng araw.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa magandang tanaw ng bundok.",
+    "difficult": "Namangha si Rita sa tanaw ng bundok mula sa kanilang bahay."
+  },
+  {
+    "word": "Pulo",
+    "easy": "Ang Pilipinas ay binubuo ng maraming pulo.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang pulo sa Pilipinas.",
+    "difficult": "Ang Palawan ay isang pulo na tanyag sa kagandahan."
+  },
+  {
+    "word": "Kanluran",
+    "easy": "Lumipad ang mga ibon patungong kanluran.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paglubog ng araw sa kanluran.",
+    "difficult": "Pinagmamasdan ng mga bata ang paglubog ng araw sa kanluran."
+  },
+  {
+    "word": "Timog",
+    "easy": "Nakatira si Lito sa timog bahagi ng bayan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga probinsya sa timog.",
+    "difficult": "Magaganda ang tanawin sa mga probinsya sa timog ng bansa."
+  },
+  {
+    "word": "Silangan",
+    "easy": "Naglakbay ang mga magsasaka patungong silangan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagsikat ng araw sa silangan.",
+    "difficult": "Maganda ang kulay ng langit tuwing sumisikat ang araw sa silangan."
+  },
+  {
+    "word": "Hilaga",
+    "easy": "Ang Baguio ay nasa hilaga ng Pilipinas.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa direksiyon ng hilaga sa mapa.",
+    "difficult": "Ginamit ni Carl ang kompas upang hanapin ang hilaga sa mapa."
+  }
+]

@@ -1,0 +1,350 @@
+[
+  {
+    "word": "Bata",
+    "easy": "Ang bata ay mahilig mag laro sa ulan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang bata na masipag mag-aral.",
+    "difficult": "Ang bata ay masipag mag-aral tuwing gabi."
+  },
+  {
+    "word": "Aklat",
+    "easy": "Nagbabasa si Ana ng aklat sa silid-aklatan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa aklat na binasa mo.",
+    "difficult": "Malaking tulong ang aklat sa pagkuha ng impormasyon."
+  },
+  {
+    "word": "Saging",
+    "easy": "Mahilig kumain ang unggoy ng saging.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagkain ng saging.",
+    "difficult": "Kumain ako ng saging para sa aking meryenda."
+  },
+  {
+    "word": "Kabayo",
+    "easy": "Si Juan ay sumakay sa isang kabayo.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kabayo na tumatakbo.",
+    "difficult": "Ginamit ng magsasaka ang kabayo sa paghila ng kariton."
+  },
+  {
+    "word": "Bote",
+    "easy": "Bumili si Maria Bote ng juice.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang bote ng tubig.",
+    "difficult": "Inilagay ni Juan ang bote sa tamang basurahan."
+  },
+  {
+    "word": "Lolo",
+    "easy": "Nagkuwento ng mga alamat si lolo sa mga bata.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa payo ni lolo.",
+    "difficult": "Nagkuwento si lolo tungkol sa kanyang kabataan sa probinsya."
+  },
+  {
+    "word": "Puno",
+    "easy": "Nahuhulog ang mga dahon ng matandang puno.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa puno na nagbibigay ng prutas.",
+    "difficult": "Itinatabi ni Ana ang pera niya sa isang alkansya."
+  },
+  {
+    "word": "Pera",
+    "easy": "Nagbayad si nanay gamit ang pera.",
+    "difficult_instruction": "Gumawa ng pangungusap kung paano iniingatan ang pera.",
+    "difficult": "Ako ay naghuhugas ng pinggan tuwing hapunan."
+  },
+  {
+    "word": "Ako",
+    "easy": "Ako ay isang masipag na mag-aaral.",
+    "difficult_instruction": "Gumawa ng pangungusap na nagsisimula sa Ako at nagsasaad ng iyong tungkulin sa bahay.",
+    "difficult": "Ikaw ang tumulong sa iyong kaibigan na gumawa ng takdang-aralin."
+  },
+  {
+    "word": "Ikaw",
+    "easy": "Ikaw ba ay kakain na?",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa ikaw na tumutulong sa kaibigan.",
+    "difficult": "Siya ang nanalo sa paligsahan ng pagguhit."
+  },
+  {
+    "word": "Siya",
+    "easy": "Siya ang pinaka-magaling na mananayaw.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa siya na nagwagi sa paligsahan.",
+    "difficult": "Nagbibigay ng sariwang gatas ang baka sa bukid."
+  },
+  {
+    "word": "Baka",
+    "easy": "Ang baka ay nagbibigay ng gatas.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa baka na nagbibigay ng gatas.",
+    "difficult": "Nagbibigay ng sariwang gatas ang baka sa bukid."
+  },
+  {
+    "word": "Aso",
+    "easy": "Tumatahol ang aso.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa aso na nagbabantay ng bahay.",
+    "difficult": "Tahol nang tahol ang aso upang bantayan ang kanilang bahay."
+  },
+  {
+    "word": "Pusa",
+    "easy": "Naglalaro ang pusa sa bakuran.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pusa na naghahabol ng daga.",
+    "difficult": "Hinabol ng pusa ang daga sa kusina."
+  },
+  {
+    "word": "Umaga",
+    "easy": "Maganda ang umaga ngayon.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa gawain tuwing umaga bago pumasok sa klase.",
+    "difficult": "Nag-aayos ako ng gamit tuwing umaga bago pumasok sa klase."
+  },
+  {
+    "word": "Tubig",
+    "easy": "Mainit ang panahon kaya masarap uminom ng malamig na tubig.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kahalagahan ng tubig sa kalusugan.",
+    "difficult": "Mahalaga ang tubig upang manatiling malusog ang katawan."
+  },
+  {
+    "word": "Malungkot",
+    "easy": "Malungkot si Peter dahil nawala ang laruan niya.",
+    "difficult_instruction": "Gumawa ng pangungusap na nagpapakita kung bakit malungkot ang isang tao.",
+    "difficult": "Malungkot si Ana dahil nawala ang kanyang laruan."
+  },
+  {
+    "word": "Tatay",
+    "easy": "Ang nag-aalaga sa amin ay si tatay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa tatay na nagtatanim sa bukid.",
+    "difficult": "Masipag magtanim ng gulay si tatay sa bukid."
+  },
+  {
+    "word": "Nanay",
+    "easy": "Masarap mag-luto ng ulam si nanay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa nanay na nagaalaga sa pamilya.",
+    "difficult": "Si nanay ay nag-aalaga sa amin kapag may sakit."
+  },
+  {
+    "word": "Lapis",
+    "easy": "Nagsusulat si Carlo sa kaniyang kuwarderno gamit ang lapis.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa lapis na ginagamit sa pagsusulit.",
+    "difficult": "Gumamit si Marco ng lapis sa pagsusulit sa matematika."
+  },
+  {
+    "word": "Papel",
+    "easy": "Ginupit niya ang puting papel gamit ang gunting.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa papel na ginamit sa paggawa ng poster.",
+    "difficult": "Ginamit ni Liza ang makulay na papel sa paggawa ng poster."
+  },
+  {
+    "word": "Upuan",
+    "easy": "Umupo si Carl sa isang upuan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa upuan sa loob ng silid-aralan.",
+    "difficult": "Umupo ang estudyante sa kanyang upuan sa klase."
+  },
+  {
+    "word": "Damit",
+    "easy": "Nagsuot siya ng bagong damit.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa damit na isinusuot sa espesyal na okasyon.",
+    "difficult": "Nagsuot si Ana ng magandang damit para sa piyesta."
+  },
+  {
+    "word": "Bola",
+    "easy": "Naglaro at nagpasahan sila ng bola.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bola na gamit sa larong basketball.",
+    "difficult": "Naglalaro sila ng basketball gamit ang bola."
+  },
+  {
+    "word": "Mansanas",
+    "easy": "Kinain ni Eba ang pulang mansanas.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mansanas na binigay sa guro.",
+    "difficult": "Nagbigay si Pedro ng pulang mansanas sa kanyang guro."
+  },
+  {
+    "word": "Pantasa",
+    "easy": "Pinatalim ni Pedro ang lapis sa pantasa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pantasa na gamit ng mag-aaral.",
+    "difficult": "Pinatalim ni Liza ang kanyang lapis gamit ang pantasa."
+  },
+  {
+    "word": "Bulaklak",
+    "easy": "Nagbigay si kuya ng rosas na bulaklak kay nanay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bulaklak na regalo sa kaarawan.",
+    "difficult": "Nagbigay si Juan ng bulaklak kay Maria sa kanyang kaarawan."
+  },
+  {
+    "word": "Kutsara",
+    "easy": "Kumain ng sabaw si Rudy gamit ang kutsara.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagkain ng sabaw gamit ang kutsara.",
+    "difficult": "Kumain ng sopas si Ana gamit ang kutsara."
+  },
+  {
+    "word": "Unan",
+    "easy": "Mahimbing ang tulog ng bata dahil malambot ang unan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa unan na ginamit sa pagtulog.",
+    "difficult": "Natulog ang bata sa malambot na unan."
+  },
+  {
+    "word": "Tinidor",
+    "easy": "Tinusok niya ang prutas gamit ang tinidor.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa tinidor na gamit sa hapag-kainan.",
+    "difficult": "Tinusok ni Pedro ang karne gamit ang tinidor."
+  },
+  {
+    "word": "Mundo",
+    "easy": "Ang mundo natin ay bilog.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pangangalaga sa ating mundo.",
+    "difficult": "Dapat tayong magtulungan upang mapangalagaan ang mundo."
+  },
+  {
+    "word": "Klima",
+    "easy": "Mainit ang klima ngayon.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa klima tuwing tag-init.",
+    "difficult": "Mainit ang klima tuwing buwan ng Abril."
+  },
+  {
+    "word": "Basura",
+    "easy": "Magtapon ng basura sa tamang tapunan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa tamang pagtatapon ng basura.",
+    "difficult": "Itapon ang basura sa tamang lalagyan."
+  },
+  {
+    "word": "Pamaypay",
+    "easy": "Ginamit ni Lola ang pamaypay dahil mainit.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paggamit ng pamaypay kapag mainit.",
+    "difficult": "Gumamit si Lola ng pamaypay dahil mainit ang panahon."
+  },
+  {
+    "word": "Salamin",
+    "easy": "Tinignan niya ang kanyang sarili sa salamin.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa salamin na ginagamit sa pagbabasa.",
+    "difficult": "Nagsuot ng salamin si Kuya upang makabasa ng malinaw."
+  },
+  {
+    "word": "Payong",
+    "easy": "Dala niya ang payong dahil umuulan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa paggamit ng payong sa ulan.",
+    "difficult": "Nagdala si Ana ng payong dahil umuulan."
+  },
+  {
+    "word": "Balat",
+    "easy": "Ang balat ng mga Pilipino ay kayumanggi.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa balat ng prutas na kinakain.",
+    "difficult": "Makintab ang balat ng berdeng mansanas."
+  },
+  {
+    "word": "Nagbabasa",
+    "easy": "Nagbabasa si Pepot ng nobela.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang nagbabasa sa silid-aklatan.",
+    "difficult": "Nagbabasa si Maria ng kwento sa silid-aklatan."
+  },
+  {
+    "word": "Nagsusulat",
+    "easy": "Nagsusulat siya ng pangalan sa papel",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa estudyanteng nagsusulat ng liham.",
+    "difficult": "Nagsusulat si Colombus ng liham para sa kanyang kaibigan."
+  },
+  {
+    "word": "Naglalaro",
+    "easy": "Naglalaro sila ng tagu-taguan sa labas",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga batang naglalaro sa palaruan.",
+    "difficult": "Naglalaro ng taguan ang mga bata sa palaruan."
+  },
+  {
+    "word": "Nagsusuklay",
+    "easy": "Nagsusuklay si Maya ng kaniyang buhok",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang nagsusuklay ng buhok bago pumasok.",
+    "difficult": "Nagsusuklay ng buhok si Liza bago pumasok sa klase."
+  },
+  {
+    "word": "Nagsasayaw",
+    "easy": "Nagsasayaw ang bata sa entablado.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang nagsasayaw sa entablado.",
+    "difficult": "Nagsasayaw ng sayaw na folk si Ana sa entablado."
+  },
+  {
+    "word": "Naghihilamos",
+    "easy": "Naghihilamos si Pepot ng nobela.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang naghihilamos pagkagising.",
+    "difficult": "Naghihilamos ng malamig na tubig si Juan pagkagising."
+  },
+  {
+    "word": "Nagsisipilyo",
+    "easy": "Nagsisipilyo ng ngipin si Elena.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang nagsisipilyo bago matulog.",
+    "difficult": "Nagsisipilyo si Ana bago siya matulog sa gabi."
+  },
+  {
+    "word": "Naglilinis",
+    "easy": "Naglilinis si nanay ng bahay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang naglilinis ng silid-aralan.",
+    "difficult": "Naglilinis ang mga mag-aaral ng kanilang silid-aralan tuwing Biyernes."
+  },
+  {
+    "word": "Umiiyak",
+    "easy": "Umiiyak ang bata dahil nadapa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang umiiyak dahil nawala ang laruan.",
+    "difficult": "Umiiyak si Liza dahil nawala ang kanyang paboritong manika."
+  },
+  {
+    "word": "Tumatawa",
+    "easy": "Tumatawa sila sa nakakatawang kwento ni Mang Arthur.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang tumatawa sa biro ng kaibigan.",
+    "difficult": "Tumatawa si Marco sa nakakatawang biro ng kaibigan."
+  },
+  {
+    "word": "Naglalakad",
+    "easy": "Sila ay naglalakad pauwi.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa batang naglalakad papunta sa paaralan.",
+    "difficult": "Naglalakad si Ana papunta sa paaralan tuwing umaga."
+  },
+  {
+    "word": "Kaibigan",
+    "easy": "Si Katrina ay matalik na kaibigan ni Jovelyn",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kaibigan na laging tumutulong.",
+    "difficult": "Laging kasama ni Pedro ang kanyang matalik na kaibigan."
+  },
+  {
+    "word": "Paaralan",
+    "easy": "Pumapasok at nag-aaral sila sa paaralan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga gawain sa paaralan.",
+    "difficult": "Maraming natututunan ang mga bata sa paaralan."
+  },
+  {
+    "word": "Mangga",
+    "easy": "Matamis ang hinog na mangga.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mangga na paboritong kainin.",
+    "difficult": "Masarap kainin ang hinog na mangga."
+  },
+  {
+    "word": "Sapatos",
+    "easy": "Sinuot niya ang magarbong niyang sapatos.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa bagong sapatos na ginagamit sa sayawan.",
+    "difficult": "Nagsuot siya ng bagong sapatos para sa sayawan sa paaralan."
+  },
+  {
+    "word": "Palayan",
+    "easy": "Nag-aani ng palay si tatay sa palayan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga magsasaka sa palayan.",
+    "difficult": "Masipag magtanim ng palay ang mga magsasaka sa palayan."
+  },
+  {
+    "word": "Dagat",
+    "easy": "Lumalangoy si Liza sa malinis na dagat.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pangingisda sa dagat.",
+    "difficult": "Nanguha ng isda ang mga mangingisda sa dagat."
+  },
+  {
+    "word": "Ilog",
+    "easy": "Nanguha sila ng isda sa ilog.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga batang naliligo sa ilog.",
+    "difficult": "Naliligo ang mga bata sa malamig na tubig ng ilog."
+  },
+  {
+    "word": "Halamanan",
+    "easy": "Nagtanim si lola ng gumamela sa halamanan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pagtatanim ng gulay sa halamanan.",
+    "difficult": "Nagtanim ng kamatis si Lola sa kanilang halamanan."
+  },
+  {
+    "word": "Palaruan",
+    "easy": "Masayang nagtatakbuhan ang mga bata sa palaruan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga bata sa palaruan.",
+    "difficult": "Masayang naglalaro ng habulan ang mga bata sa palaruan."
+  },
+  {
+    "word": "Ulam",
+    "easy": "Masarap ang nilutong ulam ni nanay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa masarap na ulam sa hapag-kainan.",
+    "difficult": "Masarap ang adobo na ulam sa hapag-kainan."
+  }
+]
