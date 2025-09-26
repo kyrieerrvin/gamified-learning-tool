@@ -44,9 +44,9 @@ export async function GET(request: NextRequest) {
       // Use expanded fallback data with 10 unique words
       return NextResponse.json({
         words: [
-          { id: 'bata', word: 'Bata', grade: 'G1_2', imageUrl: '/Bata.gif', sentences: ['Ang bata ay mahilig mag laro sa ulan.'] },
-          { id: 'aklat', word: 'Aklat', grade: 'G1_2', imageUrl: '/images/aklat.png', sentences: ['May bagong aklat sa silid-aklatan.'] },
-          { id: 'timpalak', word: 'Timpalak', grade: 'G3_4', imageUrl: '/images/timpalak.png', sentences: ['Sumali sila sa timpalak sa paaralan.'] }
+          { id: 'bata', word: 'Bata', grade: 'G1_2', imageUrl: '/assets/bata.gif', sentences: ['Ang bata ay mahilig mag laro sa ulan.'] },
+          { id: 'aklat', word: 'Aklat', grade: 'G1_2', imageUrl: '/assets/placeholder.png', sentences: ['May bagong aklat sa silid-aklatan.'] },
+          { id: 'timpalak', word: 'Timpalak', grade: 'G3_4', imageUrl: '/assets/placeholder.png', sentences: ['Sumali sila sa timpalak sa paaralan.'] }
         ],
         count: 3,
         source: 'fallback'

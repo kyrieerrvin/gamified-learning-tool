@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - allow importing asset
-import mascot from '../../../../talking.gif';
+import mascot from '../../../../assets/talking.gif';
 
 interface MakeSentenceGameProps {
   questionsCount?: number;
