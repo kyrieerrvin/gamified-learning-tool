@@ -15,7 +15,9 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy app code
+# Copy app code and data
 COPY app.py ./
+COPY words ./words
 # Optional: copy local model if available
 # COPY tl_tocylog_trf ./tl_tocylog_trf
 
