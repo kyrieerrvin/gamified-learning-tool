@@ -80,38 +80,29 @@ export default function MultipleChoicePage() {
           </div>
         </div>
         
-        {/* Tab navigation */}
-        <div className="bg-white rounded-lg shadow mb-8 p-1 flex justify-center max-w-md mx-auto">
-          <button
-            onClick={() => setActiveTab('learning')}
-            className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-              activeTab === 'learning' 
-                ? 'bg-duolingo-purple text-white shadow' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Learning Path
-          </button>
-          <button
-            onClick={() => setActiveTab('quests')}
-            className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-              activeTab === 'quests' 
-                ? 'bg-duolingo-yellow text-white shadow' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Daily Quests
-          </button>
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-              activeTab === 'stats' 
-                ? 'bg-duolingo-blue text-white shadow' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Achievements
-          </button>
+        {/* Tab navigation - icon+label with animated underline */}
+        <div className="bg-white rounded-xl shadow mb-4 p-1.5 flex justify-center max-w-2xl mx-auto">
+          {([
+            { key: 'learning', label: 'Learning Path', icon: '🗺️' },
+            { key: 'quests', label: 'Daily Quests', icon: '⭐' },
+            { key: 'stats', label: 'Achievements', icon: '🏅' },
+          ] as const).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`relative flex-1 py-3 px-4 rounded-full text-center transition-transform duration-150 ease-out mx-1 border ${
+                activeTab === tab.key
+                  ? 'bg-[#def4ff] border-[#85d8ff] text-[#0B63F6] font-semibold shadow-sm'
+                  : 'bg-[#F6F7F9] border-transparent text-gray-700'
+              } hover:-translate-y-0.5 hover:shadow active:scale-95`}
+            >
+              <span className={`mr-2 ${activeTab === tab.key ? 'opacity-100' : 'opacity-50'}`}>{tab.icon}</span>
+              {tab.label}
+              {activeTab === tab.key && (
+                <motion.div layoutId="tab-underline" className="absolute left-3 right-3 -bottom-[2px] h-[2px] bg-[#0B63F6] rounded" />
+              )}
+            </button>
+          ))}
         </div>
         
         {/* Tab content with animations */}

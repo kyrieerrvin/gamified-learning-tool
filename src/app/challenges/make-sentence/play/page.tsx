@@ -2,12 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import MakeSentenceGame from '@/components/challenges/make-sentence/MakeSentenceGame';
 import SentenceTileGame from '@/components/challenges/make-sentence/SentenceTileGame';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 import { apiGet } from '@/utils/api';
+import Image from 'next/image';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import placeholder from '../../../../../assets/placeholder.png';
 
 export default function PlayMakeSentencePage() {
   const router = useRouter();
@@ -23,6 +27,9 @@ export default function PlayMakeSentencePage() {
   const [tileRounds, setTileRounds] = useState<Array<{ sentence: string; focusWord: string }>>([]);
   const [tileIndex, setTileIndex] = useState(0);
   const [tileScore, setTileScore] = useState(0);
+  // Reduced motion preference and XP display state used for the completion screen
+  const prefersReduced = useReducedMotion();
+  const [displayXp, setDisplayXp] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -67,8 +74,8 @@ export default function PlayMakeSentencePage() {
           }
           if (candidates.length >= 8) break; // collect a few extra to sample from
         }
-        // Take first 5 (or fewer if not enough)
-        const selected = candidates.slice(0, 5);
+        // Limit to 1 round per level for quick testing
+        const selected = candidates.slice(0, 1);
         setTileRounds(selected);
         setTileIndex(0);
         setTileScore(0);
@@ -145,6 +152,27 @@ export default function PlayMakeSentencePage() {
       setTileIndex(nextIndex);
     }
   };
+
+  // Animate XP count-up when the game completes
+  useEffect(() => {
+    if (!gameCompleted) return;
+    if (prefersReduced) {
+      setDisplayXp(score);
+      return;
+    }
+    const start = performance.now();
+    const duration = 800;
+    const from = 0;
+    const to = score;
+    let raf = 0 as unknown as number;
+    const step = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      setDisplayXp(Math.round(from + (to - from) * p));
+      if (p < 1) raf = requestAnimationFrame(step) as unknown as number;
+    };
+    raf = requestAnimationFrame(step) as unknown as number;
+    return () => cancelAnimationFrame(raf);
+  }, [gameCompleted, score, prefersReduced]);
   
   if (loading) {
     return (
@@ -156,81 +184,82 @@ export default function PlayMakeSentencePage() {
   }
   
   if (gameCompleted) {
+    const levelsCompleted = Math.min(10, Math.max(0, levelId + 1));
+    const sectionPct = Math.max(0, Math.min(100, Math.round((levelsCompleted / 10) * 100)));
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.5 }}
-          className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto text-center"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          className="bg-white rounded-2xl shadow-xl p-8 md:p-10 max-w-xl w-full mx-auto text-center"
         >
-          <div className="mb-6">
-            {score >= 80 ? (
-              <div className="mx-auto w-24 h-24 bg-duolingo-green rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            ) : (
-              <div className="mx-auto w-24 h-24 bg-duolingo-blue rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+          {/* Illustration + subtle confetti */}
+          <div className="relative mb-6 flex items-center justify-center">
+            {!prefersReduced && (
+              <div className="absolute inset-0 -z-10 overflow-hidden">
+                {[...Array(14)].map((_, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 12, x: (i % 2 === 0 ? -1 : 1) * 10 }}
+                    animate={{ opacity: [0, 1, 0], y: [-8, -18, -28] }}
+                    transition={{ duration: 0.9 + (i % 3) * 0.15, delay: i * 0.03, ease: 'easeOut' }}
+                    className="absolute left-1/2 top-1/2 w-2 h-2 rounded-full"
+                    style={{ background: i % 3 === 0 ? '#22c55e' : i % 3 === 1 ? '#3b82f6' : '#f59e0b' }}
+                  />
+                ))}
               </div>
             )}
-            
-            <h2 className="text-2xl font-bold mb-2">
-              {score >= 80 ? 'Mahusay!' : 'Magaling!'}
-            </h2>
-            <p className="text-gray-600 mb-6">
-              {score >= 80 
-                ? 'Napakahusay mo! Nakumpleto mo ang level na ito.' 
-                : 'Magaling ka! Subukan mo ulit para makakuha ng mas mataas na score.'}
-            </p>
-            {/* PROGRESS BAR
-            <div className="bg-gray-100 rounded-full p-2 mb-6">
-              <div className="bg-duolingo-green h-6 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ width: `${score}%` }}>
-                {score}%
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}>
+              <Image src={placeholder} alt="Celebration" width={140} height={140} className="rounded-xl" />
+            </motion.div>
+          </div>
+
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">Mahusay!</h2>
+          <p className="text-gray-600 mb-6">Napakahusay mo! Nakumpleto mo ang level na ito.</p>
+
+          {/* Metrics */}
+          <div className="space-y-4 mb-6">
+            <div className="text-xl font-extrabold text-green-600">+ {displayXp} XP</div>
+            <div>
+              <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                <span>Section progress</span>
+                <span>{sectionPct}%</span>
+              </div>
+              <div className="w-full h-2.5 bg-gray-200/80 rounded-full overflow-hidden">
+                <div className="h-full bg-green-500 rounded-full" style={{ width: `${sectionPct}%`, transition: 'width 300ms ease' }} />
               </div>
             </div>
-            */}
-            <div className="mb-6">
-              <p className="text-lg font-bold text-duolingo-green">+ {Math.floor(score)} XP</p>
-            </div>
           </div>
-          
+
+          {/* Buttons: primary first */}
           <div className="flex flex-col gap-3">
-            <Button
-              onClick={() => router.push('/challenges/make-sentence')}
-              className="bg-duolingo-green hover:bg-duolingo-darkGreen text-white py-3 px-6 rounded-xl font-bold shadow-md hover:shadow-lg transition-all"
-            >
-              Bumalik sa Learning Path
-            </Button>
-            
-            {score >= 80 && progress['make-sentence'] && (
+            {progress['make-sentence'] && (
               <Button 
+                autoFocus
                 onClick={() => {
-                  // Use the currentSection and currentLevel to navigate to the next level
                   const gameProgress = progress['make-sentence'];
                   if (gameProgress) {
-                    // These values are automatically updated in completeLevel function
                     const nextSectionId = gameProgress.currentSection;
                     const nextLevelId = gameProgress.currentLevel;
-                    
-                    console.log(`[Navigation] Going to next level: Section ${nextSectionId}, Level ${nextLevelId}`);
-                    
-                    // Navigate to the next level using the stored values
                     router.push(`/challenges/make-sentence/play?section=${nextSectionId}&level=${nextLevelId}`);
                   } else {
-                    // Fallback to challenges page if no progress data
                     router.push('/challenges/make-sentence');
                   }
                 }}
-                className="w-full bg-duolingo-green text-white hover:bg-duolingo-darkGreen"
+                className="w-full py-3 rounded-full bg-duolingo-green hover:bg-duolingo-darkGreen text-white font-bold shadow-md"
               >
                 Susunod na Level
               </Button>
             )}
+            <Button
+              onClick={() => router.push('/challenges/make-sentence')}
+              variant="secondary"
+              className="w-full py-3 rounded-full border border-gray-300 text-gray-800 bg-white hover:bg-gray-50"
+            >
+              Bumalik sa Learning Path
+            </Button>
           </div>
         </motion.div>
       </div>
@@ -240,7 +269,7 @@ export default function PlayMakeSentencePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="container mx-auto px-4 py-8 flex flex-col flex-1">
-      {/* Temporary progress bar header */}
+      {/* Progress bar header (single top bar) */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
           <button
@@ -252,9 +281,16 @@ export default function PlayMakeSentencePage() {
           </button>
           <div className="text-sm text-gray-600">Level {sectionId + 1} · Challenge {levelId + 1}</div>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div className="bg-duolingo-green h-2 rounded-full" style={{ width: '15%' }}></div>
-        </div>
+        {(() => {
+          const pct = tileRounds.length > 0 ? Math.round((tileIndex / Math.max(1, tileRounds.length)) * 100) : 0;
+          return (
+            <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
+              <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: 'width 240ms cubic-bezier(0.22,1,0.36,1)' }}>
+                <div className="absolute inset-0 pointer-events-none bg-white/15" />
+              </div>
+            </div>
+          );
+        })()}
       </div>
       
       {/* Centered game area */}
@@ -264,6 +300,8 @@ export default function PlayMakeSentencePage() {
             <SentenceTileGame
               sampleSentence={tileRounds[Math.min(tileIndex, tileRounds.length - 1)].sentence}
               focusWord={tileRounds[Math.min(tileIndex, tileRounds.length - 1)].focusWord}
+              progressCompleted={tileIndex}
+              progressTotal={Math.max(1, tileRounds.length)}
               onComplete={() => handleTileRoundComplete()}
             />
           ) : (

@@ -128,14 +128,6 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
   
   return (
     <div className="container mx-auto p-4" style={{ position: 'relative' }}>
-      <div className="flex justify-center mb-8">
-        <button
-          onClick={startJourney}
-          className="px-6 py-3 bg-blue-500 text-white font-bold rounded-lg shadow hover:bg-blue-600 transition-all"
-        >
-          Start Your Journey
-        </button>
-      </div>
 
       {/* Remove z-index to ensure the line stays behind content */}
       <div className="learning-path relative py-8" style={{ position: 'relative', overflow: 'hidden' }}>
@@ -170,36 +162,69 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
               : 'border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white';
           
           return (
-            <div key={section.id} className="mb-16">
+            <motion.div
+              key={section.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1], delay: sectionIndex * 0.06 }}
+              className="mb-10"
+            >
               {/* Level divider */}
-              <div className="flex justify-center items-center mb-6">
-                <div className="h-[1px] bg-gray-300 flex-grow"></div>
-                <div className="px-4 text-gray-500 font-semibold whitespace-nowrap">
+              <div className="flex justify-center items-center mb-3">
+                <div className="h-[1px] bg-gray-200 flex-grow"></div>
+                <div className="px-3 text-gray-500 font-semibold whitespace-nowrap">
                   {toRoman(sectionIndex + 1)}
                 </div>
-                <div className="h-[1px] bg-gray-300 flex-grow"></div>
+                <div className="h-[1px] bg-gray-200 flex-grow"></div>
               </div>
               
               {/* Level card */}
-              <div className="bg-white rounded-xl shadow overflow-hidden max-w-xl mx-auto">
+              <div
+                onClick={() => {
+                  // Navigate to the latest playable level within this section
+                  const latestUnlockedLevelId = section.isLocked ? -1 : section.levels
+                    .filter(l => !l.isLocked && canAccessLevel(gameType, section.id, l.id))
+                    .reduce((latest, current) => current.id > latest ? current.id : latest, -1);
+                  const targetLevelId = latestUnlockedLevelId !== -1 ? latestUnlockedLevelId : 0;
+                  if (!section.isLocked) {
+                    router.push(`/challenges/${gameType}/play?section=${section.id}&level=${targetLevelId}`);
+                  }
+                }}
+                className={`bg-white rounded-2xl shadow-md overflow-hidden max-w-2xl md:max-w-3xl mx-auto cursor-pointer transform transition-transform duration-[170ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none`}
+                style={{ minHeight: 150 }}
+              >
                 {/* Level header */}
-                <div className={`p-4 ${headerBgClass} text-white`}>
-                  <div className="flex items-center">
-                    <div className={`w-10 h-10 rounded-full bg-white ${badgeTextClass} flex items-center justify-center text-lg font-bold mr-3`}>
-                      {toRoman(sectionIndex + 1)}
+                <div className={`px-5 md:px-6 py-5 ${headerBgClass} text-white`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full bg-white ${badgeTextClass} flex items-center justify-center text-lg font-bold`}>{toRoman(sectionIndex + 1)}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl font-bold">{['Easy', 'Difficult', 'Hard'][sectionIndex] || section.title}</span>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold">{['Easy', 'Difficult', 'Hard'][sectionIndex] || section.title}</h3>
-                      <div className="text-sm opacity-80">
-                        {section.levels.filter(l => l.isCompleted).length} of {section.levels.length} challenges completed
-                      </div>
-                    </div>
+                  </div>
+                  {/* Progress line */}
+                  <div className="mt-2">
+                    {(() => {
+                      const completed = section.levels.filter(l => l.isCompleted).length;
+                      const total = section.levels.length;
+                      const pct = Math.max(0, Math.min(100, Math.round((completed / Math.max(1, total)) * 100)));
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between text-xs opacity-90 mb-1">
+                            <span>{completed} of {total} done</span>
+                            <span>{pct}%</span>
+                          </div>
+                          <div className="h-1.5 bg-white/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-white rounded-full" style={{ width: `${pct}%`, transition: 'width 300ms ease' }} />
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
                 
                 {/* Challenges grid */}
-                <div className="p-4">
-                  <div className="grid grid-cols-5 gap-4 md:gap-6 justify-items-center w-full">
+                <div className="px-5 md:px-6 py-5">
+                  <div className="grid grid-cols-5 gap-3 md:gap-4 justify-items-center w-full">
                     {section.levels.map((level) => {
                       // Determine if this level is accessible
                       const isAccessible = !section.isLocked && canAccessLevel(gameType, section.id, level.id);
@@ -207,7 +232,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                       // Show START on latest unlocked level
                       const isLatestUnlocked = isAccessible && level.id === latestUnlockedLevelId;
                       
-                      let btnClasses = "relative w-10 h-10 rounded-full flex items-center justify-center text-base font-medium";
+                      let btnClasses = "relative w-10 h-10 md:w-10 md:h-10 rounded-full flex items-center justify-center text-base font-medium select-none";
                       let levelContent: React.ReactNode = level.id + 1;
                       
                       if (level.isCompleted) {
@@ -250,9 +275,14 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                           </button>
                           
                           {isLatestUnlocked && (
-                            <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-orange-400 text-white px-2 py-0.5 rounded text-xs font-bold">
+                            <motion.div
+                              initial={{ scale: 1 }}
+                              animate={{ scale: [1, 1.04, 1] }}
+                              transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 7 }}
+                              className="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-orange-400 text-white px-2 py-0.5 rounded text-xs font-bold shadow"
+                            >
                               START
-                            </div>
+                            </motion.div>
                           )}
                         </div>
                       );
@@ -260,7 +290,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>

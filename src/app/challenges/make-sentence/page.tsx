@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -8,12 +8,44 @@ import Navbar from '@/components/layout/Navbar';
 import LearningPathMap from '@/components/challenges/LearningPathMap';
 import DailyQuests from '@/components/challenges/DailyQuests';
 import UserStats from '@/components/challenges/UserStats';
+import { useGameProgress } from '@/hooks/useGameProgress';
 
 export default function MakeSentencePage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const { data, canAccessLevel } = useGameProgress();
   const [activeTab, setActiveTab] = useState<'learning' | 'quests' | 'stats'>('learning');
   const [isVisible, setIsVisible] = useState(false);
+  
+  // Determine if any challenge completed (to hide welcome card)
+  const hasAnyCompletion = useMemo(() => {
+    const sections = data?.progress?.['make-sentence']?.sections || [];
+    for (const s of sections) {
+      if (s.levels.some((l) => l.isCompleted)) return true;
+    }
+    return false;
+  }, [data]);
+  
+  const startLatest = () => {
+    const sections = data?.progress?.['make-sentence']?.sections || [];
+    let target: { sectionId: number; levelId: number } | null = null;
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const s = sections[i];
+      if (s.isLocked) continue;
+      for (let j = s.levels.length - 1; j >= 0; j--) {
+        const lvl = s.levels[j];
+        if (!lvl.isLocked && canAccessLevel('make-sentence', s.id, lvl.id)) {
+          target = { sectionId: s.id, levelId: lvl.id };
+          break;
+        }
+      }
+      if (target) break;
+    }
+    if (!target && sections[0]) target = { sectionId: sections[0].id, levelId: 0 };
+    if (target) {
+      router.push(`/challenges/make-sentence/play?section=${target.sectionId}&level=${target.levelId}`);
+    }
+  };
   
   // Protect this route - redirect to login if not authenticated
   useEffect(() => {
@@ -44,9 +76,9 @@ export default function MakeSentencePage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-6">
         {/* Header with back button */}
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-6">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -79,38 +111,29 @@ export default function MakeSentencePage() {
           </div>
         </div>
         
-        {/* Tab navigation */}
-        <div className="bg-white rounded-lg shadow mb-8 p-1 flex justify-center max-w-md mx-auto">
-          <button
-            onClick={() => setActiveTab('learning')}
-            className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-              activeTab === 'learning' 
-                ? 'bg-duolingo-green text-white shadow' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Learning Path
-          </button>
-          <button
-            onClick={() => setActiveTab('quests')}
-            className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-              activeTab === 'quests' 
-                ? 'bg-duolingo-yellow text-white shadow' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Daily Quests
-          </button>
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-              activeTab === 'stats' 
-                ? 'bg-duolingo-blue text-white shadow' 
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Achievements
-          </button>
+        {/* Tab navigation - icon+label with animated underline */}
+        <div className="bg-white rounded-xl shadow mb-4 p-1.5 flex justify-center max-w-2xl mx-auto">
+          {([
+            { key: 'learning', label: 'Learning Path', icon: '🗺️' },
+            { key: 'quests', label: 'Daily Quests', icon: '⭐' },
+            { key: 'stats', label: 'Achievements', icon: '🏅' },
+          ] as const).map((tab, idx) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`relative flex-1 py-3 px-4 rounded-full text-center transition-transform duration-150 ease-out mx-1 border ${
+                activeTab === tab.key
+                  ? 'bg-[#def4ff] border-[#85d8ff] text-[#0B63F6] font-semibold shadow-sm'
+                  : 'bg-[#F6F7F9] border-transparent text-gray-700'
+              } hover:-translate-y-0.5 hover:shadow active:scale-95`}
+            >
+              <span className={`mr-2 ${activeTab === tab.key ? 'opacity-100' : 'opacity-50'}`}>{tab.icon}</span>
+              {tab.label}
+              {activeTab === tab.key && (
+                <motion.div layoutId="tab-underline" className="absolute left-3 right-3 -bottom-[2px] h-[2px] bg-[#0B63F6] rounded" />
+              )}
+            </button>
+          ))}
         </div>
         
         {/* Tab content with animations */}

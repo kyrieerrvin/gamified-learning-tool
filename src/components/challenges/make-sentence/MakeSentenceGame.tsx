@@ -19,7 +19,7 @@ interface MakeSentenceGameProps {
 }
 
 export default function MakeSentenceGame({ 
-  questionsCount = 10,
+  questionsCount = 1,
   levelNumber = 0,
   onComplete
 }: MakeSentenceGameProps) {
