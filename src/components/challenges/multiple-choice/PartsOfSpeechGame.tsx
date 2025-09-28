@@ -1,510 +1,376 @@
 // src/components/challenges/multiple-choice/PartsOfSpeechGame.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useGameProgress } from '@/hooks/useGameProgress';
+import React, { useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Button from '@/components/ui/Button';
-import { API_ENDPOINTS } from '@/lib/config';
-import { v4 as uuidv4 } from 'uuid';
-import ChallengeResultTracker from '@/components/common/ChallengeResultTracker';
-import { ChallengeResult } from '@/hooks/useGameProgress';
-import { fetchPartsOfSpeechGame } from '@/services/game';
-import { POSGameData, POSQuestion } from '@/types/game/index';
+import { useGameProgress } from '@/hooks/useGameProgress';
+
+type GradeLevel = 'G1_2' | 'G3_4' | 'G5_6';
+
+type Target = {
+  pos: string;
+  label_tl: string;
+  mode: 'exact' | 'all';
+  required?: number;
+};
+
+type InteractiveItem = {
+  item_id: string;
+  sentence: string;
+  tokens: string[];
+  selectable_mask: boolean[];
+  targets: Target[];
+  target_index: number;
+};
 
 // Interface for component props
 interface PartsOfSpeechGameProps {
   levelNumber?: number;
   onComplete?: (score: number, levelCompleted: boolean) => void;
+  onProgressChange?: (completed: number, total: number) => void;
 }
-
-type GradeLevel = 'G1_2' | 'G3_4' | 'G5_6';
-
-export default function PartsOfSpeechGame({ 
+export default function PartsOfSpeechGame({
   levelNumber = 0,
-  onComplete
+  onComplete,
+  onProgressChange
 }: PartsOfSpeechGameProps) {
-  // State for the game
-  const [data, setData] = useState<POSGameData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
+  const crisp = prefersReducedMotion
+    ? { duration: 0.16, ease: 'linear' as const }
+    : { type: 'tween' as const, ease: [0.25, 1, 0.5, 1] as const, duration: 0.2 };
+
+  const { data: gameData } = useGameProgress();
+  const grade = (gameData?.profile?.gradeLevel as GradeLevel) || 'G3_4';
+  const sectionIndex = Math.floor(levelNumber / 10);
+  const difficulty: 'easy' | 'medium' | 'hard' = sectionIndex === 0 ? 'easy' : sectionIndex === 2 ? 'hard' : 'medium';
+
+  const [item, setItem] = useState<InteractiveItem | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const [gameOver, setGameOver] = useState(false);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [score, setScore] = useState(0);
-  const [gradeLevel, setGradeLevel] = useState<GradeLevel | null>(null);
-  
-  // New useGameProgress hook instead of old gameStore
-  const { addPoints, increaseStreak, completeLevel, updateData, data: gameData } = useGameProgress();
-  
-  // Track consecutive correct answers for streak bonus
-  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
-  const [streakBonusActive, setStreakBonusActive] = useState(false);
-  
-  // Track if this is the first mistake on this question
-  const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
-  
-  // Track game duration
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [gameEndTime, setGameEndTime] = useState<number | null>(null);
-  
-  // Final challenge result
-  const [challengeResult, setChallengeResult] = useState<ChallengeResult | null>(null);
-  
-  // Set start time when component mounts
-  useEffect(() => {
-    setStartTime(Date.now());
-  }, []);
-  
-  // Select grade level from user profile; wait until available
-  useEffect(() => {
-    if (!gameData || !gameData.profile || !gameData.profile.gradeLevel) return;
-    const g = gameData.profile.gradeLevel as GradeLevel;
-    setGradeLevel(g);
-  }, [gameData?.profile?.gradeLevel]);
-  
-  // Initialize game data
-  useEffect(() => {
-    if (!gradeLevel) return;
-    loadGameData();
-  }, [gradeLevel]);
-  
-  async function loadGameData() {
-    setLoading(true);
-    setError(null);
-    
+  const [targetIndex, setTargetIndex] = useState<number>(0);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [locked, setLocked] = useState<Set<number>>(new Set());
+  const [wrong, setWrong] = useState<Set<number>>(new Set());
+  const [sheet, setSheet] = useState<null | { kind: 'correct' | 'wrong'; cheer?: string }>(null);
+  const [completed, setCompleted] = useState<number>(0);
+
+  const totalGoal = 5;
+
+  async function loadNewItem() {
     try {
-      // Fetch game data from the NLP API
-      if (!gradeLevel) return;
-      const gameData = await fetchPartsOfSpeechGame(undefined as any, gradeLevel as any);
-      console.log('Loaded POS game data from API:', gameData);
-      setData(gameData);
-    } catch (err) {
-      console.error('Error loading game data:', err);
-      setError('Failed to load game data. Please try again.');
+      setLoading(true);
+      setError(null);
+      setSelected(new Set());
+      setLocked(new Set());
+      setWrong(new Set());
+      setSheet(null);
+      setTargetIndex(0);
+      const qs = new URLSearchParams();
+      if (grade) qs.set('grade', grade);
+      if (difficulty) qs.set('difficulty', difficulty);
+      const resp = await fetch(`/api/challenges/pos-interactive?${qs.toString()}`, { cache: 'no-store' });
+      if (!resp.ok) throw new Error('Hindi ma-load ang laro');
+      const data = (await resp.json()) as InteractiveItem;
+      if (!data?.tokens?.length || !data?.targets?.length) throw new Error('Walang pos na pwedeng laruin, nagre-retry...');
+      setItem(data);
+      setTargetIndex(data.target_index || 0);
+    } catch (e: any) {
+      setError(e?.message || 'May nangyaring error.');
     } finally {
       setLoading(false);
     }
   }
-  
-  // Helper to get the current question
-  const getCurrentQuestion = (): POSQuestion | null => {
-    if (!data || !data.questions || data.questions.length === 0) {
-      return null;
-    }
-    return data.questions[currentQuestionIndex];
-  };
-  
-  // Helper to format options as Tagalog (English)
-  const getTagalogTermForPOS = (pos: string) => {
-    const tagalogTerms: Record<string, string> = {
-      "Noun": "Pangngalan",
-      "Verb": "Pandiwa",
-      "Adjective": "Pang-uri",
-      "Adverb": "Pang-abay",
-      "Pronoun": "Panghalip",
-      "Preposition": "Pang-ukol",
-      "Conjunction": "Pangatnig",
-      "Interjection": "Pandamdam",
-      "Article": "Pantukoy"
-    };
-    
-    return tagalogTerms[pos] || pos;
-  };
-  
-  // Handle option selection
-  const handleOptionSelect = async (option: string) => {
-    setSelectedOption(option);
-    
-    const currentQuestion = getCurrentQuestion();
-    if (!currentQuestion) return;
-    
-    const isOptionCorrect = option === currentQuestion.correctAnswer;
-    setIsCorrect(isOptionCorrect);
-    
-    // Add points for correct answer
-    if (isOptionCorrect) {
-      // Base points for correct answer
-      const basePoints = 10;
-      let totalPoints = basePoints;
-      
-      // Update consecutive correct count
-      setConsecutiveCorrect(prev => prev + 1);
-      
-      // Check if streak bonus should be applied (3 or more consecutive)
-      if (consecutiveCorrect >= 2) { // Already have 2, this makes 3+
-        setStreakBonusActive(true);
-        totalPoints += 3; // Bonus points for streak
-        
-        // Complete the streak-bonus quest manually
-        if (gameData?.progress['multiple-choice']?.quests) {
-          const quests = [...gameData.progress['multiple-choice'].quests];
-          const streakBonusQuest = quests.find(q => q.id === 'streak-bonus');
-          if (streakBonusQuest && !streakBonusQuest.isCompleted) {
-            streakBonusQuest.progress = Math.min(streakBonusQuest.progress + 1, streakBonusQuest.target);
-            if (streakBonusQuest.progress >= streakBonusQuest.target) {
-              streakBonusQuest.isCompleted = true;
-            }
-            
-            // Update the quests data
-            await updateData({
-              progress: {
-                ...gameData.progress,
-                'multiple-choice': {
-                  ...gameData.progress['multiple-choice'],
-                  quests
-                }
-              }
-            });
-          }
-        }
-      }
-      
-      setScore(prevScore => prevScore + totalPoints);
-      await addPoints(totalPoints, 'multiple-choice');
-      await increaseStreak(); 
-      setFeedback('Tama! Magaling!');
-    } else {
-      // Don't reset streak on incorrect answers for daily streak
-      // But do reset the consecutive correct answers streak
-      setConsecutiveCorrect(0);
-      setStreakBonusActive(false);
-      
-      // Subtract points for wrong answer, but don't go below 0
-      setScore(prevScore => Math.max(0, prevScore - 5));
-      await addPoints(-5, 'multiple-choice');
-      
-      setFeedback(`Hindi tama. Ang tamang sagot ay "${currentQuestion.correctAnswer}".`);
-      
-      // Track if this is the first mistake on this question
-      if (!firstMistake[currentQuestionIndex]) {
-        setFirstMistake(prev => ({
-          ...prev,
-          [currentQuestionIndex]: true
-        }));
-      }
-    }
-    
-    // Wait before enabling the Next button
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500);
-  };
-  
-  // Handle moving to the next question
-  const handleNextQuestion = () => {
-    if (isTransitioning) return;
-    
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedOption(null);
-      setFeedback(null);
-      setIsCorrect(null);
-      
-      if (currentQuestionIndex < (data?.questions.length || 0) - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+
+  useEffect(() => {
+    if (!grade) return;
+    loadNewItem();
+  }, [grade, difficulty]);
+
+  const currentTarget: Target | null = useMemo(() => {
+    if (!item) return null;
+    return item.targets[targetIndex] || null;
+  }, [item, targetIndex]);
+
+  const required = currentTarget?.mode === 'exact' ? Math.max(1, currentTarget?.required || 1) : undefined;
+  const selectedCount = selected.size;
+  const lockedCount = locked.size;
+
+  function toggleIndex(i: number) {
+    if (!item || !currentTarget) return;
+    if (!item.selectable_mask[i]) return;
+    if (locked.has(i)) return;
+    setWrong(prev => (prev.has(i) ? new Set([...Array.from(prev)].filter(x => x !== i)) : prev));
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(i)) {
+        next.delete(i);
       } else {
-        // Game over
-        finishGame();
-      }
-      
-      setIsTransitioning(false);
-    }, 500);
-  };
-  
-  // Handle game completion
-  const handleGameCompletion = async () => {
-    if (gameOver) return; // Prevent multiple calls
-    
-    setGameOver(true);
-    
-    // Calculate final score percentage
-    const finalScore = Math.round((score / (data?.questions.length || 1)) * 100);
-    
-    // Create result record
-    const result: ChallengeResult = {
-      id: uuidv4(),
-      challengeType: 'multiple-choice',
-      score: finalScore,
-      maxScore: 100,
-      completedAt: new Date().toISOString(),
-      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0,
-      isCorrect: finalScore >= 80,
-      gameType: 'multiple-choice'
-    };
-    
-    setChallengeResult(result);
-    
-    // Update database with game progress
-    if (typeof levelNumber === 'number' && gameData) {
-      // Derive section (level group) and challenge index from overall index
-      const sectionId = Math.floor(levelNumber / 10); // 0,1,2
-      const challengeIndex = levelNumber % 10; // 0..9
-      
-      // Complete the specific challenge in the database
-      await completeLevel('multiple-choice', sectionId, challengeIndex, finalScore);
-      
-      // Update quest progress for completing games
-      const quests = [...(gameData.progress['multiple-choice']?.quests || [])];
-      const completeGamesQuest = quests.find(q => q.id === 'complete-games');
-      if (completeGamesQuest && !completeGamesQuest.isCompleted) {
-        completeGamesQuest.progress = Math.min(completeGamesQuest.progress + 1, completeGamesQuest.target);
-        if (completeGamesQuest.progress >= completeGamesQuest.target) {
-          completeGamesQuest.isCompleted = true;
+        if (currentTarget.mode === 'exact' && typeof required === 'number' && next.size >= required) {
+          return next; // cap
         }
-        
-        // Update the quests data
-        await updateData({
-          progress: {
-            ...gameData.progress,
-            'multiple-choice': {
-              ...gameData.progress['multiple-choice'],
-              quests
-            }
-          }
-        });
+        next.add(i);
       }
-      
-      console.log(`[GameCompletion] Saved progress to database. LevelGroup: ${sectionId}, Challenge: ${challengeIndex}`);
-    }
-    
-    // Call the onComplete callback with the final score
-    if (onComplete) {
-      // Consider the level completed if the score is at least 80%
-      const levelCompleted = finalScore >= 80;
-      onComplete(finalScore, levelCompleted);
-    }
-  };
-  
-  // Finish the game and calculate final score
-  const finishGame = async () => {
-    setGameEndTime(Date.now());
-    setGameOver(true);
-    
-    // Calculate final score
-    const correctAnswers = score / 10;
-    const totalQuestions = data?.questions.length || 0;
-    const finalScore = Math.round((correctAnswers / totalQuestions) * 100);
-    
-    // Create challenge result
-    const result: ChallengeResult = {
-      id: uuidv4(),
-      challengeType: 'multiple-choice',
-      score: finalScore,
-      maxScore: 100,
-      completedAt: new Date().toISOString(),
-      duration: startTime ? Math.floor((Date.now() - (startTime || 0)) / 1000) : 0,
-      isCorrect: finalScore >= 80,
-      gameType: 'multiple-choice'
-    };
-    
-    setChallengeResult(result);
-    
-    // Update database with game progress
-    if (typeof levelNumber === 'number' && gameData) {
-      // Derive section (level group) and challenge index from overall index
-      const sectionId = Math.floor(levelNumber / 10); // 0,1,2
-      const challengeIndex = levelNumber % 10; // 0..9
-      
-      // Complete the specific challenge in the database
-      await completeLevel('multiple-choice', sectionId, challengeIndex, finalScore);
-      
-      // Update quest progress for completing games
-      const quests = [...(gameData.progress['multiple-choice']?.quests || [])];
-      const completeGamesQuest = quests.find(q => q.id === 'complete-games');
-      if (completeGamesQuest && !completeGamesQuest.isCompleted) {
-        completeGamesQuest.progress = Math.min(completeGamesQuest.progress + 1, completeGamesQuest.target);
-        if (completeGamesQuest.progress >= completeGamesQuest.target) {
-          completeGamesQuest.isCompleted = true;
-        }
-        
-        // Update the quests data
-        await updateData({
-          progress: {
-            ...gameData.progress,
-            'multiple-choice': {
-              ...gameData.progress['multiple-choice'],
-              quests
-            }
-          }
-        });
+      return next;
+    });
+  }
+
+  function clearTransientMarks() {
+    setWrong(new Set());
+  }
+
+  async function handleCheck() {
+    if (!item || !currentTarget) return;
+    clearTransientMarks();
+    try {
+      const resp = await fetch('/api/challenges/pos-interactive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sentence: item.sentence, target: currentTarget, selections: Array.from(selected) }),
+      });
+      if (!resp.ok) throw new Error('Hindi ma-verify. Pakisubukan muli.');
+      const result: {
+        status: 'complete' | 'partial' | 'incorrect';
+        correct_indices: number[];
+        incorrect_indices: number[];
+        all_correct_indices: number[];
+      } = await resp.json();
+
+      const correctSet = new Set(result.correct_indices);
+      const wrongSet = new Set(result.incorrect_indices);
+      if (result.status === 'incorrect') {
+        setWrong(wrongSet);
+        setSheet({ kind: 'wrong' });
+        return;
       }
-      
-      console.log(`[GameCompletion] Saved progress to database. LevelGroup: ${sectionId}, Challenge: ${challengeIndex}`);
+
+      // Lock correct ones
+      setLocked(prev => new Set([...Array.from(prev), ...Array.from(correctSet)]));
+
+      if (result.status === 'partial') {
+        // Keep playing without sheet
+        return;
+      }
+
+      // complete
+      const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
+      setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
+      setCompleted(prev => Math.min(totalGoal, prev + 1));
+    } catch (e: any) {
+      setError(e?.message || 'Error habang nagche-check.');
     }
-    
-    // Call the onComplete callback with the final score
-    if (onComplete) {
-      // Consider the level completed if the score is at least 80%
-      const levelCompleted = finalScore >= 80;
-      onComplete(finalScore, levelCompleted);
+  }
+
+  function handleNext() {
+    if (!item || !currentTarget) return;
+    setSheet(null);
+    setSelected(new Set());
+    setWrong(new Set());
+    // Progress within same sentence for medium/hard; for easy always fetch new
+    if (difficulty === 'easy') {
+      loadNewItem();
+      return;
     }
-  };
-  
-  // Render loading state
+    const nextIndex = targetIndex + 1;
+    if (nextIndex < item.targets.length) {
+      setTargetIndex(nextIndex);
+      setLocked(new Set());
+    } else {
+      // Exhausted targets — fetch new sentence
+      loadNewItem();
+    }
+  }
+
+  useEffect(() => {
+    if (completed >= totalGoal && onComplete) {
+      const score = Math.round((completed / totalGoal) * 100);
+      onComplete(score, score >= 80);
+    }
+  }, [completed, onComplete]);
+
+  useEffect(() => {
+    if (onProgressChange) onProgressChange(completed, totalGoal);
+  }, [completed, totalGoal, onProgressChange]);
+
+  const instruction = useMemo(() => {
+    if (!currentTarget) return '';
+    if (currentTarget.mode === 'all') return `Piliin lahat ng ${currentTarget.label_tl}`;
+    const req = Math.max(1, currentTarget.required || 1);
+    return req > 1 ? `Piliin ang ${req} ${currentTarget.label_tl}` : `Piliin ang ${currentTarget.label_tl}`;
+  }, [currentTarget]);
+
+  const canSubmit = useMemo(() => {
+    if (!currentTarget) return false;
+    if (currentTarget.mode === 'all') return selected.size > 0; // can check anytime with at least one pick
+    const req = Math.max(1, currentTarget.required || 1);
+    // enable only when exactly req are picked and none are wrong yet
+    return selected.size === req;
+  }, [currentTarget, selected.size]);
+
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-duolingo-blue mx-auto mb-4"></div>
-        <p className="text-lg text-gray-600">Naglo-load ang game...</p>
+      <div className="min-h-[300px] flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-duolingo-purple"></div>
+        <p className="mt-4 text-gray-600">Naglo-load…</p>
       </div>
     );
   }
-  
-  // Render error state
+
   if (error) {
     return (
-      <div className="text-center py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500 mx-auto mb-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          <h2 className="text-xl font-bold text-red-800 mb-2">May Error</h2>
-          <p className="text-red-600 mb-4">{error}</p>
-          <Button onClick={loadGameData} className="bg-red-100 text-red-800 hover:bg-red-200">
-            Subukan Ulit
-          </Button>
+      <div className="max-w-xl mx-auto bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
+        {error}
+        <div className="mt-3">
+          <Button onClick={loadNewItem} className="bg-red-100 text-red-800 hover:bg-red-200">Subukan muli</Button>
         </div>
       </div>
     );
   }
-  
-  // Render game over state
-  if (gameOver) {
-    const correctAnswers = score / 10;
-    const totalQuestions = data?.questions.length || 0;
-    const finalScore = Math.round((correctAnswers / totalQuestions) * 100);
-    
-    return (
-      <div className="text-center py-8">
-        <div className="bg-duolingo-blue bg-opacity-10 border border-duolingo-blue border-opacity-30 rounded-lg p-6 max-w-md mx-auto">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-duolingo-blue mx-auto mb-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          <h2 className="text-xl font-bold text-duolingo-darkBlue mb-2">Tapos na!</h2>
-          <p className="text-lg text-duolingo-darkBlue mb-2">Score: {finalScore}%</p>
-          <p className="text-duolingo-blue mb-4">{correctAnswers} sa {totalQuestions} ang tama</p>
-          
-          <div className="space-y-2">
-            <Button onClick={() => window.location.reload()} className="bg-duolingo-blue bg-opacity-20 text-duolingo-darkBlue hover:bg-opacity-30 w-full">
-              Subukan Ulit
-            </Button>
-          </div>
-        </div>
-        
-        {/* Challenge Result Tracker */}
-        <ChallengeResultTracker 
-          result={challengeResult}
-          onResultProcessed={() => setChallengeResult(null)}
-        />
-      </div>
-    );
+
+  if (!item || !currentTarget) {
+    return null;
   }
-  
-  // Get the current question
-  const question = getCurrentQuestion();
-  
-  if (!question) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-lg text-gray-600">Walang mga tanong na available. Please try again later.</p>
-        <Button onClick={loadGameData} className="mt-4">
-          Subukan Ulit
-        </Button>
-      </div>
-    );
-  }
-  
-  // Render the game
+
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Progress indicator */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
-          <span>Question {currentQuestionIndex + 1} of {data?.questions.length}</span>
-          <span>
-            {streakBonusActive && <span className="text-red-500 mr-1">🔥</span>}
-            Score: {score}
-          </span>
+    <div className="relative p-2 md:p-4 max-w-5xl mx-auto flex flex-col">
+      {/* Hero: image + title + helper */}
+      <div className="grid grid-cols-1 md:grid-cols-[128px,1fr] gap-4 md:gap-6 items-center mb-4 md:mb-6">
+        <div className="flex items-center justify-center md:justify-start">
+          <img
+            src="/assets/placeholder.png"
+            alt="placeholder"
+            className="w-[112px] h-[112px] md:w-[120px] md:h-[120px] object-cover rounded-xl shadow-md"
+          />
         </div>
-        <div className="bg-gray-200 h-2 rounded-full">
-          <div 
-            className="bg-duolingo-blue h-2 rounded-full transition-all duration-500"
-            style={{ width: `${((currentQuestionIndex) / (data?.questions.length || 1)) * 100}%` }}
-          ></div>
-        </div>
-      </div>
-      
-      {/* Question and Sentence */}
-      <div className="bg-white shadow-md rounded-lg border border-gray-200 p-6 mb-6">
-        {/* Show the sentence prominently at the top */}
-        {data?.sentence && (
-          <div className="mb-5 text-lg font-medium text-gray-800 border-b pb-4 border-gray-100">
-            {data.sentence}
-          </div>
-        )}
-        
-        <div className="text-2xl font-bold text-duolingo-darkBlue">
-          {question.question}
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900">{instruction}</h1>
+          {currentTarget.mode === 'exact' && typeof required === 'number' && (
+            <div className="mt-2 text-sm md:text-base text-gray-600">
+              {lockedCount}/{required} {currentTarget.label_tl} tama
+            </div>
+          )}
         </div>
       </div>
-      
-      {/* Options */}
-      <div className="space-y-3 my-6">
-        {question.options
-          // Filter out punctuation options which are too obvious
-          .filter(option => !['Punctuation', 'Bantas'].includes(option))
-          .map(option => {
-            // Format the option to show only once, e.g. "Pang-Uri (Adjective)"
-            const tagalogTerm = getTagalogTermForPOS(option);
-            // If the option is already in Tagalog, show with English translation
-            // If the option is in English, show with Tagalog translation
-            const displayOption = option === tagalogTerm 
-              ? `${tagalogTerm}` 
-              : `${tagalogTerm} (${option})`;
-            
+
+      {/* Sentence strip */}
+      <div className="w-full rounded-2xl px-5 md:px-6 py-4 text-[14px] md:text-[16px] leading-relaxed mb-5 md:mb-6 border shadow-sm" style={{ backgroundColor: '#fff7ed', borderColor: '#feebd3', color: '#c3420d' }}>
+        {item.sentence}
+      </div>
+
+      {/* Faint grouping line before tiles */}
+      <div className="h-px bg-gray-200 my-4 md:my-5" />
+
+      {/* Sentence tokens */}
+      <div className={sheet ? 'pointer-events-none opacity-100' : ''} aria-hidden={!!sheet}>
+        <div className="flex flex-wrap gap-3 md:gap-4 items-start justify-center md:justify-start">
+          {item.tokens.map((t, i) => {
+            const isSelectable = item.selectable_mask[i];
+            const isSelected = selected.has(i);
+            const isLocked = locked.has(i);
+            const isWrong = wrong.has(i);
             return (
-              <button
-                key={option}
-                className={`w-full text-left p-4 rounded-lg transition-all duration-200 
-                  ${selectedOption === option 
-                    ? isCorrect 
-                      ? 'bg-green-100 border-2 border-green-500 text-green-800' 
-                      : 'bg-red-100 border-2 border-red-500 text-red-800'
-                    : selectedOption
-                      ? 'bg-gray-100 text-gray-500'
-                      : 'bg-duolingo-blue bg-opacity-10 border border-duolingo-blue text-duolingo-darkBlue hover:bg-opacity-20'
-                  }`}
-                onClick={() => handleOptionSelect(option)}
-                disabled={!!selectedOption}
+              <motion.button
+                key={`${i}-${t}`}
+                onClick={() => toggleIndex(i)}
+                disabled={!isSelectable || isLocked || isWrong}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={crisp}
+                className={`min-h-[44px] px-5 py-3 rounded-2xl border text-base md:text-lg shadow-sm select-none ${
+                  !isSelectable
+                    ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                    : isLocked
+                      ? 'bg-green-50 text-green-800 border-green-300'
+                      : isWrong
+                        ? 'bg-red-50 text-red-700 border-red-300'
+                        : isSelected
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'bg-white text-gray-900 border-gray-300'
+                }`}
+                style={{ willChange: 'transform', transform: 'translateZ(0)' }}
               >
-                {displayOption}
-              </button>
+                {t}
+              </motion.button>
             );
           })}
-      </div>
-      
-      {/* Feedback */}
-      {feedback && (
-        <div className={`text-center py-3 px-4 rounded-lg mb-6 ${
-          isCorrect ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
-        }`}>
-          {feedback}
         </div>
-      )}
-      
-      {/* Actions */}
-      <div className="flex justify-between mt-6">
-        <Button 
-          onClick={handleNextQuestion} 
-          disabled={!selectedOption}
-          className="bg-duolingo-blue text-white hover:bg-duolingo-darkBlue"
-        >
-          {currentQuestionIndex >= (data?.questions.length || 0) - 1 ? 'Finish' : 'Next'}
-        </Button>
       </div>
+
+      {/* Bottom action bar */}
+      <div className="mt-auto pt-6 border-t border-gray-200">
+        <div className="flex items-center justify-end min-h-[72px]">
+          <AnimatePresence mode="wait">
+            {!sheet && (
+              <motion.div
+                key="check-cta"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <motion.div whileTap={{ scale: 0.97 }} whileHover={{ scale: 1.02 }} transition={crisp}>
+                  <Button
+                    id="check-btn"
+                    onClick={handleCheck}
+                    disabled={!canSubmit}
+                    className="font-sans tracking-tight rounded-[24px] px-8 py-4 text-white font-extrabold text-[16px] md:text-[18px] bg-[#3B82F6] hover:bg-[#2563EB] shadow-md shadow-blue-200"
+                  >
+                    I-check
+                  </Button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Bottom feedback sheet */}
+      <AnimatePresence>
+        {sheet && (
+          <motion.div
+            initial={prefersReducedMotion ? { opacity: 0 } : { y: 20, opacity: 0 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { y: 20, opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0.16 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed left-0 right-0 bottom-0 z-50"
+            aria-live="polite"
+          >
+            <div className="max-w-5xl mx-auto px-3 md:px-4 pb-4">
+              <div className={`rounded-2xl shadow-xl px-5 py-4 md:px-6 md:py-5 text-white ${sheet.kind === 'correct' ? 'bg-green-500' : 'bg-red-500'}`}>
+                <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3">
+                  <div className="text-lg md:text-xl font-extrabold tracking-tight">
+                    {sheet.kind === 'correct' ? (sheet.cheer || 'Mahusay!') : 'Subukan muli. Hindi tugma ang iyong sagot.'}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {sheet.kind === 'wrong' && (
+                      <motion.div whileTap={{ scale: 0.97 }}>
+                        <Button
+                          onClick={() => setSheet(null)}
+                          variant="secondary"
+                          className="rounded-[28px] px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-extrabold text-base md:text-lg shadow-md"
+                        >
+                          Subukan Muli
+                        </Button>
+                      </motion.div>
+                    )}
+                    {sheet.kind === 'correct' && (
+                      <motion.div whileTap={{ scale: 0.97 }}>
+                        <Button
+                          onClick={handleNext}
+                          id="sheet-primary-btn"
+                          className="rounded-[28px] px-8 py-3 bg-[#3B82F6] hover:bg-[#2563EB] text-white font-extrabold text-base md:text-lg shadow-md"
+                        >
+                          Sunod
+                        </Button>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

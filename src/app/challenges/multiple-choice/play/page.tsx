@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
@@ -28,6 +28,8 @@ export default function PlayMultipleChoicePage() {
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [progressCompleted, setProgressCompleted] = useState(0);
+  const prefersReduced = useReducedMotion();
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -192,34 +194,42 @@ export default function PlayMultipleChoicePage() {
   }
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header with back button */}
-      <div className="flex items-center mb-8">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => router.push('/challenges/multiple-choice')}
-          className="mr-4 text-gray-600 hover:text-gray-900 bg-white p-2 rounded-full shadow hover:shadow-md transition-all"
-          aria-label="Go back to learning path"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-        </motion.button>
+    <div className="min-h-screen flex flex-col">
+      <div className="container mx-auto px-4 py-8 flex flex-col flex-1">
+        {/* Make-a-Sentence style header + progress */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={() => router.push('/challenges/multiple-choice')}
+              className="text-gray-600 hover:text-gray-900"
+              aria-label="Bumalik"
+            >
+              ← Back
+            </button>
+            <div className="text-sm text-gray-600">Level {sectionId + 1} · Challenge {levelId + 1}</div>
+          </div>
+          {(() => {
+            const pct = Math.max(0, Math.min(100, Math.round((progressCompleted / 5) * 100)));
+            return (
+              <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
+                <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: prefersReduced ? 'none' : 'width 240ms cubic-bezier(0.22,1,0.36,1)' }}>
+                  <div className="absolute inset-0 pointer-events-none bg-white/15" />
+                </div>
+              </div>
+            );
+          })()}
+        </div>
         
-        <div>
-          <h2 className="text-2xl font-bold">Bahagi ng Pangungusap</h2>
-          <p className="text-gray-600">
-            Level {sectionId + 1}, Challenge {levelId + 1}: Tukuyin ang bahagi ng pangungusap sa Tagalog.
-          </p>
+        {/* Centered game area */}
+        <div className="flex-1 flex items-start md:items-center">
+          <PartsOfSpeechGame
+            key={`${sectionId}-${levelId}`}
+            levelNumber={sectionId * 10 + levelId}
+            onComplete={handleComplete}
+            onProgressChange={(c) => setProgressCompleted(c)}
+          />
         </div>
       </div>
-      
-      <PartsOfSpeechGame
-        key={`${sectionId}-${levelId}`} // Add key to force component refresh when params change
-        levelNumber={sectionId * 10 + levelId} // Convert Level (group) and Challenge index to overall index
-        onComplete={handleComplete}
-      />
     </div>
   );
 }
