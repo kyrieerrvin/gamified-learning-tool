@@ -76,11 +76,11 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-[#0038a8] shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/dashboard" className="text-2xl font-bold text-blue-600 flex items-center">
+          <Link href="/dashboard" className="text-2xl font-bold text-white flex items-center">
             TagalogLearn
           </Link>
 
@@ -88,7 +88,7 @@ export default function Navbar() {
           <div className="hidden md:flex md:items-center md:space-x-4">
             <Link 
               href="/dashboard" 
-              className={`text-sm font-medium transition-colors ${pathname === '/dashboard' ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
+              className={`text-sm font-medium transition-colors ${pathname === '/dashboard' ? 'text-white' : 'text-white/80 hover:text-white'}`}
             >
               Home
             </Link>
@@ -96,7 +96,7 @@ export default function Navbar() {
               href="https://forms.gle/1NZy1hTMBMA8PdvS9" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium transition-colors text-gray-600 hover:text-blue-600"
+              className="text-sm font-medium transition-colors text-white/80 hover:text-white"
             >
               Feedback
             </a>
@@ -104,7 +104,7 @@ export default function Navbar() {
             {/* NLP Test Button (DEV ONLY) */}
             <button
               onClick={() => setShowNlpTest(true)}
-              className="text-sm font-medium px-3 py-1 text-yellow-800 bg-yellow-100 rounded-full hover:bg-yellow-200 transition-colors"
+              className="text-sm font-medium px-3 py-1 text-[#0038a8] bg-white rounded-full hover:bg-white/90 transition-colors"
             >
               Test NLP
             </button>
@@ -115,13 +115,13 @@ export default function Navbar() {
             </div>
             
             {/* User Info & Sign Out */}
-            <div className="flex items-center ml-2 pl-4 border-l border-gray-200">
-              <div className="text-sm text-gray-600 mr-4">
+            <div className="flex items-center ml-2 pl-4 border-l border-white/20">
+              <div className="text-sm text-white/90 mr-4">
                 {user?.email}
               </div>
               <button
                 onClick={signOut}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                className="bg-white text-[#0038a8] px-4 py-2 rounded-lg text-sm hover:bg-white/90 transition-colors"
               >
                 Sign Out
               </button>
@@ -131,7 +131,7 @@ export default function Navbar() {
           {/* Mobile menu button */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-gray-100 focus:outline-none"
+            className="md:hidden p-2 rounded-md text-white/90 hover:text-white hover:bg-white/10 focus:outline-none"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isMenuOpen ? (
@@ -145,11 +145,11 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+          <div className="md:hidden py-4 border-t border-white/20">
             <div className="flex flex-col space-y-4">
               <Link 
                 href="/dashboard" 
-                className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/dashboard' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
+                className={`px-2 py-1 text-sm font-medium rounded ${pathname === '/dashboard' ? 'text-[#0038a8] bg-white' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
               >
                 Home
               </Link>
@@ -157,7 +157,7 @@ export default function Navbar() {
                 href="https://forms.gle/yourGoogleFormLink" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2 py-1 text-sm font-medium rounded text-gray-600 hover:text-blue-600"
+                className="px-2 py-1 text-sm font-medium rounded text-white/90 hover:text-white"
               >
                 Feedback
               </a>
@@ -168,18 +168,18 @@ export default function Navbar() {
                   setIsMenuOpen(false);
                   setShowNlpTest(true);
                 }}
-                className="px-2 py-1 text-sm font-medium rounded text-yellow-800 bg-yellow-100 hover:bg-yellow-200"
+                className="px-2 py-1 text-sm font-medium rounded text-[#0038a8] bg-white hover:bg-white/90"
               >
                 Test NLP
               </button>
               
-              <div className="pt-4 mt-2 border-t border-gray-200">
-                <div className="text-sm text-gray-600 mb-2">
+              <div className="pt-4 mt-2 border-t border-white/20">
+                <div className="text-sm text-white/90 mb-2">
                   {user?.email}
                 </div>
                 <button
                   onClick={signOut}
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                  className="w-full bg-white text-[#0038a8] px-4 py-2 rounded-lg text-sm hover:bg-white/90 transition-colors"
                 >
                   Sign Out
                 </button>
