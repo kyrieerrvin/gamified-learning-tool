@@ -1,20 +1,238 @@
 [
     {
-        "sentence": "Ang bata ay masipag mag-aral tuwing gabi."
+        "short": "Nagwagi si Maribel sa timpalak ng pagguhit sa kanilang paaralan.",
+        "long": "Kahit ang kanyang mga magulang ay nahihiwagaan kung kanino siya nagmana. Pinupuri ang angking ganda ni Kuholita."
     },
     {
-        "sentence": "Malaking tulong ang aklat sa pagkuha ng impormasyon."
+        "short": "Sumigaw ng saklolo ang bata nang makita ang sunog sa bahay.",
+        "long": "Hindi maikakaila na talagang dinadayo siya ng maraming kalalakihang suso. Pati nga ang mga kababaihang suso na galing pa sa kabilang ibayo ay pinupuntahan siya, masilayan lamang ang kanyang ganda."
     },
     {
-        "sentence": "Masarap ang adobo na ulam sa hapag-kainan."
+        "short": "Ang kudong ay ginagamit ng mga katutubo bilang tradisyonal na panakip sa ulo lalo na sa mga espesyal na okasyon.",
+        "long": "“Puntahan natin iyong sinasabi nilang kakaibang suso sa kabilang bukid,” sabi ng isang lalaking suso sa kaibigan niya."
     },
     {
-        "sentence": "Sa isang malawak na bukirin ay may maliit na lawa. Sa hindi kalayuan ay may magandang hardin. Sa lugar na ito, nakatira ang maraming suso."
+        "short": "Sumukob ang mga bata sa tindahan upang hindi mabasa ng ulan.",
+        "long": "Sa isang malawak na bukirin ay may maliit na lawa. Sa hindi kalayuan ay may magandang hardin. Sa lugar na ito, nakatira ang maraming suso."
     },
     {
-        "sentence": "Makikita sila sa mga malalaki at maliliit na bato. Ang iba ay nakadikit sa mga dahon malapit sa tubig habang ang iba naman ay nasa lupa o hindi kaya ay nasa tuyong mga dahon at putol na mga kahoy."
+        "short": "Ang hirap ng paglalako ay nakikita sa pawis at pagod ng mga nagtitinda sa kalsada.",
+        "long": "Makikita sila sa mga malalaki at maliliit na bato. Ang iba ay nakadikit sa mga dahon malapit sa tubig habang ang iba naman ay nasa lupa o hindi kaya ay nasa tuyong mga dahon at putol na mga kahoy."
     },
     {
-        "sentence": "Iba't iba ang kulay, hugis, laki at tigas ng kanilang mga talukab. Ang ibang talukab ay may katamtamang tigas habang ang iba naman ay talagang manipis. "
+        "short": "Ang bawat mamamayan ay may tungkuling magbayad ng buwis nang tama.",
+        "long": ""
+    },
+    {
+        "short": "Matao at masigla ang lungsod ng Maynila tuwing gabi.",
+        "long": ""
+    },
+    {
+        "short": "Nagtipon ang buong angkan para sa pista ng bayan.",
+        "long": ""
+    },
+    {
+        "short": "Ang krus ay simbolo ng pananampalataya ng mga Kristiyano.",
+        "long": ""
+    },
+    {
+        "short": "Si Mark ay laging aktibo sa sports kaya marami siyang nagiging kaibigan.",
+        "long": ""
+    },
+    {
+        "short": "Tahimik at berde ang lalawigan ng Quezon dahil sa malalawak na bukirin.",
+        "long": ""
+    },
+    {
+        "short": "Salat man sa yaman, masaya ang pamilya Santos dahil nagmamahalan sila.",
+        "long": ""
+    },
+    {
+        "short": "Nagtatalo sina Rico at Ben kung sino ang unang maglalaro ng bola.",
+        "long": ""
+    },
+    {
+        "short": "Ipinatayo ng alkalde ang bagong tulay sa barangay.",
+        "long": ""
+    },
+    {
+        "short": "Ayaw makinig ng batang mapagmataas dahil iniisip niya na siya lang ang laging tama.",
+        "long": ""
+    },
+    {
+        "short": "Nanguha ng tilapia ang mga mangingisda sa lawa ng Laguna.",
+        "long": ""
+    },
+    {
+        "short": "Katamtaman ang lakas ng hangin kaya komportable ang maglakad sa labas.",
+        "long": ""
+    },
+    {
+        "short": "Bukod-tangi ang batang si Mark sa talento sa pagsayaw kaya madalas siyang maimbitahan sa programa.",
+        "long": ""
+    },
+    {
+        "short": "Mithiin ng bawat mag-aaral na magkaroon ng magandang kinabukasan.",
+        "long": ""
+    },
+    {
+        "short": "Itinago ni Jessa ang kanyang lihim na sulat sa ilalim ng unan.",
+        "long": ""
+    },
+    {
+        "short": "Punyagi ng isang atleta ang nagtulak sa kanya na mag-ensayo araw-araw.",
+        "long": ""
+    },
+    {
+        "short": "Tinaboy ni Mang Glen ang aso gamit ang palakpak ng kamay.",
+        "long": ""
+    },
+    {
+        "short": "Makikita mula sa malayo ang mataas na gusali sa siyudad.",
+        "long": ""
+    },
+    {
+        "short": "Sambit ni tatay kay Pedro na maging mabait sa lahat ng tao.",
+        "long": ""
+    },
+    {
+        "short": "Nagwawalis at nag-aayos ng upuan ang mga mag-aaral sa silid-aralan.",
+        "long": ""
+    },
+    {
+        "short": "Naging taob ang bangka dahil sa malakas na hangin sa dagat.",
+        "long": ""
+    },
+    {
+        "short": "Ginamit ng guro ang kumpas ng kamay upang patahimikin ang klase.",
+        "long": ""
+    },
+    {
+        "short": "Si Ate Lea ay modelo ng kabutihan sa kanilang pamayanan.",
+        "long": ""
+    },
+    {
+        "short": "Ang pito ng referee ang hudyat ng pagsisimula ng laro.",
+        "long": ""
+    },
+    {
+        "short": "Nagkaroon ng anunsyo tungkol sa bagong iskedyul ng klase.",
+        "long": ""
+    },
+    {
+        "short": "Umakyat ang mga bata sa entablado para sa kanilang sayaw.",
+        "long": ""
+    },
+    {
+        "short": "Si Lorie ay isang masipag na estudyante na laging nag-aaral sa gabi.",
+        "long": ""
+    },
+    {
+        "short": "Ang pinuno ng barangay ay nangunguna sa paglilinis ng komunidad.",
+        "long": ""
+    },
+    {
+        "short": "Maganda ang disenyo ng bahay na gawa sa kahoy at bato.",
+        "long": ""
+    },
+    {
+        "short": "Ipinatupad ang mungkahi ng guro na magtanim ng halaman sa bakuran ng paaralan.",
+        "long": ""
+    },
+    {
+        "short": "Ang bayanihan ay bahagi ng kultura ng mga Pilipino.",
+        "long": ""
+    },
+    {
+        "short": "Mabilis ang takbo ng buhay sa siyudad kumpara sa probinsya.",
+        "long": ""
+    },
+    {
+        "short": "Ang paksa ng talakayan sa klase ay tungkol sa kalikasan.",
+        "long": ""
+    },
+    {
+        "short": "Ang sining ng pagpipinta ay nagpapakita ng damdamin ng tao.",
+        "long": ""
+    },
+    {
+        "short": "May kakaibang estilo ng pananamit si Daniel tuwing pista.",
+        "long": ""
+    },
+    {
+        "short": "Nakangiti ang mga residente dahil malinis ang kanilang lansangan.",
+        "long": ""
+    },
+    {
+        "short": "Maraming ibon at usa ang naninirahan sa kagubatan.",
+        "long": ""
+    },
+    {
+        "short": "Nakaani ng maraming bigas ang magsasaka mula sa isang ektarya ng palayan.",
+        "long": ""
+    },
+    {
+        "short": "Mapayapa ang pamayanan dahil nagtutulungan ang lahat ng tao.",
+        "long": ""
+    },
+    {
+        "short": "Nabasa ni Lorie sa pahayagan ang tungkol sa bagong batas.",
+        "long": ""
+    },
+    {
+        "short": "Nayanig ang buong barangay nang dumating ang kalamidad na lindol.",
+        "long": ""
+    },
+    {
+        "short": "Ginamit ng karpintero ang troso sa paggawa ng mesa.",
+        "long": ""
+    },
+    {
+        "short": "Walang alintana si Mang Rene sa init habang siya’y naglalakad.",
+        "long": ""
+    },
+    {
+        "short": "Mahaba ang prusisyon sa pista ng bayan tuwing Mayo.",
+        "long": ""
+    },
+    {
+        "short": "Nabasag agad ang marupok na baso sa mesa.",
+        "long": ""
+    },
+    {
+        "short": "Kusang-loob na tumulong si Joy sa paglilinis ng kapaligiran.",
+        "long": ""
+    },
+    {
+        "short": "Ipinakita ni Carlo ang malasakit sa kapwa sa pagtulong sa mahihirap.",
+        "long": ""
+    },
+    {
+        "short": "Dumating ang mga pasahero sa istasyon ng tren nang maaga.",
+        "long": ""
+    },
+    {
+        "short": "Namangha si Rita sa tanaw ng bundok mula sa kanilang bahay.",
+        "long": ""
+    },
+    {
+        "short": "Ang Palawan ay isang pulo na tanyag sa kagandahan.",
+        "long": ""
+    },
+    {
+        "short": "Pinagmamasdan ng mga bata ang paglubog ng araw sa kanluran.",
+        "long": ""
+    },
+    {
+        "short": "Magaganda ang tanawin sa mga probinsya sa timog ng bansa.",
+        "long": ""
+    },
+    {
+        "short": "Maganda ang kulay ng langit tuwing sumisikat ang araw sa silangan.",
+        "long": ""
+    },
+    {
+        "short": "Ginamit ni Carl ang kompas upang hanapin ang hilaga sa mapa.",
+        "long": ""
     }
 ]

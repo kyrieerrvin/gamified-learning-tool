@@ -1,176 +1,234 @@
 [
     {
-        "sentence": "Ang bata ay masipag mag-aral tuwing gabi."
+        "short": "Ang bata ay masipag mag-aral tuwing gabi.",
+        "long": ""
     },
     {
-        "sentence": "Malaking tulong ang aklat sa pagkuha ng impormasyon."
+        "short": "Malaking tulong ang aklat sa pagkuha ng impormasyon.",
+        "long": ""
     },
     {
-        "sentence": "Kumain ako ng saging para sa aking meryenda."
+        "short": "Kumain ako ng saging para sa aking meryenda.",
+        "long": ""
     },
     {
-        "sentence": "Ginamit ng magsasaka ang kabayo sa paghila ng kariton."
+        "short": "Ginamit ng magsasaka ang kabayo sa paghila ng kariton.",
+        "long": ""
     },
     {
-        "sentence": "Inilagay ni Juan ang bote sa tamang basurahan."
+        "short": "Inilagay ni Juan ang bote sa tamang basurahan.",
+        "long": ""
     },
     {
-        "sentence": "Nagkuwento si lolo tungkol sa kanyang kabataan sa probinsya."
+        "short": "Nagkuwento si lolo tungkol sa kanyang kabataan sa probinsya.",
+        "long": ""
     },
     {
-        "sentence": "Itinatabi ni Ana ang pera niya sa isang alkansya."
+        "short": "Itinatabi ni Ana ang pera niya sa isang alkansya.",
+        "long": ""
     },
     {
-        "sentence": "Ako ay naghuhugas ng pinggan tuwing hapunan."
+        "short": "Ako ay naghuhugas ng pinggan tuwing hapunan.",
+        "long": ""
     },
     {
-        "sentence": "Ikaw ang tumulong sa iyong kaibigan na gumawa ng takdang-aralin."
+        "short": "Ikaw ang tumulong sa iyong kaibigan na gumawa ng takdang-aralin.",
+        "long": ""
     },
     {
-        "sentence": "Siya ang nanalo sa paligsahan ng pagguhit."
+        "short": "Siya ang nanalo sa paligsahan ng pagguhit.",
+        "long": ""
     },
     {
-        "sentence": "Nagbibigay ng sariwang gatas ang baka sa bukid."
+        "short": "Nagbibigay ng sariwang gatas ang baka sa bukid.",
+        "long": ""
     },
     {
-        "sentence": "Nagbibigay ng sariwang gatas ang baka sa bukid."
+        "short": "Nagbibigay ng sariwang gatas ang baka sa bukid.",
+        "long": ""
     },
     {
-        "sentence": "Tahol nang tahol ang aso upang bantayan ang kanilang bahay."
+        "short": "Tahol nang tahol ang aso upang bantayan ang kanilang bahay.",
+        "long": ""
     },
     {
-        "sentence": "Hinabol ng pusa ang daga sa kusina."
+        "short": "Hinabol ng pusa ang daga sa kusina.",
+        "long": ""
     },
     {
-        "sentence": "Nag-aayos ako ng gamit tuwing umaga bago pumasok sa klase."
+        "short": "Nag-aayos ako ng gamit tuwing umaga bago pumasok sa klase.",
+        "long": ""
     },
     {
-        "sentence": "Mahalaga ang tubig upang manatiling malusog ang katawan."
+        "short": "Mahalaga ang tubig upang manatiling malusog ang katawan.",
+        "long": ""
     },
     {
-        "sentence": "Malungkot si Ana dahil nawala ang kanyang laruan."
+        "short": "Malungkot si Ana dahil nawala ang kanyang laruan.",
+        "long": ""
     },
     {
-        "sentence": "Masipag magtanim ng gulay si tatay sa bukid."
+        "short": "Masipag magtanim ng gulay si tatay sa bukid.",
+        "long": ""
     },
     {
-        "sentence": "Si nanay ay nag-aalaga sa amin kapag may sakit."
+        "short": "Si nanay ay nag-aalaga sa amin kapag may sakit.",
+        "long": ""
     },
     {
-        "sentence": "Gumamit si Marco ng lapis sa pagsusulit sa matematika."
+        "short": "Gumamit si Marco ng lapis sa pagsusulit sa matematika.",
+        "long": ""
     },
     {
-        "sentence": "Ginamit ni Liza ang makulay na papel sa paggawa ng poster."
+        "short": "Ginamit ni Liza ang makulay na papel sa paggawa ng poster.",
+        "long": ""
     },
     {
-        "sentence": "Umupo ang estudyante sa kanyang upuan sa klase."
+        "short": "Umupo ang estudyante sa kanyang upuan sa klase.",
+        "long": ""
     },
     {
-        "sentence": "Nagsuot si Ana ng magandang damit para sa piyesta."
+        "short": "Nagsuot si Ana ng magandang damit para sa piyesta.",
+        "long": ""
     },
     {
-        "sentence": "Naglalaro sila ng basketball gamit ang bola."
+        "short": "Naglalaro sila ng basketball gamit ang bola.",
+        "long": ""
     },
     {
-        "sentence": "Nagbigay si Pedro ng pulang mansanas sa kanyang guro."
+        "short": "Nagbigay si Pedro ng pulang mansanas sa kanyang guro.",
+        "long": ""
     },
     {
-        "sentence": "Pinatalim ni Liza ang kanyang lapis gamit ang pantasa."
+        "short": "Pinatalim ni Liza ang kanyang lapis gamit ang pantasa.",
+        "long": ""
     },
     {
-        "sentence": "Nagbigay si Juan ng bulaklak kay Maria sa kanyang kaarawan."
+        "short": "Nagbigay si Juan ng bulaklak kay Maria sa kanyang kaarawan.",
+        "long": ""
     },
     {
-        "sentence": "Kumain ng sopas si Ana gamit ang kutsara."
+        "short": "Kumain ng sopas si Ana gamit ang kutsara.",
+        "long": ""
     },
     {
-        "sentence": "Natulog ang bata sa malambot na unan."
+        "short": "Natulog ang bata sa malambot na unan.",
+        "long": ""
     },
     {
-        "sentence": "Tinusok ni Pedro ang karne gamit ang tinidor."
+        "short": "Tinusok ni Pedro ang karne gamit ang tinidor.",
+        "long": ""
     },
     {
-        "sentence": "Dapat tayong magtulungan upang mapangalagaan ang mundo."
+        "short": "Dapat tayong magtulungan upang mapangalagaan ang mundo.",
+        "long": ""
     },
     {
-        "sentence": "Mainit ang klima tuwing buwan ng Abril."
+        "short": "Mainit ang klima tuwing buwan ng Abril.",
+        "long": ""
     },
     {
-        "sentence": "Itapon ang basura sa tamang lalagyan."
+        "short": "Itapon ang basura sa tamang lalagyan.",
+        "long": ""
     },
     {
-        "sentence": "Gumamit si Lola ng pamaypay dahil mainit ang panahon."
+        "short": "Gumamit si Lola ng pamaypay dahil mainit ang panahon.",
+        "long": ""
     },
     {
-        "sentence": "Nagsuot ng salamin si Kuya upang makabasa ng malinaw."
+        "short": "Nagsuot ng salamin si Kuya upang makabasa ng malinaw.",
+        "long": ""
     },
     {
-        "sentence": "Nagdala si Ana ng payong dahil umuulan."
+        "short": "Nagdala si Ana ng payong dahil umuulan.",
+        "long": ""
     },
     {
-        "sentence": "Makintab ang balat ng berdeng mansanas."
+        "short": "Makintab ang balat ng berdeng mansanas.",
+        "long": ""
     },
     {
-        "sentence": "Nagbabasa si Maria ng kwento sa silid-aklatan."
+        "short": "Nagbabasa si Maria ng kwento sa silid-aklatan.",
+        "long": ""
     },
     {
-        "sentence": "Nagsusulat si Colombus ng liham para sa kanyang kaibigan."
+        "short": "Nagsusulat si Colombus ng liham para sa kanyang kaibigan.",
+        "long": ""
     },
     {
-        "sentence": "Naglalaro ng taguan ang mga bata sa palaruan."
+        "short": "Naglalaro ng taguan ang mga bata sa palaruan.",
+        "long": ""
     },
     {
-        "sentence": "Nagsusuklay ng buhok si Liza bago pumasok sa klase."
+        "short": "Nagsusuklay ng buhok si Liza bago pumasok sa klase.",
+        "long": ""
     },
     {
-        "sentence": "Nagsasayaw ng sayaw na folk si Ana sa entablado."
+        "short": "Nagsasayaw ng sayaw na folk si Ana sa entablado.",
+        "long": ""
     },
     {
-        "sentence": "Naghihilamos ng malamig na tubig si Juan pagkagising."
+        "short": "Naghihilamos ng malamig na tubig si Juan pagkagising.",
+        "long": ""
     },
     {
-        "sentence": "Nagsisipilyo si Ana bago siya matulog sa gabi."
+        "short": "Nagsisipilyo si Ana bago siya matulog sa gabi.",
+        "long": ""
     },
     {
-        "sentence": "Naglilinis ang mga mag-aaral ng kanilang silid-aralan tuwing Biyernes."
+        "short": "Naglilinis ang mga mag-aaral ng kanilang silid-aralan tuwing Biyernes.",
+        "long": ""
     },
     {
-        "sentence": "Umiiyak si Liza dahil nawala ang kanyang paboritong manika."
+        "short": "Umiiyak si Liza dahil nawala ang kanyang paboritong manika.",
+        "long": ""
     },
     {
-        "sentence": "Tumatawa si Marco sa nakakatawang biro ng kaibigan."
+        "short": "Tumatawa si Marco sa nakakatawang biro ng kaibigan.",
+        "long": ""
     },
     {
-        "sentence": "Naglalakad si Ana papunta sa paaralan tuwing umaga."
+        "short": "Naglalakad si Ana papunta sa paaralan tuwing umaga.",
+        "long": ""
     },
     {
-        "sentence": "Laging kasama ni Pedro ang kanyang matalik na kaibigan."
+        "short": "Laging kasama ni Pedro ang kanyang matalik na kaibigan.",
+        "long": ""
     },
     {
-        "sentence": "Maraming natututunan ang mga bata sa paaralan."
+        "short": "Maraming natututunan ang mga bata sa paaralan.",
+        "long": ""
     },
     {
-        "sentence": "Masarap kainin ang hinog na mangga."
+        "short": "Masarap kainin ang hinog na mangga.",
+        "long": ""
     },
     {
-        "sentence": "Nagsuot siya ng bagong sapatos para sa sayawan sa paaralan."
+        "short": "Nagsuot siya ng bagong sapatos para sa sayawan sa paaralan.",
+        "long": ""
     },
     {
-        "sentence": "Masipag magtanim ng palay ang mga magsasaka sa palayan."
+        "short": "Masipag magtanim ng palay ang mga magsasaka sa palayan.",
+        "long": ""
     },
     {
-        "sentence": "Nanguha ng isda ang mga mangingisda sa dagat."
+        "short": "Nanguha ng isda ang mga mangingisda sa dagat.",
+        "long": ""
     },
     {
-        "sentence": "Naliligo ang mga bata sa malamig na tubig ng ilog."
+        "short": "Naliligo ang mga bata sa malamig na tubig ng ilog.",
+        "long": ""
     },
     {
-        "sentence": "Nagtanim ng kamatis si Lola sa kanilang halamanan."
+        "short": "Nagtanim ng kamatis si Lola sa kanilang halamanan.",
+        "long": ""
     },
     {
-        "sentence": "Masayang naglalaro ng habulan ang mga bata sa palaruan."
+        "short": "Masayang naglalaro ng habulan ang mga bata sa palaruan.",
+        "long": ""
     },
     {
-        "sentence": "Masarap ang adobo na ulam sa hapag-kainan."
+        "short": "Masarap ang adobo na ulam sa hapag-kainan.",
+        "long": ""
     }
 ]

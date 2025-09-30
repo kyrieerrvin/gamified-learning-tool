@@ -96,18 +96,20 @@ export default function PartsOfSpeechGame({
   const selectedCount = selected.size;
   const lockedCount = locked.size;
 
-  function toggleIndex(i: number) {
+  async function toggleIndex(i: number) {
     if (!item || !currentTarget) return;
-    if (!item.selectable_mask[i]) return;
-    if (locked.has(i)) return;
-    setWrong(prev => (prev.has(i) ? new Set([...Array.from(prev)].filter(x => x !== i)) : prev));
+    if (!item.selectable_mask[i]) return; // disabled/punctuation
+    if (locked.has(i) || wrong.has(i)) return; // locked states are not interactive
+
+    // Pending selection prior to I-check for all difficulties
     setSelected(prev => {
       const next = new Set(prev);
       if (next.has(i)) {
         next.delete(i);
       } else {
+        // For exact quota difficulties (e.g., medium), cap to required
         if (currentTarget.mode === 'exact' && typeof required === 'number' && next.size >= required) {
-          return next; // cap
+          return next;
         }
         next.add(i);
       }
@@ -121,7 +123,7 @@ export default function PartsOfSpeechGame({
 
   async function handleCheck() {
     if (!item || !currentTarget) return;
-    clearTransientMarks();
+    if (selected.size === 0) return; // enable only when pending exists
     try {
       const resp = await fetch('/api/challenges/pos-interactive', {
         method: 'POST',
@@ -135,27 +137,38 @@ export default function PartsOfSpeechGame({
         incorrect_indices: number[];
         all_correct_indices: number[];
       } = await resp.json();
+      // Apply locks
+      const prevLockedSize = locked.size;
+      const uniqueNewCorrect = result.correct_indices.filter(idx => !locked.has(idx));
+      let newLockedCount = prevLockedSize + uniqueNewCorrect.length;
+      setLocked(prev => {
+        const next = new Set(prev);
+        for (const idx of result.correct_indices) next.add(idx);
+        return next;
+      });
+      setWrong(prev => {
+        const next = new Set(prev);
+        for (const idx of result.incorrect_indices) next.add(idx);
+        return next;
+      });
+      // Clear all pending selections after evaluation
+      setSelected(new Set());
 
-      const correctSet = new Set(result.correct_indices);
-      const wrongSet = new Set(result.incorrect_indices);
-      if (result.status === 'incorrect') {
-        setWrong(wrongSet);
+      // Determine completion for current target
+      const isExact = currentTarget.mode === 'exact' && typeof required === 'number';
+      const exactSatisfied = isExact ? newLockedCount >= (required as number) : false;
+      const allSatisfied = !isExact && Array.isArray(result.all_correct_indices)
+        ? result.all_correct_indices.every(idx => new Set(Array.from(new Set([...locked, ...result.correct_indices]))).has(idx))
+        : false;
+
+      if (exactSatisfied || allSatisfied || result.status === 'complete') {
+        const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
+        setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
+        setCompleted(prev => Math.min(totalGoal, prev + 1));
+      } else if (result.incorrect_indices.length > 0) {
         setSheet({ kind: 'wrong' });
-        return;
       }
-
-      // Lock correct ones
-      setLocked(prev => new Set([...Array.from(prev), ...Array.from(correctSet)]));
-
-      if (result.status === 'partial') {
-        // Keep playing without sheet
-        return;
-      }
-
-      // complete
-      const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
-      setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
-      setCompleted(prev => Math.min(totalGoal, prev + 1));
+      // Otherwise, partial correct with no wrong: continue without sheet
     } catch (e: any) {
       setError(e?.message || 'Error habang nagche-check.');
     }
@@ -167,10 +180,7 @@ export default function PartsOfSpeechGame({
     setSelected(new Set());
     setWrong(new Set());
     // Progress within same sentence for medium/hard; for easy always fetch new
-    if (difficulty === 'easy') {
-      loadNewItem();
-      return;
-    }
+    // For easy: only move on when user taps Sunod from the sheet (sheet.correct)
     const nextIndex = targetIndex + 1;
     if (nextIndex < item.targets.length) {
       setTargetIndex(nextIndex);
@@ -196,15 +206,13 @@ export default function PartsOfSpeechGame({
     if (!currentTarget) return '';
     if (currentTarget.mode === 'all') return `Piliin lahat ng ${currentTarget.label_tl}`;
     const req = Math.max(1, currentTarget.required || 1);
-    return req > 1 ? `Piliin ang ${req} ${currentTarget.label_tl}` : `Piliin ang ${currentTarget.label_tl}`;
+    return req > 1 ? `Pumili ng ${req} ${currentTarget.label_tl}` : `Piliin ang ${currentTarget.label_tl}`;
   }, [currentTarget]);
 
   const canSubmit = useMemo(() => {
     if (!currentTarget) return false;
-    if (currentTarget.mode === 'all') return selected.size > 0; // can check anytime with at least one pick
-    const req = Math.max(1, currentTarget.required || 1);
-    // enable only when exactly req are picked and none are wrong yet
-    return selected.size === req;
+    // Enable when at least one pending selection exists
+    return selected.size > 0;
   }, [currentTarget, selected.size]);
 
   if (loading) {
