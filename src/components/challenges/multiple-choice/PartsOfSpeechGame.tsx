@@ -41,7 +41,8 @@ export default function PartsOfSpeechGame({
     : { type: 'tween' as const, ease: [0.25, 1, 0.5, 1] as const, duration: 0.2 };
 
   const { data: gameData } = useGameProgress();
-  const grade = (gameData?.profile?.gradeLevel as GradeLevel) || 'G3_4';
+  // Lock the user's grade level for the entire session to prevent cross-grade leakage
+  const [sessionGrade, setSessionGrade] = useState<GradeLevel | null>(null);
   const sectionIndex = Math.floor(levelNumber / 10);
   const difficulty: 'easy' | 'medium' | 'hard' = sectionIndex === 0 ? 'easy' : sectionIndex === 2 ? 'hard' : 'medium';
 
@@ -67,7 +68,7 @@ export default function PartsOfSpeechGame({
       setSheet(null);
       setTargetIndex(0);
       const qs = new URLSearchParams();
-      if (grade) qs.set('grade', grade);
+      if (sessionGrade) qs.set('grade', sessionGrade);
       if (difficulty) qs.set('difficulty', difficulty);
       const resp = await fetch(`/api/challenges/pos-interactive?${qs.toString()}`, { cache: 'no-store' });
       if (!resp.ok) throw new Error('Hindi ma-load ang laro');
@@ -82,10 +83,18 @@ export default function PartsOfSpeechGame({
     }
   }
 
+  // Initialize sessionGrade once when profile data is available, then keep it stable
   useEffect(() => {
-    if (!grade) return;
+    const g = gameData?.profile?.gradeLevel as GradeLevel | undefined;
+    if (!sessionGrade && (g === 'G1_2' || g === 'G3_4' || g === 'G5_6')) {
+      setSessionGrade(g);
+    }
+  }, [gameData?.profile?.gradeLevel, sessionGrade]);
+
+  useEffect(() => {
+    if (!sessionGrade) return;
     loadNewItem();
-  }, [grade, difficulty]);
+  }, [sessionGrade, difficulty]);
 
   const currentTarget: Target | null = useMemo(() => {
     if (!item) return null;

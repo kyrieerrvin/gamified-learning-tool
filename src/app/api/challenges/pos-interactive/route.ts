@@ -47,33 +47,24 @@ async function analyze(sentence: string): Promise<{ tokens: AnalyzeToken[] }> {
   return resp.json();
 }
 
-async function pickSentence(grade: string | null): Promise<string | null> {
+async function pickSentence(grade: string | null, difficulty: string): Promise<string | null> {
   try {
     const fs = await import('fs/promises');
     const path = (p: string) => `${process.cwd()}/${p}`;
-    if (grade === 'G1_2') {
-      const raw = await fs.readFile(path('words/grade_level_1-2_words.json'), 'utf8');
-      const arr = JSON.parse(raw) as Array<{ difficult?: string; sentence?: string } & Record<string, unknown>>;
-      // Prefer "difficult" sentences per refinement; fall back to "sentence" if present
-      const pool = arr.map(x => (x as any).difficult || x.sentence).filter(Boolean) as string[];
-      if (pool.length === 0) return null;
-      return pool[Math.floor(Math.random() * pool.length)];
-    }
-    if (grade === 'G3_4') {
-      const raw = await fs.readFile(path('words/mulcho_grade_3-4.json'), 'utf8');
-      const arr = JSON.parse(raw) as Array<{ sentence?: string }>;
-      const pool = arr.map(x => x.sentence).filter(Boolean) as string[];
-      if (pool.length === 0) return null;
-      return pool[Math.floor(Math.random() * pool.length)];
-    }
-    if (grade === 'G5_6') {
-      const raw = await fs.readFile(path('words/mulcho_grade_5-6.json'), 'utf8');
-      const arr = JSON.parse(raw) as Array<{ sentence?: string }>;
-      const pool = arr.map(x => x.sentence).filter(Boolean) as string[];
-      if (pool.length === 0) return null;
-      return pool[Math.floor(Math.random() * pool.length)];
-    }
-    return null;
+    if (!grade) return null;
+    const fileMap: Record<string, string> = {
+      G1_2: 'words/mulcho_grade_1-2.json',
+      G3_4: 'words/mulcho_grade_3-4.json',
+      G5_6: 'words/mulcho_grade_5-6.json',
+    };
+    const file = fileMap[grade];
+    if (!file) return null;
+    const raw = await fs.readFile(path(file), 'utf8');
+    const arr = JSON.parse(raw) as Array<{ short?: string; long?: string }>;
+    const key: 'short' | 'long' = difficulty === 'easy' ? 'short' : 'long';
+    const pool = arr.map(x => (x && x[key]) || '').filter(Boolean) as string[];
+    if (pool.length === 0) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
   } catch (e) {
     return null;
   }
@@ -87,7 +78,7 @@ export async function GET(request: NextRequest) {
 
   // Pick sentence from pools if not provided
   if (!sentence) {
-    sentence = await pickSentence(grade);
+    sentence = await pickSentence(grade, difficulty);
   }
   // If still none, bail early
   if (!sentence) {
