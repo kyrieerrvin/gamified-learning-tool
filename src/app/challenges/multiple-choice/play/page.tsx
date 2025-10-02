@@ -29,6 +29,8 @@ export default function PlayMultipleChoicePage() {
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [progressCompleted, setProgressCompleted] = useState(0);
+  const [nextSection, setNextSection] = useState<number | null>(null);
+  const [nextLevel, setNextLevel] = useState<number | null>(null);
   const prefersReduced = useReducedMotion();
   
   // Check if level is accessible AFTER game progress has loaded
@@ -46,6 +48,15 @@ export default function PlayMultipleChoicePage() {
 
     setLoading(false);
   }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
+
+  // Reset completion and local navigation state when URL params change
+  useEffect(() => {
+    setGameCompleted(false);
+    setScore(0);
+    setProgressCompleted(0);
+    setNextSection(null);
+    setNextLevel(null);
+  }, [sectionId, levelId]);
   
   // Handle quest progress updates
   const updateQuestProgress = async (questId: string, progressAmount: number) => {
@@ -90,6 +101,27 @@ export default function PlayMultipleChoicePage() {
     
     // Add additional debug log for XP tracking
     console.log(`[XP Debug - MultipleChoice] Score: ${score}, Level: ${levelId}, Section: ${sectionId}`);
+
+    // Pre-compute the next level locally to avoid relying on async store propagation
+    if (score >= 80) {
+      let ns = sectionId;
+      let nl = levelId;
+      if (levelId < 9) {
+        nl = levelId + 1;
+      } else if (sectionId < 2) {
+        ns = sectionId + 1;
+        nl = 0;
+      } else {
+        // No next level (finished last level). Keep nulls to hide the button.
+        ns = -1;
+        nl = -1;
+      }
+      setNextSection(ns >= 0 ? ns : null);
+      setNextLevel(nl >= 0 ? nl : null);
+    } else {
+      setNextSection(null);
+      setNextLevel(null);
+    }
   };
   
   if (loading) {
@@ -162,24 +194,13 @@ export default function PlayMultipleChoicePage() {
                 </Button>
               )}
               
-              {score >= 80 && progress['multiple-choice'] && (
+              {score >= 80 && nextSection !== null && nextLevel !== null && (
                 <Button 
                   onClick={() => {
-                    // Use the currentSection and currentLevel to navigate to the next level
-                    const gameProgress = progress['multiple-choice'];
-                    if (gameProgress) {
-                      // These values are automatically updated in completeLevel function
-                      const nextSectionId = gameProgress.currentSection;
-                      const nextLevelId = gameProgress.currentLevel;
-                      
-                      console.log(`[Navigation] Going to next level: Section ${nextSectionId}, Level ${nextLevelId}`);
-                      
-                      // Navigate to the next level using the stored values
-                      router.push(`/challenges/multiple-choice/play?section=${nextSectionId}&level=${nextLevelId}`);
-                    } else {
-                      // Fallback to challenges page if no progress data
-                      router.push('/challenges/multiple-choice');
-                    }
+                    const nextSectionId = nextSection as number;
+                    const nextLevelId = nextLevel as number;
+                    console.log(`[Navigation] Going to next level: Section ${nextSectionId}, Level ${nextLevelId}`);
+                    router.push(`/challenges/multiple-choice/play?section=${nextSectionId}&level=${nextLevelId}`);
                   }}
                   className="w-full bg-duolingo-green text-white hover:bg-duolingo-darkGreen"
                 >
