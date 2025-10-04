@@ -1,11 +1,7 @@
 {
-  "/api/challenges/make-sentence/words/route": "app/api/challenges/make-sentence/words/route.js",
-  "/api/analyze/route": "app/api/analyze/route.js",
-  "/login/page": "app/login/page.js",
-  "/challenges/multiple-choice/page": "app/challenges/multiple-choice/page.js",
-  "/challenges/multiple-choice/play/page": "app/challenges/multiple-choice/play/page.js",
+  "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/challenges/make-sentence/page": "app/challenges/make-sentence/page.js",
-  "/challenges/make-sentence/play/page": "app/challenges/make-sentence/play/page.js",
-  "/onboarding/grade/page": "app/onboarding/grade/page.js"
+  "/login/page": "app/login/page.js",
+  "/challenges/make-sentence/play/page": "app/challenges/make-sentence/play/page.js"
 }

@@ -8,7 +8,7 @@ import Navbar from '@/components/layout/Navbar';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import { useRouter } from 'next/navigation';
 import ClientOnly from '@/components/common/ClientOnly';
-import ResetTimer from '@/components/ui/ResetTimer';
+// import ResetTimer from '@/components/ui/ResetTimer';
 import DatabaseVerification from '@/components/debug/DatabaseVerification';
 import LevelCompletionTest from '@/components/debug/LevelCompletionTest';
 import DailyQuestsTest from '@/components/debug/DailyQuestsTest';
@@ -75,14 +75,18 @@ function DashboardContent() {
               <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome, {user?.displayName || 'Learner'}!</h1>
               <p className="text-gray-700">{motivation}</p>
             </div>
-            {/* Reset Timer */}
-            <div className="flex-shrink-0 w-full sm:w-auto">
-              <ResetTimer 
-                size="medium" 
-                showProgress={true}
-                className="w-full sm:w-auto lg:w-80"
-              />
-            </div>
+            {/* Reset Timer temporarily disabled */}
+            {/*
+            {false && (
+              <div className="flex-shrink-0 w-full sm:w-auto">
+                <ResetTimer 
+                  size="medium" 
+                  showProgress={true}
+                  className="w-full sm:w-auto lg:w-80"
+                />
+              </div>
+            )}
+            */}
           </div>
         </div>
         

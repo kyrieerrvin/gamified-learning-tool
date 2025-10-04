@@ -74,17 +74,20 @@ export default function PlayMakeSentencePage() {
           }
           if (candidates.length >= 8) break; // collect a few extra to sample from
         }
-        // Limit to 1 round per level for quick testing
-        const selected = candidates.slice(0, 1);
-        setTileRounds(selected);
+        // Use up to 5 rounds per level (like multiple-choice)
+        let selected = candidates.slice(0, 5);
+        // If we don't have 5, repeat from the start to reach 5
+        if (selected.length > 0 && selected.length < 5) {
+          const need = 5 - selected.length;
+          selected = selected.concat(selected.slice(0, Math.min(need, selected.length)));
+        }
+        // If still empty, fallback handled below
+        setTileRounds(selected.length ? selected : []);
         setTileIndex(0);
         setTileScore(0);
       } catch (e) {
-        // Fallback: static sample
-        const fallback = [
-          { sentence: 'Ang bata ay mahilig mag laro sa ulan.', focusWord: 'bata' }
-        ];
-        setTileRounds(fallback);
+        // No fallbacks: if fetch fails, keep empty state
+        setTileRounds([]);
         setTileIndex(0);
         setTileScore(0);
       }
@@ -107,7 +110,6 @@ export default function PlayMakeSentencePage() {
       }
       
       await setQuests('make-sentence', quests);
-      await setQuests('make-sentence', quests);
 
       // Award XP instantly when a quest completes
       if (justCompleted) {
@@ -125,6 +127,15 @@ export default function PlayMakeSentencePage() {
     await completeLevel('make-sentence', sectionId, levelId, score);
     // Grant +100 XP to lifetime on level completion (no score threshold)
     await addPoints(100, 'make-sentence');
+    // Streak: mark today as active
+    try {
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      // Persist streak fields atomically (avoid full overwrite)
+      const { db } = await import('@/lib/firebase');
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { useAuth } = await import('@/context/AuthContext');
+    } catch {}
     
     // Update daily quest progress for game completion
     await updateQuestProgress('complete-games', 1);

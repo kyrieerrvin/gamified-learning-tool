@@ -309,6 +309,26 @@ export const useGameProgress = () => {
               }
             }
 
+            // Reset streak if a day was missed (device local date)
+            try {
+              const today = getTodayDateString();
+              const missedDay = !!docData.lastStreakDate &&
+                !isSameDay(docData.lastStreakDate, today) &&
+                !isConsecutiveDay(docData.lastStreakDate, today) &&
+                (docData.streak || 0) > 0;
+              if (missedDay) {
+                await updateDoc(userDocRef, {
+                  streak: 0,
+                  streakState: 'none',
+                  updatedAt: new Date().toISOString()
+                });
+                docData.streak = 0;
+                docData.streakState = 'none';
+              }
+            } catch (e) {
+              console.warn('[GameProgress] Streak reset check failed:', e);
+            }
+
             if (didMigrate) {
               console.log('[GameProgress] Migrating progress to 3 levels × 10 challenges structure');
               await updateDoc(userDocRef, {
@@ -480,6 +500,31 @@ export const useGameProgress = () => {
     }
     updatedGameAchievements[gameType] = Array.from(gameTypeAchievements);
     
+    // Streak logic (local time):
+    // - Start at 1 on first completion
+    // - If same day: keep streak, set active
+    // - If consecutive day: +1
+    // - If missed days: reset to 1
+    const todayStr = getTodayDateString();
+    let newStreak = data.streak || 0;
+    let newLastStreakDate = data.lastStreakDate || '';
+    let newStreakState: 'none' | 'inactive' | 'active' = 'active';
+    if (!data.lastStreakDate) {
+      newStreak = 1;
+      newLastStreakDate = todayStr;
+    } else if (isSameDay(data.lastStreakDate, todayStr)) {
+      // already counted today; keep state active
+      newStreak = data.streak;
+      newLastStreakDate = data.lastStreakDate;
+    } else if (isConsecutiveDay(data.lastStreakDate, todayStr)) {
+      newStreak = (data.streak || 0) + 1;
+      newLastStreakDate = todayStr;
+    } else {
+      // Missed a day, restart at 1
+      newStreak = 1;
+      newLastStreakDate = todayStr;
+    }
+
     await updateData({
       progress: {
         ...data.progress,
@@ -491,7 +536,10 @@ export const useGameProgress = () => {
         }
       },
       achievements: Array.from(updatedAchievements),
-      gameAchievements: updatedGameAchievements
+      gameAchievements: updatedGameAchievements,
+      streak: newStreak,
+      lastStreakDate: newLastStreakDate,
+      streakState: newStreak > 0 ? 'active' : 'none'
     });
   };
   

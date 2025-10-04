@@ -1,4 +1,16 @@
 {
+  "app/challenges/make-sentence/play/page.tsx -> @/context/AuthContext": {
+    "id": "app/challenges/make-sentence/play/page.tsx -> @/context/AuthContext",
+    "files": []
+  },
+  "app/challenges/make-sentence/play/page.tsx -> @/lib/firebase": {
+    "id": "app/challenges/make-sentence/play/page.tsx -> @/lib/firebase",
+    "files": []
+  },
+  "app/challenges/make-sentence/play/page.tsx -> firebase/firestore": {
+    "id": "app/challenges/make-sentence/play/page.tsx -> firebase/firestore",
+    "files": []
+  },
   "app/challenges/multiple-choice/play/page.tsx -> @/components/challenges/multiple-choice/PartsOfSpeechGame": {
     "id": "app/challenges/multiple-choice/play/page.tsx -> @/components/challenges/multiple-choice/PartsOfSpeechGame",
     "files": [
