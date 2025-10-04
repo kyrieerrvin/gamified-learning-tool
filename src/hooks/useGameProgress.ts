@@ -364,23 +364,32 @@ export const useGameProgress = () => {
   };
   
   const addPoints = async (points: number, gameType: string) => {
-    if (!user?.uid || !data) return;
-    
-    const gameProgress = data.progress[gameType];
-    if (!gameProgress) return;
-    
-    const newXP = Math.max(0, gameProgress.xp + points);
-    
-    await updateData({
-      score: data.score + points,
-      progress: {
-        ...data.progress,
-        [gameType]: {
-          ...gameProgress,
-          xp: newXP
-        }
-      }
-    });
+    if (!user?.uid) return;
+    try {
+      const userDocRef = doc(db, 'gameProgress', user.uid);
+      await updateDoc(userDocRef, {
+        [`progress.${gameType}.xp`]: increment(points),
+        score: increment(points),
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error('[GameProgress] Error incrementing XP:', err);
+      throw err;
+    }
+  };
+
+  const setQuests = async (gameType: string, quests: DailyQuest[]) => {
+    if (!user?.uid) return;
+    try {
+      const userDocRef = doc(db, 'gameProgress', user.uid);
+      await updateDoc(userDocRef, {
+        [`progress.${gameType}.quests`]: quests,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error('[GameProgress] Error updating quests:', err);
+      throw err;
+    }
   };
   
   const increaseStreak = async () => {
@@ -426,29 +435,50 @@ export const useGameProgress = () => {
       level.bestScore = score;
     }
     
-    // Mark as completed if score >= 80%
-    const isLevelCompleted = score !== undefined && score >= 80;
+    // Treat invocation of completeLevel as "finished the level"
+    // Always mark as completed and advance unlocking
     let nextSectionId = sectionId;
     let nextLevelId = levelId;
     
-    if (isLevelCompleted) {
-      level.isCompleted = true;
-      
-      // Unlock next level
-      if (levelId < section.levels.length - 1) {
-        nextLevelId = levelId + 1;
-        section.levels[nextLevelId].isLocked = false;
-      } else {
-        // Completed section, unlock next section
-        section.isCompleted = true;
-        if (sectionId < updatedSections.length - 1) {
-          nextSectionId = sectionId + 1;
-          nextLevelId = 0;
-          updatedSections[nextSectionId].isLocked = false;
-          updatedSections[nextSectionId].levels[0].isLocked = false;
-        }
+    level.isCompleted = true;
+    
+    // Unlock next level or section
+    if (levelId < section.levels.length - 1) {
+      nextLevelId = levelId + 1;
+      section.levels[nextLevelId].isLocked = false;
+    } else {
+      // Completed section, unlock next section
+      section.isCompleted = true;
+      if (sectionId < updatedSections.length - 1) {
+        nextSectionId = sectionId + 1;
+        nextLevelId = 0;
+        updatedSections[nextSectionId].isLocked = false;
+        updatedSections[nextSectionId].levels[0].isLocked = false;
       }
     }
+
+    // Prepare achievements updates (simple MVP)
+    const updatedGameAchievements = { ...(data.gameAchievements || {}) } as Record<string, string[]>;
+    const gameTypeAchievements = new Set<string>(updatedGameAchievements[gameType] || []);
+    const updatedAchievements = new Set<string>(data.achievements || []);
+
+    // First Steps: completing a first game
+    if (!gameTypeAchievements.has('first-steps')) {
+      gameTypeAchievements.add('first-steps');
+      updatedAchievements.add('first-steps');
+    }
+    // Perfect Score: score 100
+    if (score !== undefined && score >= 100 && !gameTypeAchievements.has('perfect-score')) {
+      gameTypeAchievements.add('perfect-score');
+      updatedAchievements.add('perfect-score');
+    }
+    // Section Champion: entire section completed
+    const sectionCompleted = section.levels.every(l => l.isCompleted);
+    if (sectionCompleted && !gameTypeAchievements.has('section-champion')) {
+      gameTypeAchievements.add('section-champion');
+      updatedAchievements.add('section-champion');
+    }
+    updatedGameAchievements[gameType] = Array.from(gameTypeAchievements);
     
     await updateData({
       progress: {
@@ -459,7 +489,9 @@ export const useGameProgress = () => {
           currentSection: nextSectionId,
           currentLevel: nextLevelId
         }
-      }
+      },
+      achievements: Array.from(updatedAchievements),
+      gameAchievements: updatedGameAchievements
     });
   };
   
@@ -489,6 +521,7 @@ export const useGameProgress = () => {
     // Actions
     updateData,
     addPoints,
+    setQuests,
     increaseStreak,
     completeLevel,
     canAccessLevel,

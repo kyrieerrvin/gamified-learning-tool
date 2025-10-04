@@ -24,7 +24,7 @@ export default function PlayMultipleChoicePage() {
   const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Difficult, 2: Hard)
   const levelId = parseInt(searchParams.get('level') || '0'); // Challenge index within the level (0..9)
   
-  const { progress, canAccessLevel, completeLevel, updateData, data, loading: gameProgressLoading } = useGameProgress();
+  const { progress, canAccessLevel, completeLevel, updateData, addPoints, setQuests, data, loading: gameProgressLoading } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
@@ -67,19 +67,18 @@ export default function PlayMultipleChoicePage() {
     
     if (quest && !quest.isCompleted) {
       quest.progress = Math.min(quest.progress + progressAmount, quest.target);
-      if (quest.progress >= quest.target) {
+      const justCompleted = quest.progress >= quest.target;
+      if (justCompleted) {
         quest.isCompleted = true;
       }
       
-      await updateData({
-        progress: {
-          ...data.progress,
-          'multiple-choice': {
-            ...data.progress['multiple-choice'],
-            quests
-          }
-        }
-      });
+      await setQuests('multiple-choice', quests);
+      await setQuests('multiple-choice', quests);
+
+      // Award XP once at the moment the quest completes
+      if (justCompleted) {
+        await addPoints(quest.reward, 'multiple-choice');
+      }
     }
   };
   
@@ -90,6 +89,8 @@ export default function PlayMultipleChoicePage() {
     
     // Complete level with the score to determine if next level should unlock
     await completeLevel('multiple-choice', sectionId, levelId, score);
+    // Grant fixed +100 XP on level completion (no score threshold)
+    await addPoints(100, 'multiple-choice');
     
     // Update perfect score quest only if perfect
     if (score === 100) {
@@ -103,25 +104,20 @@ export default function PlayMultipleChoicePage() {
     console.log(`[XP Debug - MultipleChoice] Score: ${score}, Level: ${levelId}, Section: ${sectionId}`);
 
     // Pre-compute the next level locally to avoid relying on async store propagation
-    if (score >= 80) {
-      let ns = sectionId;
-      let nl = levelId;
-      if (levelId < 9) {
-        nl = levelId + 1;
-      } else if (sectionId < 2) {
-        ns = sectionId + 1;
-        nl = 0;
-      } else {
-        // No next level (finished last level). Keep nulls to hide the button.
-        ns = -1;
-        nl = -1;
-      }
-      setNextSection(ns >= 0 ? ns : null);
-      setNextLevel(nl >= 0 ? nl : null);
+    let ns = sectionId;
+    let nl = levelId;
+    if (levelId < 9) {
+      nl = levelId + 1;
+    } else if (sectionId < 2) {
+      ns = sectionId + 1;
+      nl = 0;
     } else {
-      setNextSection(null);
-      setNextLevel(null);
+      // No next level (finished last level). Keep nulls to hide the button.
+      ns = -1;
+      nl = -1;
     }
+    setNextSection(ns >= 0 ? ns : null);
+    setNextLevel(nl >= 0 ? nl : null);
   };
   
   if (loading) {
@@ -143,7 +139,7 @@ export default function PlayMultipleChoicePage() {
           className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto text-center"
         >
           <div className="mb-6">
-            {score >= 80 ? (
+            {true ? (
               <div className="mx-auto w-24 h-24 bg-duolingo-blue rounded-full flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -161,9 +157,7 @@ export default function PlayMultipleChoicePage() {
               {score >= 80 ? 'Mahusay!' : 'Magaling!'}
             </h2>
             <p className="text-gray-600 mb-6">
-              {score >= 80 
-                ? 'Napakahusay mo! Nakumpleto mo ang level na ito.' 
-                : 'Magaling ka! Subukan mo ulit para makakuha ng mas mataas na score.'}
+              {'Napakagaling mo! Nakumpleto mo ang level na ito.'}
             </p>
             {/* PROGRESS BAR 
             <div className="bg-gray-100 rounded-full p-2 mb-6">
@@ -185,16 +179,7 @@ export default function PlayMultipleChoicePage() {
                 Bumalik sa Learning Path
               </Button>
               
-              {score < 80 && (
-                <Button 
-                  onClick={() => window.location.reload()}
-                  className="w-full bg-gray-100 text-gray-700 hover:bg-gray-200"
-                >
-                  Subukan Ulit
-                </Button>
-              )}
-              
-              {score >= 80 && nextSection !== null && nextLevel !== null && (
+              {nextSection !== null && nextLevel !== null && (
                 <Button 
                   onClick={() => {
                     const nextSectionId = nextSection as number;

@@ -2,14 +2,14 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { useGameStore } from '@/store/gameStore';
+import { useGameProgress } from '@/hooks/useGameProgress';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
-  // Remove UserContext usage and use profile from game store instead
-  const { score, streak, totalChallengesCompleted, achievements, progress, profile } = useGameStore();
+  // Use real-time game progress for consistent XP across app
+  const { score, streak, achievements, progress, profile, recentChallenges } = useGameProgress();
   
   // Animation state
   const [isVisible, setIsVisible] = useState(false);
@@ -38,6 +38,7 @@ export default function ProfilePage() {
   const totalXP = Object.values(progress).reduce((total, gameData) => {
     return total + (gameData.xp || 0);
   }, 0);
+  const totalChallengesCompleted = (recentChallenges?.length || 0);
 
   return (
     <div className="min-h-screen bg-gray-50">

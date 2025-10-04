@@ -19,7 +19,7 @@ export default function PlayMakeSentencePage() {
   const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Difficult, 2: Hard)
   const levelId = parseInt(searchParams.get('level') || '0'); // Challenge index within the level (0..9)
   
-  const { progress, canAccessLevel, completeLevel, updateData, data, loading: gameProgressLoading } = useGameProgress();
+  const { progress, canAccessLevel, completeLevel, updateData, addPoints, setQuests, data, loading: gameProgressLoading } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
@@ -101,19 +101,18 @@ export default function PlayMakeSentencePage() {
     
     if (quest && !quest.isCompleted) {
       quest.progress = Math.min(quest.progress + progressAmount, quest.target);
-      if (quest.progress >= quest.target) {
+      const justCompleted = quest.progress >= quest.target;
+      if (justCompleted) {
         quest.isCompleted = true;
       }
       
-      await updateData({
-        progress: {
-          ...data.progress,
-          'make-sentence': {
-            ...data.progress['make-sentence'],
-            quests
-          }
-        }
-      });
+      await setQuests('make-sentence', quests);
+      await setQuests('make-sentence', quests);
+
+      // Award XP instantly when a quest completes
+      if (justCompleted) {
+        await addPoints(quest.reward, 'make-sentence');
+      }
     }
   };
   
@@ -124,6 +123,8 @@ export default function PlayMakeSentencePage() {
     
     // Complete the level in game store
     await completeLevel('make-sentence', sectionId, levelId, score);
+    // Grant +100 XP to lifetime on level completion (no score threshold)
+    await addPoints(100, 'make-sentence');
     
     // Update daily quest progress for game completion
     await updateQuestProgress('complete-games', 1);
@@ -143,6 +144,7 @@ export default function PlayMakeSentencePage() {
       setScore(newScore);
       setGameCompleted(true);
       await completeLevel('make-sentence', sectionId, levelId, newScore);
+      await addPoints(100, 'make-sentence');
       await updateQuestProgress('complete-games', 1);
       if (newScore === 100) {
         await updateQuestProgress('perfect-score', 1);

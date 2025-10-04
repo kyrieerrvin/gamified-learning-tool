@@ -1003,64 +1003,11 @@ export const useGameStore = create<GameState>()(
         return gameUpdates;
       }),
       
-      // Save user progress to database with better error handling
+      // Save user progress to database - disabled to avoid conflicts with useGameProgress
+      // All writes should go through src/hooks/useGameProgress.ts for a single source of truth
       saveUserProgress: async () => {
-        const user = auth.currentUser;
-        if (!user) {
-          console.error('[Database] Cannot save: No authenticated user');
-          return;
-        }
-        
-        try {
-          console.log('[Database] Saving user progress to Firestore...');
-          
-          // Get the user document reference
-          const userProgressRef = doc(db, GAME_PROGRESS_COLLECTION, user.uid);
-          
-          // Prepare data to save - ensure all fields exist
-          const dataToSave = {
-            // User profile
-            profile: get().profile,
-            
-            // Game statistics
-            score: get().score || 0,
-            streak: get().streak || 0,
-            lastStreakDate: get().lastStreakDate || '',
-            streakState: get().streakState || 'none',
-            totalChallengesCompleted: get().totalChallengesCompleted || 0,
-            
-            // Achievements
-            achievements: get().achievements || [],
-            gameAchievements: get().gameAchievements || {},
-            
-            // Challenge history
-            recentChallenges: get().recentChallenges || [],
-            
-            // Game progress data
-            progress: get().progress || {},
-            
-            // Metadata
-            updatedAt: new Date().toISOString()
-          };
-          
-          // Log a summary of what's being saved
-          console.log(`[Database] Saving - Score: ${dataToSave.score}, Streak: ${dataToSave.streak}, Achievements: ${dataToSave.achievements.length}`);
-          
-          // Deep clone to avoid Firebase warnings about objects with custom prototypes
-          const cleanData = JSON.parse(JSON.stringify(dataToSave));
-          
-          // Use merge to avoid overwriting any fields not included in current state
-          await setDoc(userProgressRef, cleanData, { merge: true });
-          console.log('[Database] Successfully saved user progress to Firestore');
-        } catch (error) {
-          console.error('[Database] Error saving user progress:', error);
-          
-          // Try to save again after a delay
-          setTimeout(() => {
-            console.log('[Database] Retrying failed save operation...');
-            get().saveUserProgress();
-          }, 3000);
-        }
+        // No-op: prevent overwriting XP and quests written by useGameProgress
+        return;
       },
       
       // User-specific progress

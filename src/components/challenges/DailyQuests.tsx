@@ -32,7 +32,14 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
       if (gameProgress) {
         const filtered = (gameProgress.quests || []).filter(q => q.id !== 'daily-xp');
         setQuests(filtered);
-        setTotalXP(gameProgress.xp || 0);
+        // Daily total XP should reflect the sum of completed quest rewards for today
+        const dailyTotal = filtered
+          .filter(q => q.isCompleted)
+          .reduce((sum, q) => sum + (q.reward || 0), 0);
+        setTotalXP(dailyTotal);
+      } else {
+        setQuests([]);
+        setTotalXP(0);
       }
     };
     
