@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import * as nlpService from '@/services/nlp';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion';
@@ -19,6 +20,7 @@ interface SentenceTileGameProps {
   // Progress for the current level (external source). Reflects completed rounds out of total.
   progressCompleted?: number;
   progressTotal?: number;
+  onHeartsChange?: (hearts: number) => void;
 }
 
 type TokenItem = {
@@ -52,8 +54,10 @@ export default function SentenceTileGame({
   focusWord = 'bata',
   onComplete,
   progressCompleted = 0,
-  progressTotal = 5
+  progressTotal = 5,
+  onHeartsChange
 }: SentenceTileGameProps) {
+  const router = useRouter();
   const [expectedSentence, setExpectedSentence] = useState<string>(sampleSentence);
   // Fixed, randomized tokens for this round (order never changes)
   const [tokens, setTokens] = useState<TokenItem[]>([]);
@@ -68,6 +72,9 @@ export default function SentenceTileGame({
     : { type: 'tween' as const, ease: [0.25, 1, 0.5, 1] as const, duration: 0.2 };
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<null | { correct: boolean; message: string }>(null);
+  // Hearts
+  const [hearts, setHearts] = useState<number>(3);
+  const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
   const [correctCheer, setCorrectCheer] = useState<string>('Galing!');
 
   const expectedNormalized = useMemo(() => normalize(expectedSentence), [expectedSentence]);
@@ -92,6 +99,9 @@ export default function SentenceTileGame({
           setTokens(randomized);
           setSelectedIds([]);
           setResult(null);
+          setHearts(3); // reset hearts on new round/session
+          if (onHeartsChange) onHeartsChange(3);
+          setOutOfHearts(false);
         }
       } catch (e) {
         const fallback = sampleSentence.split(/\s+/).map((text, idx) => ({ id: generateId('tok', idx), text }));
@@ -100,6 +110,9 @@ export default function SentenceTileGame({
           setTokens(shuffle(fallback));
           setSelectedIds([]);
           setResult(null);
+          setHearts(3);
+          if (onHeartsChange) onHeartsChange(3);
+          setOutOfHearts(false);
         }
       }
     };
@@ -137,6 +150,14 @@ export default function SentenceTileGame({
       if (isCorrect) {
         setCorrectCheer(cheers[Math.floor(Math.random() * cheers.length)]);
       }
+      if (!isCorrect) {
+        setHearts(prev => {
+          const next = Math.max(0, prev - 1);
+          if (next === 0) setOutOfHearts(true);
+          if (onHeartsChange) onHeartsChange(next);
+          return next;
+        });
+      }
       setResult({ correct: isCorrect, message: feedback });
     } finally {
       setChecking(false);
@@ -156,6 +177,23 @@ export default function SentenceTileGame({
 
   return (
     <div className="relative p-2 md:p-4 max-w-5xl mx-auto flex flex-col">
+      {/* Out of hearts overlay */}
+      {outOfHearts && (
+        <div className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm rounded-2xl border flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-2xl md:text-3xl font-extrabold mb-4">Naubos na ang buhay mo!</div>
+          <div className="flex gap-3 text-4xl mb-6">
+            <span className="text-gray-300">💔</span>
+            <span className="text-gray-300">💔</span>
+            <span className="text-gray-300">💔</span>
+          </div>
+          <Button
+            onClick={() => router.push('/challenges/make-sentence')}
+            className="rounded-full px-8 py-3 bg-duolingo-green text-white hover:bg-green-600"
+          >
+            Bumalik sa Main Menu
+          </Button>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-[160px,1fr] gap-6 items-center mb-2">
         <motion.div initial={{ rotate: -5, scale: 0.9, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 12 }} className="mx-auto md:mx-0">
           <Image src={mascot} alt="Mascot" className="rounded-xl shadow-md" width={140} height={140} />

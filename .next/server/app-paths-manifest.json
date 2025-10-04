@@ -1,7 +1,9 @@
 {
+  "/api/challenges/pos-interactive/route": "app/api/challenges/pos-interactive/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/challenges/make-sentence/page": "app/challenges/make-sentence/page.js",
-  "/login/page": "app/login/page.js",
-  "/challenges/make-sentence/play/page": "app/challenges/make-sentence/play/page.js"
+  "/challenges/make-sentence/play/page": "app/challenges/make-sentence/play/page.js",
+  "/challenges/multiple-choice/play/page": "app/challenges/multiple-choice/play/page.js",
+  "/challenges/multiple-choice/page": "app/challenges/multiple-choice/page.js",
+  "/login/page": "app/login/page.js"
 }

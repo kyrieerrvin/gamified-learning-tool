@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
+import Image from 'next/image';
 
 // Dynamically import the game component to avoid module not found errors
 const PartsOfSpeechGame = dynamic(
@@ -32,6 +33,7 @@ export default function PlayMultipleChoicePage() {
   const [nextSection, setNextSection] = useState<number | null>(null);
   const [nextLevel, setNextLevel] = useState<number | null>(null);
   const prefersReduced = useReducedMotion();
+  const [hearts, setHearts] = useState(3);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -212,15 +214,17 @@ export default function PlayMultipleChoicePage() {
             >
               ← Back
             </button>
-            <div className="text-sm text-gray-600">Level {sectionId + 1} · Challenge {levelId + 1}</div>
+            <div className="flex items-center gap-2 text-gray-700">
+              <div className="text-sm text-gray-600 mr-2">Level {sectionId + 1} · Challenge {levelId + 1}</div>
+              <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
+              <span className="font-semibold">x{hearts}</span>
+            </div>
           </div>
           {(() => {
             const pct = Math.max(0, Math.min(100, Math.round((progressCompleted / 5) * 100)));
             return (
               <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
-                <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: prefersReduced ? 'none' : 'width 240ms cubic-bezier(0.22,1,0.36,1)' }}>
-                  <div className="absolute inset-0 pointer-events-none bg-white/15" />
-                </div>
+                <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: prefersReduced ? 'none' : 'width 240ms cubic-bezier(0.22,1,0.36,1)' }} />
               </div>
             );
           })()}
@@ -233,6 +237,7 @@ export default function PlayMultipleChoicePage() {
             levelNumber={sectionId * 10 + levelId}
             onComplete={handleComplete}
             onProgressChange={(c) => setProgressCompleted(c)}
+            onHeartsChange={(h) => setHearts(h)}
           />
         </div>
       </div>

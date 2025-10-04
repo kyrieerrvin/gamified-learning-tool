@@ -7,8 +7,8 @@ import MakeSentenceGame from '@/components/challenges/make-sentence/MakeSentence
 import SentenceTileGame from '@/components/challenges/make-sentence/SentenceTileGame';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
-import { apiGet } from '@/utils/api';
 import Image from 'next/image';
+import { apiGet } from '@/utils/api';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import placeholder from '../../../../../assets/placeholder.png';
@@ -30,6 +30,7 @@ export default function PlayMakeSentencePage() {
   // Reduced motion preference and XP display state used for the completion screen
   const prefersReduced = useReducedMotion();
   const [displayXp, setDisplayXp] = useState(0);
+  const [hearts, setHearts] = useState(3);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -292,17 +293,19 @@ export default function PlayMakeSentencePage() {
           >
             ← Back
           </button>
-          <div className="text-sm text-gray-600">Level {sectionId + 1} · Challenge {levelId + 1}</div>
+          <div className="flex items-center gap-2 text-gray-700">
+            <div className="text-sm text-gray-600 mr-2">Level {sectionId + 1} · Challenge {levelId + 1}</div>
+            <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
+            <span className="font-semibold">x{hearts}</span>
+          </div>
         </div>
         {(() => {
           const pct = tileRounds.length > 0 ? Math.round((tileIndex / Math.max(1, tileRounds.length)) * 100) : 0;
-          return (
-            <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
-              <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: 'width 240ms cubic-bezier(0.22,1,0.36,1)' }}>
-                <div className="absolute inset-0 pointer-events-none bg-white/15" />
+            return (
+              <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
+                <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: 'width 240ms cubic-bezier(0.22,1,0.36,1)' }} />
               </div>
-            </div>
-          );
+            );
         })()}
       </div>
       
@@ -316,6 +319,7 @@ export default function PlayMakeSentencePage() {
               progressCompleted={tileIndex}
               progressTotal={Math.max(1, tileRounds.length)}
               onComplete={() => handleTileRoundComplete()}
+              onHeartsChange={(h) => setHearts(h)}
             />
           ) : (
             <div className="text-gray-600">Naglo-load ng mga pangungusap…</div>

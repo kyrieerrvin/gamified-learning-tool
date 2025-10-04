@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { useGameProgress } from '@/hooks/useGameProgress';
@@ -29,12 +30,15 @@ interface PartsOfSpeechGameProps {
   levelNumber?: number;
   onComplete?: (score: number, levelCompleted: boolean) => void;
   onProgressChange?: (completed: number, total: number) => void;
+  onHeartsChange?: (hearts: number) => void;
 }
 export default function PartsOfSpeechGame({
   levelNumber = 0,
   onComplete,
-  onProgressChange
+  onProgressChange,
+  onHeartsChange
 }: PartsOfSpeechGameProps) {
+  const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
   const crisp = prefersReducedMotion
     ? { duration: 0.16, ease: 'linear' as const }
@@ -55,6 +59,9 @@ export default function PartsOfSpeechGame({
   const [wrong, setWrong] = useState<Set<number>>(new Set());
   const [sheet, setSheet] = useState<null | { kind: 'correct' | 'wrong'; cheer?: string }>(null);
   const [completed, setCompleted] = useState<number>(0);
+  // Hearts system
+  const [hearts, setHearts] = useState<number>(3);
+  const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
 
   const totalGoal = 5;
 
@@ -93,6 +100,10 @@ export default function PartsOfSpeechGame({
 
   useEffect(() => {
     if (!sessionGrade) return;
+    // Reset hearts at the beginning of each session/level
+    setHearts(3);
+    setOutOfHearts(false);
+    if (onHeartsChange) onHeartsChange(3);
     loadNewItem();
   }, [sessionGrade, difficulty]);
 
@@ -132,7 +143,7 @@ export default function PartsOfSpeechGame({
 
   async function handleCheck() {
     if (!item || !currentTarget) return;
-    if (selected.size === 0) return; // enable only when pending exists
+    if (selected.size === 0 || outOfHearts) return; // enable only when pending exists
     try {
       const resp = await fetch('/api/challenges/pos-interactive', {
         method: 'POST',
@@ -175,6 +186,15 @@ export default function PartsOfSpeechGame({
         setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
         setCompleted(prev => Math.min(totalGoal, prev + 1));
       } else if (result.incorrect_indices.length > 0) {
+        // Deduct a heart for a mistake
+        setHearts((prev) => {
+          const next = Math.max(0, prev - 1);
+          if (next === 0) {
+            setOutOfHearts(true);
+          }
+          if (onHeartsChange) onHeartsChange(next);
+          return next;
+        });
         setSheet({ kind: 'wrong' });
       }
       // Otherwise, partial correct with no wrong: continue without sheet
@@ -250,6 +270,23 @@ export default function PartsOfSpeechGame({
 
   return (
     <div className="relative p-2 md:p-4 max-w-5xl mx-auto flex flex-col">
+      {/* Out of hearts screen */}
+      {outOfHearts && (
+        <div className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm rounded-2xl border flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-2xl md:text-3xl font-extrabold mb-4">Naubos na ang buhay mo!</div>
+          <div className="flex gap-3 text-4xl mb-6">
+            <span className="text-gray-300">💔</span>
+            <span className="text-gray-300">💔</span>
+            <span className="text-gray-300">💔</span>
+          </div>
+          <Button
+            onClick={() => router.push('/challenges/multiple-choice')}
+            className="rounded-full px-8 py-3 bg-duolingo-green text-white hover:bg-green-600"
+          >
+            Bumalik sa Main Menu
+          </Button>
+        </div>
+      )}
       {/* Hero: image + title + helper */}
       <div className="grid grid-cols-1 md:grid-cols-[128px,1fr] gap-4 md:gap-6 items-center mb-4 md:mb-6">
         <div className="flex items-center justify-center md:justify-start">
