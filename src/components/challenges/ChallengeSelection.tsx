@@ -35,7 +35,7 @@ export default function ChallengeSelection() {
   const challenges = [
     {
       id: 'conversation',
-      name: 'AI Chatbot',
+      name: 'Tagalog Chatbot',
       path: '/challenges/conversation',
       color: 'blue',
       progressPercentage: 0 // No progression map for this yet

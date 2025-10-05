@@ -4,55 +4,101 @@ import random
 # Load ToCylog model
 tocylog_nlp = spacy.load("./tl_tocylog_trf")
 
-# Gamification
+# Gamification state
 user_points = 0
 user_level = 1
+user_streak = 0
+conversation_log = []
 
-# Response templates for variety
+# Greeting responses
 greetings = [
-    "Mabuti! Ikaw, kamusta?",
-    "Ayos lang ako. Salamat sa pagtatanong! Ikaw, kamusta?",
-    "Maayos naman ako ngayon. Kamusta ka rin?"
+    "Magandang araw! Kamusta ka?",
+    "Kumusta! Anong balita?",
+    "Mabuti, salamat. Ikaw, kamusta?",
+    "Ayos lang ako. Kamusta ka rin?"
 ]
 
+# Fallback prompts
 fallbacks = [
-    "Pasensya, hindi ko masyadong naintindihan. Pwede mong ikwento nang mas malinaw?",
-    "Hmm... maaari mo bang ipaliwanag pa?",
-    "Medyo nalito ako. Ano ang ibig mong sabihin?"
+    "Hmm, hindi ko masyadong nakuha. Pwede bang ulitin gamit ang mas simpleng salita?",
+    "Pasensya, medyo nalito ako. Maaari mo bang ipaliwanag pa?",
+    "Medyo hindi ko naintindihan. Pahingi ng halimbawa?"
 ]
 
-def get_bot_response(user_input):
-    global user_points, user_level
+# Gamification feedback
+def get_progress_feedback():
+    global user_points, user_level, user_streak
+    # Gamification handled client-side; back-end returns no points/level text
+    return ""
+
+def _generate_responses(user_input):
     doc = tocylog_nlp(user_input)
+    responses = []
+    entities_detected = []
 
-    # 1. Greeting detection (simple heuristic)
-    if any(word in user_input.lower() for word in ["kamusta", "kumusta", "musta"]):
-        return random.choice(greetings)
+    # Greeting detection
+    if any(greet in user_input.lower() for greet in 
+           ["kamusta", "kumusta", "musta", "magandang araw",
+            "magandang umaga", "magandang hapon", "magandang gabi",
+            "hello", "hi"]):
+        return [random.choice(greetings)], []
 
-    # 2. Entity-based responses
-    if doc.ents:
-        responses = []
-        for ent in doc.ents:
-            if ent.label_ == "PER":
-                responses.append(f"Nabanggit mo si '{ent.text}'. Magaling! Sino siya sa'yo?")
-                user_points += 1
-            elif ent.label_ == "LOC":
-                responses.append(f"Binanggit mo ang lugar na '{ent.text}'. Ano ang madalas mong gawin doon?")
-                user_points += 1
-            elif ent.label_ == "ORG":
-                responses.append(f"Ay, nabanggit mo ang '{ent.text}'. Anong karanasan mo rito?")
-                user_points += 1
-            else:
-                responses.append(f"Nabanggit mo ang '{ent.text}' ({ent.label_}).")
+    # Entity-based responses
+    for ent in doc.ents:
+        label = ent.label_
+        entities_detected.append((ent.text, label))
 
-        # Gamification feedback
-        if user_points >= user_level * 5:
-            user_level += 1
-            responses.append(f"🏆 Level Up! Nasa Level {user_level} ka na. Magaling!")
+        if label in ["PER", "PERSON"]:
+            responses.append(f"Nabanggit mo si '{ent.text}' ({label}). Pwede mo bang ikuwento sino siya?")
+        elif label in ["LOC", "GPE"]:
+            responses.append(f"Binanggit mo ang lugar na '{ent.text}' ({label}). Ano ang karanasan mo roon?")
+        elif label == "ORG":
+            responses.append(f"Ay, '{ent.text}' ({label})! Ano ang ginawa mo o natutunan sa lugar na ito?")
         else:
-            responses.append(f"🎉 Puntos: {user_points}")
+            responses.append(f"Nabanggit mo ang '{ent.text}' ({label}). Pwede mo bang dagdagan ang detalye?")
 
-        return " ".join(responses)
+    if not responses:
+        responses = [random.choice(fallbacks)]
 
-    # 3. Default fallback
-    return random.choice(fallbacks)
+    return responses, entities_detected
+
+# Main chatbot (kept for backward compatibility: returns a single string)
+def get_bot_response(user_input):
+    global conversation_log
+    responses, entities_detected = _generate_responses(user_input)
+    bot_reply = " ".join(responses)
+    conversation_log.append({
+        "user": user_input,
+        "bot": bot_reply,
+        "entities": entities_detected,
+    })
+    return bot_reply
+
+# New helper that returns split parts for the UI
+def get_bot_response_parts(user_input):
+    responses, entities_detected = _generate_responses(user_input)
+    bot_reply = " ".join(responses)
+    # Do not append to log twice; reuse same behavior as get_bot_response
+    conversation_log.append({
+        "user": user_input,
+        "bot": bot_reply,
+        "entities": entities_detected,
+    })
+    return {"reply": bot_reply, "parts": responses}
+
+# Summary
+def get_summary():
+    global user_points, user_level, conversation_log
+    entities = []
+    for entry in conversation_log:
+        if "entities" in entry and entry["entities"]:
+            for ent_text, ent_label in entry["entities"]:
+                entities.append((ent_text, ent_label))
+
+    summary = {
+        "points": user_points,
+        "level": user_level,
+        "entities": entities,
+        "conversation": conversation_log
+    }
+    return summary

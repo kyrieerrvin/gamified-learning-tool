@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation Summary</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='static.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Salamat sa Pakikipag-usap!</h1>
+
+        <p><b>Final Points:</b> {{ summary.points }}</p>
+        <p><b>Final Level:</b> {{ summary.level }}</p>
+
+        <h2>Mga Nabanggit na Entities:</h2>
+        <ul>
+            {% for entity, label in summary.entities %}
+                <li>{{ entity }} ({{ label }})</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Buong Usapan:</h2>
+        <div class="chat-box">
+            {% for entry in summary.conversation %}
+                {% if entry.user %}
+                    <p><b>You:</b> {{ entry.user }}</p>
+                {% endif %}
+                {% if entry.bot %}
+                    <p><b>Bot:</b> {{ entry.bot | safe }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="center-btn">
+            <a href="/" class="btn">↩️ Balik sa Simula</a>
+        </div>
+    </div>
+</body>
+</html>

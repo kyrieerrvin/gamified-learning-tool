@@ -171,7 +171,7 @@ function DashboardContent() {
           </div>
         </div>
         
-        {/* Debug Components (only in development) */}
+        {/* Debug Components (only in development)
         {process.env.NODE_ENV === 'development' && (
           <div className={`transition-all duration-1000 transform ${visibilityClasses} mt-8`}>
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Debug & Testing</h2>
@@ -183,7 +183,7 @@ function DashboardContent() {
               <StreaksTest />
             </div>
           </div>
-        )}
+        )} */}
       </main>
     </div>
   );

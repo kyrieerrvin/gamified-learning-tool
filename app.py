@@ -17,7 +17,9 @@ import socket
 import time
 import spacy
 import json
+import re
 from typing import Optional
+from conversation.chatbot import get_bot_response as conv_get_bot_response, get_summary as conv_get_summary, get_bot_response_parts as conv_get_bot_response_parts
 
 # Optional memory measurement tools
 try:
@@ -1257,6 +1259,74 @@ def verify_make_sentence():
         return jsonify({
             "error": f"Error verifying sentence: {str(e)}"
         }), 500
+
+
+# --- Conversation challenge endpoints ---
+@app.route('/api/conversation/chat', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def conversation_chat():
+    """Proxy endpoint for conversation challenge chat messages."""
+    if request.method == 'OPTIONS':
+        return handle_preflight_request()
+
+    try:
+        data = request.json or {}
+        message = data.get('message')
+        if not message or not isinstance(message, str):
+            return jsonify({"error": "message is required"}), 400
+
+        # Compute score delta by comparing points before/after
+        # Use parts-aware response for multi-entity separation
+        parts_payload = conv_get_bot_response_parts(message)
+        reply_text = parts_payload.get('reply') if isinstance(parts_payload, dict) else str(parts_payload)
+        reply_parts = parts_payload.get('parts') if isinstance(parts_payload, dict) else None
+
+        # Remove any inline points text from reply (multiple formats/newlines)
+        # Keep other gamification messages like level-ups and streak bonuses
+        # First, drop any line containing the word 'Puntos' or 'Level Up' (case-insensitive)
+        try:
+            lines = [
+                ln for ln in reply_text.splitlines()
+                if ('puntos' not in ln.lower() and 'level up' not in ln.lower())
+            ]
+            cleaned_reply = ' '.join([ln.strip() for ln in lines if ln.strip()])
+        except Exception:
+            cleaned_reply = reply_text
+        # As a secondary safety, strip remaining inline occurrences like "... Puntos: 9" or "Level Up! ..."
+        try:
+            cleaned_reply = re.sub(r"(?i)\bPuntos\b\s*:\s*\d+", "", cleaned_reply).strip()
+            cleaned_reply = re.sub(r"(?i)🏆?\s*Level\s*Up!.*?(?=$|[.?!])", "", cleaned_reply).strip()
+        except Exception:
+            pass
+
+        # Determine points delta by counting recognized entity mentions in the reply
+        # Patterns like: "'John' (PER)", "'DLSU' (ORG)", "'Manila' (GPE)"
+        try:
+            entity_hits = re.findall(r"'[^']+'\s*\([A-Z]{2,}\)", reply_text)
+            delta = max(0, len(entity_hits))
+        except Exception:
+            delta = 0
+        return create_cors_response({
+            "reply": cleaned_reply,
+            "replyParts": reply_parts,
+            "scoreDelta": delta
+        })
+    except Exception as e:
+        logger.error(f"Error in conversation chat: {str(e)}", exc_info=True)
+        return jsonify({"error": "Error handling conversation chat"}), 500
+
+
+@app.route('/api/conversation/summary', methods=['GET', 'OPTIONS'])
+@cross_origin()
+def conversation_summary():
+    """Return current conversation summary (points, level, entities, log)."""
+    if request.method == 'OPTIONS':
+        return handle_preflight_request()
+    try:
+        return create_cors_response(conv_get_summary())
+    except Exception as e:
+        logger.error(f"Error fetching conversation summary: {str(e)}", exc_info=True)
+        return jsonify({"error": "Error fetching summary"}), 500
 
 # --- Helper functions ---
 

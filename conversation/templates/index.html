@@ -11,6 +11,7 @@
         <div id="chatbox" class="chat-box"></div>
         <input type="text" id="userInput" placeholder="Type your message...">
         <button onclick="sendMessage()">Send</button>
+        <button onclick="endConversation()">End</button>
     </div>
 
     <script>
@@ -27,6 +28,10 @@
             chatbox.innerHTML += `<p><b>Bot:</b> ${data.response}</p>`;
             chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll
             document.getElementById("userInput").value = "";
+        }
+
+        function endConversation() {
+            window.location.href = "/end"; 
         }
     </script>
 </body>
