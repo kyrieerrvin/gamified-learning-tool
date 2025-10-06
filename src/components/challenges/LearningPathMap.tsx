@@ -190,7 +190,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                     router.push(`/challenges/${gameType}/play?section=${section.id}&level=${targetLevelId}`);
                   }
                 }}
-                className={`bg-white rounded-2xl shadow-md overflow-hidden max-w-2xl md:max-w-3xl mx-auto cursor-pointer transform transition-transform duration-[170ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none`}
+                className={`bg-white rounded-2xl shadow-md overflow-hidden max-w-2xl md:max-w-3xl mx-auto cursor-pointer transform transition-transform transition-duration-[170ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] active:scale-[0.98] motion-reduce:transition-none motion-reduce:transform-none`}
                 style={{ minHeight: 150 }}
               >
                 {/* Level header */}

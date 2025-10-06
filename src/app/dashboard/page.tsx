@@ -96,11 +96,11 @@ function DashboardContent() {
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-5">
             <Link href="/challenges/conversation" className="group block">
               <div
-                className={`rounded-[22px] px-5 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8 shadow-sm border bg-gradient-to-br from-blue-50 to-cyan-100/60 border-blue-100 text-gray-800 transform ${cardEnter} motion-reduce:transform-none motion-reduce:opacity-100 hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] active:duration-[90ms] transition-transform duration-[160ms] transition-shadow transition-opacity ease-out min-h-[150px]`}
+                className={`rounded-[22px] px-5 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8 shadow-sm border bg-gradient-to-br from-blue-50 to-cyan-100/60 border-blue-100 text-gray-800 transform ${cardEnter} motion-reduce:transform-none motion-reduce:opacity-100 hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] active:transition-duration-[90ms] transition-transform transition-shadow transition-opacity transition-duration-[160ms] ease-out min-h-[150px]`}
                 style={cardTransitionStyle}
               >
                 <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] items-center md:items-stretch gap-4 md:gap-6">
-                  <div className="self-center md:self-stretch w-[72px] h-[72px] md:w-[96px] md:h-[96px] p-3 md:p-4 bg-gradient-to-tr from-blue-600 to-cyan-500 rounded-[18px] shadow-md aspect-square flex items-center justify-center transition-transform duration-[160ms] delay-[40ms] group-hover:scale-[1.05]">
+                  <div className="self-center md:self-stretch w-[72px] h-[72px] md:w-[96px] md:h-[96px] p-3 md:p-4 bg-gradient-to-tr from-blue-600 to-cyan-500 rounded-[18px] shadow-md aspect-square flex items-center justify-center transition-transform transition-duration-[160ms] transition-delay-[40ms] group-hover:scale-[1.05]">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white w-[70%] h-[70%]">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
@@ -121,11 +121,11 @@ function DashboardContent() {
 
             <Link href="/challenges/make-sentence" className="group block">
               <div
-                className={`rounded-[22px] px-5 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8 shadow-sm border bg-gradient-to-br from-indigo-50 to-pink-100/60 border-indigo-100 text-gray-800 transform ${cardEnter} motion-reduce:transform-none motion-reduce:opacity-100 hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] active:duration-[90ms] transition-transform duration-[160ms] transition-shadow transition-opacity ease-out delay-[60ms] min-h-[150px]`}
+                className={`rounded-[22px] px-5 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8 shadow-sm border bg-gradient-to-br from-indigo-50 to-pink-100/60 border-indigo-100 text-gray-800 transform ${cardEnter} motion-reduce:transform-none motion-reduce:opacity-100 hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] active:transition-duration-[90ms] transition-transform transition-shadow transition-opacity transition-duration-[160ms] ease-out transition-delay-[60ms] min-h-[150px]`}
                 style={cardTransitionStyle}
               >
                 <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] items-center md:items-stretch gap-4 md:gap-6">
-                  <div className="self-center md:self-stretch w-[72px] h-[72px] md:w-[96px] md:h-[96px] p-3 md:p-4 bg-gradient-to-tr from-indigo-600 to-pink-500 rounded-[18px] shadow-md aspect-square flex items-center justify-center transition-transform duration-[160ms] delay-[40ms] group-hover:scale-[1.05]">
+                  <div className="self-center md:self-stretch w-[72px] h-[72px] md:w-[96px] md:h-[96px] p-3 md:p-4 bg-gradient-to-tr from-indigo-600 to-pink-500 rounded-[18px] shadow-md aspect-square flex items-center justify-center transition-transform transition-duration-[160ms] transition-delay-[40ms] group-hover:scale-[1.05]">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white w-[70%] h-[70%]">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
@@ -146,11 +146,11 @@ function DashboardContent() {
 
             <Link href="/challenges/multiple-choice" className="group block">
               <div
-                className={`rounded-[22px] px-5 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8 shadow-sm border bg-gradient-to-br from-purple-50 to-violet-100/60 border-purple-100 text-gray-800 transform ${cardEnter} motion-reduce:transform-none motion-reduce:opacity-100 hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] active:duration-[90ms] transition-transform duration-[160ms] transition-shadow transition-opacity ease-out delay-[120ms] min-h-[150px]`}
+                className={`rounded-[22px] px-5 sm:px-6 md:px-8 py-5 sm:py-6 md:py-8 shadow-sm border bg-gradient-to-br from-purple-50 to-violet-100/60 border-purple-100 text-gray-800 transform ${cardEnter} motion-reduce:transform-none motion-reduce:opacity-100 hover:shadow-lg hover:scale-[1.03] active:scale-[0.98] active:transition-duration-[90ms] transition-transform transition-shadow transition-opacity transition-duration-[160ms] ease-out transition-delay-[120ms] min-h-[150px]`}
                 style={cardTransitionStyle}
               >
                 <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] items-center md:items-stretch gap-4 md:gap-6">
-                  <div className="self-center md:self-stretch w-[72px] h-[72px] md:w-[96px] md:h-[96px] p-3 md:p-4 bg-gradient-to-tr from-purple-600 to-violet-500 rounded-[18px] shadow-md aspect-square flex items-center justify-center transition-transform duration-[160ms] delay-[40ms] group-hover:scale-[1.05]">
+                  <div className="self-center md:self-stretch w-[72px] h-[72px] md:w-[96px] md:h-[96px] p-3 md:p-4 bg-gradient-to-tr from-purple-600 to-violet-500 rounded-[18px] shadow-md aspect-square flex items-center justify-center transition-transform transition-duration-[160ms] transition-delay-[40ms] group-hover:scale-[1.05]">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white w-[70%] h-[70%]">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>

@@ -15,5 +15,8 @@
 /node_modules/
 __pycache__/
 
+# Next.js build output (should not be committed)
+/.next/
+
 # OS files
 .DS_Store
