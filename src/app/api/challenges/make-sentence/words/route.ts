@@ -41,16 +41,14 @@ export async function GET(request: NextRequest) {
     } catch (fetchError) {
       console.error('Error fetching from Python API:', fetchError);
       
-      // Use expanded fallback data with 10 unique words
-      return NextResponse.json({
-        words: [
-          { id: 'bata', word: 'Bata', grade: 'G1_2', imageUrl: '/assets/bata.gif', sentences: ['Ang bata ay mahilig mag laro sa ulan.'] },
-          { id: 'aklat', word: 'Aklat', grade: 'G1_2', imageUrl: '/assets/placeholder.png', sentences: ['May bagong aklat sa silid-aklatan.'] },
-          { id: 'timpalak', word: 'Timpalak', grade: 'G3_4', imageUrl: '/assets/placeholder.png', sentences: ['Sumali sila sa timpalak sa paaralan.'] }
-        ],
-        count: 3,
-        source: 'fallback'
-      });
+      // Do not return fallback data; surface the error so issues are visible
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to fetch words from the JSON word bank. Ensure the backend is reachable and the word files exist.'
+        },
+        { status: 502 }
+      );
     }
   } catch (error: any) {
     console.error('API error:', error);
