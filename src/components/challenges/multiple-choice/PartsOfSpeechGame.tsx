@@ -103,9 +103,13 @@ export default function PartsOfSpeechGame({
     // Reset hearts at the beginning of each session/level
     setHearts(3);
     setOutOfHearts(false);
-    if (onHeartsChange) onHeartsChange(3);
     loadNewItem();
   }, [sessionGrade, difficulty]);
+
+  // Propagate heart changes to the parent after render
+  useEffect(() => {
+    if (onHeartsChange) onHeartsChange(hearts);
+  }, [hearts, onHeartsChange]);
 
   const currentTarget: Target | null = useMemo(() => {
     if (!item) return null;
@@ -192,7 +196,6 @@ export default function PartsOfSpeechGame({
           if (next === 0) {
             setOutOfHearts(true);
           }
-          if (onHeartsChange) onHeartsChange(next);
           return next;
         });
         setSheet({ kind: 'wrong' });

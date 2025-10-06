@@ -6,60 +6,20 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
-    "/login/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
-    ],
     "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/page.js"
     ],
-    "/challenges/multiple-choice/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/challenges/multiple-choice/page.js"
+      "static/chunks/app/page.js"
     ],
     "/challenges/make-sentence/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/challenges/make-sentence/page.js"
-    ],
-    "/challenges/multiple-choice/play/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/challenges/multiple-choice/play/page.js"
-    ],
-    "/api/challenges/pos-interactive/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/challenges/pos-interactive/route.js"
-    ],
-    "/api/analyze/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/analyze/route.js"
-    ],
-    "/onboarding/grade/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/onboarding/grade/page.js"
-    ],
-    "/challenges/conversation/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/challenges/conversation/page.js"
-    ],
-    "/challenges/conversation/play/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/challenges/conversation/play/page.js"
     ],
     "/challenges/make-sentence/play/page": [
       "static/chunks/webpack.js",
@@ -70,6 +30,31 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/challenges/make-sentence/words/route.js"
+    ],
+    "/api/analyze/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/analyze/route.js"
+    ],
+    "/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/login/page.js"
+    ],
+    "/challenges/multiple-choice/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/challenges/multiple-choice/page.js"
+    ],
+    "/challenges/multiple-choice/play/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/challenges/multiple-choice/play/page.js"
+    ],
+    "/api/challenges/pos-interactive/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/challenges/pos-interactive/route.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

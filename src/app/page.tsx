@@ -5,11 +5,22 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
+import ConsentModal from '@/components/ui/ConsentModal';
 
 export default function Home() {
   const router = useRouter();
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [consentOpen, setConsentOpen] = useState(false);
+
+  const openConsent = () => setConsentOpen(true);
+  const handleConsentAccept = () => {
+    setConsentOpen(false);
+    router.push('/login');
+  };
+  const handleConsentDecline = () => {
+    setConsentOpen(false);
+  };
 
   useEffect(() => {
     // Show content with animation after page loads
@@ -52,7 +63,7 @@ export default function Home() {
                 Contact
               </Link>
               <button 
-                onClick={() => router.push('/login')}
+                onClick={openConsent}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Learn Now
@@ -93,7 +104,7 @@ export default function Home() {
                 A fun and interactive way to learn the Philippine language through gamified challenges
               </p>
               <button 
-                onClick={() => router.push('/login')}
+                onClick={openConsent}
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-all hover:scale-105 text-lg"
               >
                 Start Learning
@@ -318,7 +329,7 @@ export default function Home() {
               Join our community of learners and start building your Tagalog skills today
             </p>
             <button 
-              onClick={() => router.push('/login')}
+              onClick={openConsent}
               className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-blue-50 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
               style={calculateParallax(-0.03)}
             >
@@ -345,6 +356,11 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <ConsentModal 
+        open={consentOpen} 
+        onAccept={handleConsentAccept} 
+        onDecline={handleConsentDecline} 
+      />
     </div>
   );
 }

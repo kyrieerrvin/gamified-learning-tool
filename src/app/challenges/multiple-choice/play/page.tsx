@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
+import EndOfLevelScreen from '@/components/challenges/common/EndOfLevelScreen';
 
 // Dynamically import the game component to avoid module not found errors
 const PartsOfSpeechGame = dynamic(
@@ -32,6 +33,7 @@ export default function PlayMultipleChoicePage() {
   const [progressCompleted, setProgressCompleted] = useState(0);
   const [nextSection, setNextSection] = useState<number | null>(null);
   const [nextLevel, setNextLevel] = useState<number | null>(null);
+  const [displayXp, setDisplayXp] = useState(0);
   const prefersReduced = useReducedMotion();
   const [hearts, setHearts] = useState(3);
   
@@ -58,6 +60,7 @@ export default function PlayMultipleChoicePage() {
     setProgressCompleted(0);
     setNextSection(null);
     setNextLevel(null);
+    setDisplayXp(0);
   }, [sectionId, levelId]);
   
   // Handle quest progress updates
@@ -121,6 +124,27 @@ export default function PlayMultipleChoicePage() {
     setNextSection(ns >= 0 ? ns : null);
     setNextLevel(nl >= 0 ? nl : null);
   };
+
+  // Animate XP display to match Make-a-Sentence
+  useEffect(() => {
+    if (!gameCompleted) return;
+    if (prefersReduced) {
+      setDisplayXp(score);
+      return;
+    }
+    const start = performance.now();
+    const duration = 800;
+    const from = 0;
+    const to = score;
+    let raf = 0 as unknown as number;
+    const step = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      setDisplayXp(Math.round(from + (to - from) * p));
+      if (p < 1) raf = requestAnimationFrame(step) as unknown as number;
+    };
+    raf = requestAnimationFrame(step) as unknown as number;
+    return () => cancelAnimationFrame(raf);
+  }, [gameCompleted, score, prefersReduced]);
   
   if (loading) {
     return (
@@ -132,72 +156,27 @@ export default function PlayMultipleChoicePage() {
   }
   
   if (gameCompleted) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.5 }}
-          className="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto text-center"
-        >
-          <div className="mb-6">
-            {true ? (
-              <div className="mx-auto w-24 h-24 bg-duolingo-blue rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            ) : (
-              <div className="mx-auto w-24 h-24 bg-duolingo-blue rounded-full flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            )}
-            
-            <h2 className="text-2xl font-bold mb-2">
-              {score >= 80 ? 'Mahusay!' : 'Magaling!'}
-            </h2>
-            <p className="text-gray-600 mb-6">
-              {'Napakagaling mo! Nakumpleto mo ang level na ito.'}
-            </p>
-            {/* PROGRESS BAR 
-            <div className="bg-gray-100 rounded-full p-2 mb-6">
-              <div className="bg-duolingo-blue h-6 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ width: `${score}%` }}>
-                {score}%
-              </div>
-            </div>
-            */}
+    const levelsCompleted = Math.min(10, Math.max(0, levelId + 1));
+    const sectionPct = Math.max(0, Math.min(100, Math.round((levelsCompleted / 10) * 100)));
 
-            <div className="text-center text-xl font-bold text-duolingo-blue mb-6">
-              + {Math.floor(score)} XP
-            </div>
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={() => router.push('/challenges/multiple-choice')}
-                className="w-full bg-duolingo-blue text-white hover:bg-duolingo-darkBlue"
-              >
-                Bumalik sa Learning Path
-              </Button>
-              
-              {nextSection !== null && nextLevel !== null && (
-                <Button 
-                  onClick={() => {
-                    const nextSectionId = nextSection as number;
-                    const nextLevelId = nextLevel as number;
-                    console.log(`[Navigation] Going to next level: Section ${nextSectionId}, Level ${nextLevelId}`);
-                    router.push(`/challenges/multiple-choice/play?section=${nextSectionId}&level=${nextLevelId}`);
-                  }}
-                  className="w-full bg-duolingo-green text-white hover:bg-duolingo-darkGreen"
-                >
-                  Susunod na Level
-                </Button>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </div>
+    return (
+      <EndOfLevelScreen
+        xp={displayXp}
+        sectionPct={sectionPct}
+        primaryCta={{
+          label: 'Bumalik sa Learning Path',
+          onClick: () => router.push('/challenges/multiple-choice'),
+          autoFocus: true
+        }}
+        secondaryCta={{
+          label: 'Magbigay ng Feedback',
+          onClick: () => {
+            if (typeof window !== 'undefined') {
+              window.open('https://forms.gle/1NZy1hTMBMA8PdvS9', '_blank');
+            }
+          }
+        }}
+      />
     );
   }
   

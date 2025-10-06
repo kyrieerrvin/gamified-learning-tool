@@ -12,6 +12,7 @@ import { apiGet } from '@/utils/api';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import placeholder from '../../../../../assets/placeholder.png';
+import EndOfLevelScreen from '@/components/challenges/common/EndOfLevelScreen';
 
 export default function PlayMakeSentencePage() {
   const router = useRouter();
@@ -202,81 +203,23 @@ export default function PlayMakeSentencePage() {
     const sectionPct = Math.max(0, Math.min(100, Math.round((levelsCompleted / 10) * 100)));
 
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="bg-white rounded-2xl shadow-xl p-8 md:p-10 max-w-xl w-full mx-auto text-center"
-        >
-          {/* Illustration + subtle confetti */}
-          <div className="relative mb-6 flex items-center justify-center">
-            {!prefersReduced && (
-              <div className="absolute inset-0 -z-10 overflow-hidden">
-                {[...Array(14)].map((_, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 12, x: (i % 2 === 0 ? -1 : 1) * 10 }}
-                    animate={{ opacity: [0, 1, 0], y: [-8, -18, -28] }}
-                    transition={{ duration: 0.9 + (i % 3) * 0.15, delay: i * 0.03, ease: 'easeOut' }}
-                    className="absolute left-1/2 top-1/2 w-2 h-2 rounded-full"
-                    style={{ background: i % 3 === 0 ? '#22c55e' : i % 3 === 1 ? '#3b82f6' : '#f59e0b' }}
-                  />
-                ))}
-              </div>
-            )}
-            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}>
-              <Image src={placeholder} alt="Celebration" width={140} height={140} className="rounded-xl" />
-            </motion.div>
-          </div>
-
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">Mahusay!</h2>
-          <p className="text-gray-600 mb-6">Napakahusay mo! Nakumpleto mo ang level na ito.</p>
-
-          {/* Metrics */}
-          <div className="space-y-4 mb-6">
-            <div className="text-xl font-extrabold text-green-600">+ {displayXp} XP</div>
-            <div>
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                <span>Section progress</span>
-                <span>{sectionPct}%</span>
-              </div>
-              <div className="w-full h-2.5 bg-gray-200/80 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 rounded-full" style={{ width: `${sectionPct}%`, transition: 'width 300ms ease' }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Buttons: primary first */}
-          <div className="flex flex-col gap-3">
-            {progress['make-sentence'] && (
-              <Button 
-                autoFocus
-                onClick={() => {
-                  const gameProgress = progress['make-sentence'];
-                  if (gameProgress) {
-                    const nextSectionId = gameProgress.currentSection;
-                    const nextLevelId = gameProgress.currentLevel;
-                    router.push(`/challenges/make-sentence/play?section=${nextSectionId}&level=${nextLevelId}`);
-                  } else {
-                    router.push('/challenges/make-sentence');
-                  }
-                }}
-                className="w-full py-3 rounded-full bg-duolingo-green hover:bg-duolingo-darkGreen text-white font-bold shadow-md"
-              >
-                Susunod na Level
-              </Button>
-            )}
-            <Button
-              onClick={() => router.push('/challenges/make-sentence')}
-              variant="secondary"
-              className="w-full py-3 rounded-full border border-gray-300 text-gray-800 bg-white hover:bg-gray-50"
-            >
-              Bumalik sa Learning Path
-            </Button>
-          </div>
-        </motion.div>
-      </div>
+      <EndOfLevelScreen
+        xp={displayXp}
+        sectionPct={sectionPct}
+        primaryCta={{
+          label: 'Bumalik sa Learning Path',
+          onClick: () => router.push('/challenges/make-sentence'),
+          autoFocus: true
+        }}
+        secondaryCta={{
+          label: 'Magbigay ng Feedback',
+          onClick: () => {
+            if (typeof window !== 'undefined') {
+              window.open('https://forms.gle/1NZy1hTMBMA8PdvS9', '_blank');
+            }
+          }
+        }}
+      />
     );
   }
   
