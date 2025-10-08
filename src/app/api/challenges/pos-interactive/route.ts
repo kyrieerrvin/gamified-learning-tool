@@ -2,6 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_ENDPOINTS } from '@/lib/config';
 
+// Ensure this route runs on Node.js runtime and remains fully dynamic
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type AnalyzeToken = { text: string; pos?: string };
 
 function isPunctuationToken(text: string, pos?: string) {
@@ -26,7 +31,7 @@ const POS_TL_LABEL: Record<string, string> = {
   INTJ: 'Padamdam',
 };
 
-async function analyze(sentence: string): Promise<{ tokens: AnalyzeToken[] }> {
+async function analyze(sentence: string, origin: string): Promise<{ tokens: AnalyzeToken[] }> {
   const resp = await fetch(API_ENDPOINTS.ANALYZE_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -35,7 +40,7 @@ async function analyze(sentence: string): Promise<{ tokens: AnalyzeToken[] }> {
   });
   if (!resp.ok) {
     // try Next proxy
-    const proxy = await fetch('/api/analyze', {
+    const proxy = await fetch(`${origin}/api/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sentence }),
@@ -47,27 +52,27 @@ async function analyze(sentence: string): Promise<{ tokens: AnalyzeToken[] }> {
   return resp.json();
 }
 
-async function pickSentence(grade: string | null, difficulty: string): Promise<string | null> {
-  try {
-    const fs = await import('fs/promises');
-    const path = (p: string) => `${process.cwd()}/${p}`;
-    if (!grade) return null;
-    const fileMap: Record<string, string> = {
-      G1_2: 'words/mulcho_grade_1-2.json',
-      G3_4: 'words/mulcho_grade_3-4.json',
-      G5_6: 'words/mulcho_grade_5-6.json',
-    };
-    const file = fileMap[grade];
-    if (!file) return null;
-    const raw = await fs.readFile(path(file), 'utf8');
-    const arr = JSON.parse(raw) as Array<{ short?: string; long?: string }>;
-    const key: 'short' | 'long' = difficulty === 'easy' ? 'short' : 'long';
-    const pool = arr.map(x => (x && x[key]) || '').filter(Boolean) as string[];
-    if (pool.length === 0) return null;
-    return pool[Math.floor(Math.random() * pool.length)];
-  } catch (e) {
-    return null;
-  }
+// Statically import sentence pools so they are bundled with the deployment
+// Relative path from this file to project root `words/` directory
+// JSON imports require `resolveJsonModule` which is enabled in tsconfig
+import G1_2_WORDS from '../../../../../words/mulcho_grade_1-2.json';
+import G3_4_WORDS from '../../../../../words/mulcho_grade_3-4.json';
+import G5_6_WORDS from '../../../../../words/mulcho_grade_5-6.json';
+
+type SentenceEntry = { short?: string; long?: string };
+
+function pickSentence(grade: string | null, difficulty: string): string | null {
+  if (!grade) return null;
+  const map: Record<string, SentenceEntry[]> = {
+    G1_2: (G1_2_WORDS as unknown as SentenceEntry[]) || [],
+    G3_4: (G3_4_WORDS as unknown as SentenceEntry[]) || [],
+    G5_6: (G5_6_WORDS as unknown as SentenceEntry[]) || [],
+  };
+  const entries = map[grade] || [];
+  const key: 'short' | 'long' = difficulty === 'easy' ? 'short' : 'long';
+  const pool = entries.map(x => (x && x[key]) || '').filter(Boolean) as string[];
+  if (pool.length === 0) return null;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 export async function GET(request: NextRequest) {
@@ -75,10 +80,11 @@ export async function GET(request: NextRequest) {
   const grade = searchParams.get('grade');
   const difficulty = (searchParams.get('difficulty') || 'medium').toLowerCase();
   let sentence = searchParams.get('sentence');
+  const origin = request.nextUrl.origin;
 
   // Pick sentence from pools if not provided
   if (!sentence) {
-    sentence = await pickSentence(grade, difficulty);
+    sentence = pickSentence(grade, difficulty);
   }
   // If still none, bail early
   if (!sentence) {
@@ -86,7 +92,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Analyze to get tokens and POS
-  const analysis = await analyze(sentence);
+  const analysis = await analyze(sentence, origin);
   const rawTokens = (analysis.tokens || []) as AnalyzeToken[];
   const tokens = rawTokens.map(t => t.text);
   const pos = rawTokens.map(t => (t.pos || '').toUpperCase());
@@ -153,12 +159,13 @@ export async function POST(request: NextRequest) {
   const sentence: string | undefined = body?.sentence;
   const target: { pos: string; mode: 'exact' | 'all'; required?: number } | undefined = body?.target;
   const selections: number[] = Array.isArray(body?.selections) ? body.selections : [];
+  const origin = request.nextUrl.origin;
 
   if (!sentence || !target) {
     return NextResponse.json({ error: 'sentence and target are required' }, { status: 400 });
   }
 
-  const analysis = await analyze(sentence);
+  const analysis = await analyze(sentence, origin);
   const rawTokens = (analysis.tokens || []) as AnalyzeToken[];
   const pos = rawTokens.map(t => (t.pos || '').toUpperCase());
 

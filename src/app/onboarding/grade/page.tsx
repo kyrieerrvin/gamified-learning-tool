@@ -37,7 +37,7 @@ export default function GradeOnboardingPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-sm border border-gray-100">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Choose your grade level</h1>
-        <p className="text-gray-600 mb-6">We’ll tailor words and questions to your level.</p>
+        <p className="text-gray-600 mb-6">Iaangkop namin ang mga salita at tanong ayon sa iyong antas.</p>
 
         <div className="space-y-3">
           <button
