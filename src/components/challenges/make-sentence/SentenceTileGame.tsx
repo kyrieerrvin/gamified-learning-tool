@@ -194,7 +194,6 @@ export default function SentenceTileGame({
         setHearts(prev => {
           const next = Math.max(0, prev - 1);
           if (next === 0) setOutOfHearts(true);
-          if (onHeartsChange) onHeartsChange(next);
           return next;
         });
       }
@@ -385,7 +384,7 @@ export default function SentenceTileGame({
                             const el = document.querySelector('#check-btn');
                             (el as HTMLElement | null)?.focus?.();
                           }}
-                          className="rounded-[28px] px-6 py-3 bg-red-100 text-red-800 hover:bg-red-200 font-extrabold text-base md:text-lg shadow-md"
+                          className="rounded-[28px] px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-extrabold text-base md:text-lg shadow-md"
                         >
                           Subukan Muli
                         </Button>
