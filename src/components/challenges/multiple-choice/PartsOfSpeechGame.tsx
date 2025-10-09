@@ -67,7 +67,7 @@ export default function PartsOfSpeechGame({
   const [hearts, setHearts] = useState<number>(3);
   const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
 
-  const totalGoal = 5;
+  const totalGoal = 10;
 
   async function loadNewItem() {
     try {

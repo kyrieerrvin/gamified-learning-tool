@@ -47,7 +47,7 @@ export default function PlayMakeSentencePage() {
     setLoading(false);
   }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
 
-  // Prepare 5 rounds for SentenceTileGame for Easy/Difficult based on grade-level words
+  // Prepare 10 rounds for SentenceTileGame for Easy/Difficult based on grade-level words
   useEffect(() => {
     const loadTileRounds = async () => {
       // Only for Easy (0) and Difficult (1)
@@ -73,11 +73,11 @@ export default function PlayMakeSentencePage() {
           }
           if (candidates.length >= 8) break; // collect a few extra to sample from
         }
-        // Use up to 5 rounds per level temporarily
-        let selected = candidates.slice(0, 5);
-        // If we don't have 5, repeat from the start to reach 5
-        if (selected.length > 0 && selected.length < 5) {
-          const need = 5 - selected.length;
+        // Use up to 10 rounds per level
+        let selected = candidates.slice(0, 10);
+        // If we don't have 10, repeat from the start to reach 10
+        if (selected.length > 0 && selected.length < 10) {
+          const need = 10 - selected.length;
           selected = selected.concat(selected.slice(0, Math.min(need, selected.length)));
         }
         // If still empty, fallback handled below
@@ -145,11 +145,11 @@ export default function PlayMakeSentencePage() {
     }
   };
 
-  // Handle per-round completion for SentenceTileGame (10 points per correct sentence, 5 rounds -> 50)
+  // Handle per-round completion for SentenceTileGame (10 points per correct sentence, 10 rounds -> 100)
   const handleTileRoundComplete = async () => {
     const newScore = tileScore + 10;
     const nextIndex = tileIndex + 1;
-    if (nextIndex >= 5 || nextIndex >= tileRounds.length) {
+    if (nextIndex >= 10 || nextIndex >= tileRounds.length) {
       // Finish level
       setScore(newScore);
       setGameCompleted(true);
@@ -266,7 +266,7 @@ export default function PlayMakeSentencePage() {
           )
         ) : (
           <MakeSentenceGame 
-            questionsCount={5}
+            questionsCount={10}
             levelNumber={sectionId * 10 + levelId}
             onComplete={handleComplete}
           />
