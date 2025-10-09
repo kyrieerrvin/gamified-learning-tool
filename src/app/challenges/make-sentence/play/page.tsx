@@ -259,7 +259,7 @@ export default function PlayMakeSentencePage() {
               progressCompleted={tileIndex}
               progressTotal={Math.max(1, tileRounds.length)}
               onComplete={() => handleTileRoundComplete()}
-              onHeartsChange={(h) => setHearts(h)}
+              onHeartsChange={setHearts}
             />
           ) : (
             <div className="text-gray-600">Naglo-load ng mga pangungusap…</div>

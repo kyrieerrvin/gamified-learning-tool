@@ -79,10 +79,18 @@ export default function SentenceTileGame({
 
   const expectedNormalized = useMemo(() => normalize(expectedSentence), [expectedSentence]);
 
+  // Propagate heart changes to parent after commit to avoid updating ancestor during render
+  useEffect(() => {
+    if (onHeartsChange) onHeartsChange(hearts);
+  }, [hearts, onHeartsChange]);
+
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
       try {
+        // Start of new round: reset hearts synchronously before async work
+        setHearts(3);
+        setOutOfHearts(false);
         const analysis = await nlpService.analyzeSentence(sampleSentence);
         const rawTokens = analysis.tokens.map(t => t.text).filter(Boolean);
         const cleaned = rawTokens
@@ -99,9 +107,7 @@ export default function SentenceTileGame({
           setTokens(randomized);
           setSelectedIds([]);
           setResult(null);
-          setHearts(3); // reset hearts on new round/session
-          if (onHeartsChange) onHeartsChange(3);
-          setOutOfHearts(false);
+          // hearts already reset above
         }
       } catch (e) {
         const fallback = sampleSentence.split(/\s+/).map((text, idx) => ({ id: generateId('tok', idx), text }));
@@ -110,9 +116,7 @@ export default function SentenceTileGame({
           setTokens(shuffle(fallback));
           setSelectedIds([]);
           setResult(null);
-          setHearts(3);
-          if (onHeartsChange) onHeartsChange(3);
-          setOutOfHearts(false);
+          // hearts already reset above
         }
       }
     };
@@ -154,7 +158,6 @@ export default function SentenceTileGame({
         setHearts(prev => {
           const next = Math.max(0, prev - 1);
           if (next === 0) setOutOfHearts(true);
-          if (onHeartsChange) onHeartsChange(next);
           return next;
         });
       }
