@@ -4,8 +4,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import { useGameProgress } from '@/hooks/useGameProgress';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import mulcho from '../../../../assets/mulcho.gif';
 
 type GradeLevel = 'G1_2' | 'G3_4' | 'G5_6';
 
@@ -293,9 +297,11 @@ export default function PartsOfSpeechGame({
       {/* Hero: image + title + helper */}
       <div className="grid grid-cols-1 md:grid-cols-[128px,1fr] gap-4 md:gap-6 items-center mb-4 md:mb-6">
         <div className="flex items-center justify-center md:justify-start">
-          <img
-            src="/assets/mulcho.gif"
+          <Image
+            src={mulcho}
             alt="Mascot"
+            width={120}
+            height={120}
             className="w-[112px] h-[112px] md:w-[120px] md:h-[120px] object-cover rounded-xl shadow-md"
           />
         </div>
