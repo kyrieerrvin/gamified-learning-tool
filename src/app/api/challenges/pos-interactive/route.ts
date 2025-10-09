@@ -31,6 +31,9 @@ const POS_TL_LABEL: Record<string, string> = {
   INTJ: 'Padamdam',
 };
 
+// Exclude POS that should never be asked as targets in the game
+const EXCLUDED_POS = new Set<string>(['UNKNOWN', 'PART']);
+
 async function analyze(sentence: string, origin: string): Promise<{ tokens: AnalyzeToken[] }> {
   const resp = await fetch(API_ENDPOINTS.ANALYZE_ENDPOINT, {
     method: 'POST',
@@ -106,7 +109,9 @@ export async function GET(request: NextRequest) {
 
   // Determine targets per difficulty
   type Target = { pos: string; label_tl: string; mode: 'exact' | 'all'; required?: number };
-  const entries = Object.entries(counts).filter(([p, c]) => c > 0);
+  const entries = Object.entries(counts)
+    .filter(([p, c]) => c > 0)
+    .filter(([p]) => !EXCLUDED_POS.has((p || '').toUpperCase()));
   let targets: Target[] = [];
   if (difficulty === 'easy') {
     const pool = entries.filter(([_, c]) => c >= 1);
