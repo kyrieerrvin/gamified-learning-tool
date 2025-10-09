@@ -50,7 +50,7 @@ export default function PartsOfSpeechGame({
     ? { duration: 0.16, ease: 'linear' as const }
     : { type: 'tween' as const, ease: [0.25, 1, 0.5, 1] as const, duration: 0.2 };
 
-  const { data: gameData } = useGameProgress();
+  const { data: gameData, setQuests, addPoints } = useGameProgress();
   // Lock the user's grade level for the entire session to prevent cross-grade leakage
   const [sessionGrade, setSessionGrade] = useState<GradeLevel | null>(null);
   const sectionIndex = Math.floor(levelNumber / 10);
@@ -209,6 +209,26 @@ export default function PartsOfSpeechGame({
           const next = prev + 1;
           console.log('[POS-Interactive] consecutiveCorrect ->', next);
           if (next >= 3) console.log('Currently in an answer streak');
+          // Immediately complete streak-bonus quest upon reaching 3-in-a-row, even if level ends later
+          try {
+            const quests = gameData?.progress['multiple-choice']?.quests ? [...gameData.progress['multiple-choice'].quests] : null;
+            if (next >= 3 && quests) {
+              const streakQuest = quests.find(q => q.id === 'streak-bonus');
+              if (streakQuest && !streakQuest.isCompleted) {
+                const before = streakQuest.progress;
+                streakQuest.progress = Math.min(streakQuest.progress + 1, streakQuest.target);
+                const justCompleted = before < streakQuest.target && streakQuest.progress >= streakQuest.target;
+                if (streakQuest.progress >= streakQuest.target) {
+                  streakQuest.isCompleted = true;
+                }
+                // Persist quest progress and award XP once
+                setQuests('multiple-choice', quests);
+                if (justCompleted) {
+                  addPoints(streakQuest.reward, 'multiple-choice');
+                }
+              }
+            }
+          } catch {}
           return next;
         });
       } else if (result.incorrect_indices.length > 0) {
@@ -326,9 +346,9 @@ export default function PartsOfSpeechGame({
         </div>
         <div className="text-center md:text-left">
           <div className="inline-flex items-center gap-2">
-            {consecutiveCorrect >= 3 && !sheet && (
-              <span className="text-5xl" aria-label="streak-indicator">🔥</span>
-            )}
+            {/* {consecutiveCorrect >= 3 && !sheet && (
+              <span className="text-5xl" aria-label="streak-indicator" title="Tatlong o mahigit na sunod sunod na tamang sagot!">🔥</span>
+            )} */}
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900">{instruction}</h1>
           </div>
           {currentTarget.mode === 'exact' && typeof required === 'number' && (

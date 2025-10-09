@@ -158,7 +158,7 @@ export default function MakeSentenceGame({
         });
         
         // Check if streak bonus should be applied (3 or more consecutive)
-        if (consecutiveCorrect >= 2) { // Already have 2, this makes 3+
+        if (consecutiveCorrect + 1 >= 3) { // use next value to avoid stale closure
           console.log('Currently in an answer streak');
           setStreakBonusActive(true);
           totalPoints += 3; // Bonus points for streak
@@ -331,24 +331,30 @@ export default function MakeSentenceGame({
   
   return (
     <div className="w-full flex flex-col items-center">
-      {consecutiveCorrect > 0 && !currentResult && (
-        <div className="mb-2 text-xl" aria-label="streak-indicator">🔥</div>
-      )}
-      {/* Character + speech bubble ABOVE the card (free-floating) */}
+      {/* Character + title + helper */}
       {currentWord && !currentResult && (
         <div className="max-w-5xl w-full mx-auto mb-4">
           <div className="flex items-start gap-5">
             <div className="shrink-0">
               <Image src={mascot} alt="Mascot" width={256} height={128} className="" />
             </div>
-            <div className="relative inline-block max-w-4xl bg-blue-50 rounded-2xl p-6 text-blue-900 font-sans">
-              <div className="text-lg md:text-2xl font-semibold tracking-tight">Gamitin ang salitang</div>
-              <div className="mt-3 inline-block px-5 py-2 rounded-full bg-blue-600 text-white font-extrabold text-lg md:text-xl">{currentWord.word}</div>
-              {currentWord.description && (
-                <div className="mt-3 text-base md:text-lg text-blue-700">{currentWord.description}</div>
-              )}
-              <div className="text-lg md:text-2xl font-semibold tracking-tight">sa isang pangungusap.</div>
-              <div className="absolute -left-2 top-8 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-blue-50" />
+            <div className="flex-1">
+              <div className="text-center md:text-left">
+                <div className="inline-flex items-center gap-2">
+                  {/* {consecutiveCorrect >= 3 && !currentResult && (
+                    <span className="text-5xl" aria-label="streak-indicator" title="Tatlong o mahigit na sunod sunod na tamang sagot!">🔥</span>
+                  )} */}
+                  <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">Buuin ang pangungusap</h1>
+                </div>
+              </div>
+              <div className="mt-3 inline-block bg-blue-50 rounded-2xl p-6 text-blue-900 font-sans">
+                <div className="text-lg md:text-2xl font-semibold tracking-tight">Gamitin ang salitang</div>
+                <div className="mt-3 inline-block px-5 py-2 rounded-full bg-blue-600 text-white font-extrabold text-lg md:text-xl">{currentWord.word}</div>
+                {currentWord.description && (
+                  <div className="mt-3 text-base md:text-lg text-blue-700">{currentWord.description}</div>
+                )}
+                <div className="text-lg md:text-2xl font-semibold tracking-tight">sa isang pangungusap.</div>
+              </div>
             </div>
           </div>
         </div>

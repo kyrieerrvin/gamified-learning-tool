@@ -193,9 +193,6 @@ export default function PlayMultipleChoicePage() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              {streak >= 3 && (
-                <span aria-label="streak-indicator">🔥</span>
-              )}
               <button
                 onClick={() => router.push('/challenges/multiple-choice')}
                 className="text-gray-600 hover:text-gray-900"
@@ -208,6 +205,9 @@ export default function PlayMultipleChoicePage() {
               <div className="text-sm text-gray-600 mr-2">Level {sectionId + 1} · Challenge {levelId + 1}</div>
               <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
               <span className="font-semibold">x{hearts}</span>
+              {streak >= 3 && (
+              <span aria-label="streak-indicator">Sunod sunod na tama! 🔥</span>
+              )}
             </div>
           </div>
           {(() => {

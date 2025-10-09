@@ -100,7 +100,6 @@ export default function SentenceTileGame({
         // Start of new round: reset hearts synchronously before async work
         setHearts(3);
         setOutOfHearts(false);
-        setConsecutiveCorrect(0);
         const analysis = await nlpService.analyzeSentence(sampleSentence);
         const rawTokens = analysis.tokens.map(t => t.text).filter(Boolean);
         const cleaned = rawTokens
@@ -164,12 +163,14 @@ export default function SentenceTileGame({
       if (isCorrect) {
         console.log('[MakeSentenceTile] Correct');
         setCorrectCheer(cheers[Math.floor(Math.random() * cheers.length)]);
-        const nextStreak = consecutiveCorrect + 1;
-        console.log('[MakeSentenceTile] consecutiveCorrect ->', nextStreak);
-        setConsecutiveCorrect(nextStreak);
+        setConsecutiveCorrect(prev => {
+          const next = prev + 1;
+          console.log('[MakeSentenceTile] consecutiveCorrect ->', next);
+          return next;
+        });
 
         // Complete the streak-bonus quest when hitting 3+ consecutive correct
-        if (nextStreak >= 3 && data?.progress['make-sentence']?.quests) {
+        if (consecutiveCorrect + 1 >= 3 && data?.progress['make-sentence']?.quests) {
           console.log('Currently in an answer streak');
           const quests = [...data.progress['make-sentence'].quests];
           const streakBonusQuest = quests.find(q => q.id === 'streak-bonus');
@@ -216,9 +217,6 @@ export default function SentenceTileGame({
 
   return (
     <div className="relative p-2 md:p-4 max-w-5xl mx-auto flex flex-col">
-      {consecutiveCorrect > 0 && !result && (
-        <div className="text-2xl mb-2" aria-label="streak-indicator">🔥</div>
-      )}
       {/* Out of hearts overlay */}
       {outOfHearts && (
         <div className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm rounded-2xl border flex flex-col items-center justify-center p-6 text-center">
@@ -384,12 +382,10 @@ export default function SentenceTileGame({
                         <Button
                           onClick={() => {
                             setResult(null);
-                            // return focus back to the I-check button
                             const el = document.querySelector('#check-btn');
                             (el as HTMLElement | null)?.focus?.();
                           }}
-                          variant="secondary"
-                          className="rounded-[28px] px-6 py-3 bg.white/10 hover:bg.white/15 text-white font-extrabold text-base md:text-lg shadow-md"
+                          className="rounded-[28px] px-6 py-3 bg-red-100 text-red-800 hover:bg-red-200 font-extrabold text-base md:text-lg shadow-md"
                         >
                           Subukan Muli
                         </Button>
