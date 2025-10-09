@@ -200,7 +200,7 @@ export default function PlayMultipleChoicePage() {
             </div>
           </div>
           {(() => {
-            const pct = Math.max(0, Math.min(100, Math.round((progressCompleted / 5) * 100)));
+            const pct = Math.max(0, Math.min(100, Math.round((progressCompleted / 10) * 100)));
             return (
               <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
                 <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: prefersReduced ? 'none' : 'width 240ms cubic-bezier(0.22,1,0.36,1)' }} />

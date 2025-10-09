@@ -9,9 +9,6 @@ import { useGameProgress } from '@/hooks/useGameProgress';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
 import { apiGet } from '@/utils/api';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import placeholder from '../../../../../assets/placeholder.png';
 import EndOfLevelScreen from '@/components/challenges/common/EndOfLevelScreen';
 
 export default function PlayMakeSentencePage() {
@@ -76,7 +73,7 @@ export default function PlayMakeSentencePage() {
           }
           if (candidates.length >= 8) break; // collect a few extra to sample from
         }
-        // Use up to 5 rounds per level (like multiple-choice)
+        // Use up to 5 rounds per level temporarily
         let selected = candidates.slice(0, 5);
         // If we don't have 5, repeat from the start to reach 5
         if (selected.length > 0 && selected.length < 5) {
@@ -148,9 +145,9 @@ export default function PlayMakeSentencePage() {
     }
   };
 
-  // Handle per-round completion for SentenceTileGame (20 points per correct sentence, 5 rounds -> 100)
+  // Handle per-round completion for SentenceTileGame (10 points per correct sentence, 5 rounds -> 50)
   const handleTileRoundComplete = async () => {
-    const newScore = tileScore + 20;
+    const newScore = tileScore + 10;
     const nextIndex = tileIndex + 1;
     if (nextIndex >= 5 || nextIndex >= tileRounds.length) {
       // Finish level
@@ -159,7 +156,7 @@ export default function PlayMakeSentencePage() {
       await completeLevel('make-sentence', sectionId, levelId, newScore);
       await addPoints(100, 'make-sentence');
       await updateQuestProgress('complete-games', 1);
-      if (newScore === 100) {
+      if (newScore === Math.max(1, tileRounds.length) * 10) {
         await updateQuestProgress('perfect-score', 1);
       }
     } else {
@@ -269,7 +266,7 @@ export default function PlayMakeSentencePage() {
           )
         ) : (
           <MakeSentenceGame 
-            questionsCount={10}
+            questionsCount={5}
             levelNumber={sectionId * 10 + levelId}
             onComplete={handleComplete}
           />

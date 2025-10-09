@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import placeholder from '../../../../assets/placeholder.png';
+import congratulations from '../../../../assets/congratulations.gif';
 
 export interface EndOfLevelScreenProps {
   title?: string;
@@ -61,7 +61,7 @@ export default function EndOfLevelScreen({
             </div>
           )}
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}>
-            <Image src={placeholder} alt="Celebration" width={140} height={140} className="rounded-xl" />
+            <Image src={congratulations} alt="Celebration" width={140} height={140} className="rounded-xl" />
           </motion.div>
         </div>
 

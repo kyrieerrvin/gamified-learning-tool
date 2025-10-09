@@ -294,8 +294,8 @@ export default function PartsOfSpeechGame({
       <div className="grid grid-cols-1 md:grid-cols-[128px,1fr] gap-4 md:gap-6 items-center mb-4 md:mb-6">
         <div className="flex items-center justify-center md:justify-start">
           <img
-            src="/assets/placeholder.png"
-            alt="placeholder"
+            src="/assets/mulcho.gif"
+            alt="Mascot"
             className="w-[112px] h-[112px] md:w-[120px] md:h-[120px] object-cover rounded-xl shadow-md"
           />
         </div>
