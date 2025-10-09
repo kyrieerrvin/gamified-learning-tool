@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
+import { playSound, preloadSounds } from '@/utils/sounds';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -36,6 +37,11 @@ export default function EndOfLevelScreen({
   const prefersReduced = useReducedMotion();
 
   const clampedPct = Math.max(0, Math.min(100, Math.round(sectionPct)));
+
+  useEffect(() => {
+    preloadSounds(['victory']);
+    playSound('victory');
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">

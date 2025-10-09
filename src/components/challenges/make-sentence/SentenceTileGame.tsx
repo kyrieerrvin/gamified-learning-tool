@@ -13,6 +13,7 @@ import Image from 'next/image';
 // @ts-ignore - allow importing asset
 import mascot from '../../../../assets/bata.gif';
 import { useGameProgress } from '@/hooks/useGameProgress';
+import { playSound, preloadSounds } from '@/utils/sounds';
 
 interface SentenceTileGameProps {
   sampleSentence?: string;
@@ -83,6 +84,10 @@ export default function SentenceTileGame({
   const { data, setQuests, addPoints } = useGameProgress();
 
   useEffect(() => {
+    preloadSounds(['tiles', 'correct', 'wrong', 'lost']);
+  }, []);
+
+  useEffect(() => {
     if (onStreakChange) onStreakChange(consecutiveCorrect);
   }, [consecutiveCorrect, onStreakChange]);
 
@@ -97,9 +102,7 @@ export default function SentenceTileGame({
     let cancelled = false;
     const run = async () => {
       try {
-        // Start of new round: reset hearts synchronously before async work
-        setHearts(3);
-        setOutOfHearts(false);
+        // Start of new round: keep current hearts/outOfHearts state across questions
         const analysis = await nlpService.analyzeSentence(sampleSentence);
         const rawTokens = analysis.tokens.map(t => t.text).filter(Boolean);
         const cleaned = rawTokens
@@ -116,7 +119,7 @@ export default function SentenceTileGame({
           setTokens(randomized);
           setSelectedIds([]);
           setResult(null);
-          // hearts already reset above
+          // hearts persist across rounds; do not reset here
         }
       } catch (e) {
         const fallback = sampleSentence.split(/\s+/).map((text, idx) => ({ id: generateId('tok', idx), text }));
@@ -125,7 +128,7 @@ export default function SentenceTileGame({
           setTokens(shuffle(fallback));
           setSelectedIds([]);
           setResult(null);
-          // hearts already reset above
+          // hearts persist across rounds; do not reset here
         }
       }
     };
@@ -138,11 +141,13 @@ export default function SentenceTileGame({
   const isComplete = selectedIds.length === tokens.length && tokens.length > 0;
 
   function handleSelect(id: string) {
+    playSound('tiles');
     setSelectedIds(prev => (prev.includes(id) ? prev : [...prev, id]));
     setResult(null);
   }
 
   function handleRemoveSelected(id: string) {
+    playSound('tiles');
     setSelectedIds(prev => prev.filter(x => x !== id));
     setResult(null);
   }
@@ -154,6 +159,7 @@ export default function SentenceTileGame({
 
   async function handleCheck() {
     try {
+      playSound('tiles');
       setChecking(true);
       const idToToken: Record<string, TokenItem> = Object.fromEntries(tokens.map(t => [t.id, t]));
       const userSentence = selectedIds.map(id => idToToken[id]?.text ?? '').join(' ');
@@ -161,6 +167,7 @@ export default function SentenceTileGame({
       const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
       const feedback = isCorrect ? 'Naayos mo nang wasto ang pangungusap.' : 'Subukan muli. Hindi tugma ang pagkakasunod-sunod.';
       if (isCorrect) {
+        playSound('correct');
         console.log('[MakeSentenceTile] Correct');
         setCorrectCheer(cheers[Math.floor(Math.random() * cheers.length)]);
         setConsecutiveCorrect(prev => {
@@ -189,6 +196,7 @@ export default function SentenceTileGame({
         }
       }
       if (!isCorrect) {
+        playSound('wrong');
         console.log('[MakeSentenceTile] Incorrect - reset streak');
         setConsecutiveCorrect(0);
         setHearts(prev => {
@@ -213,6 +221,12 @@ export default function SentenceTileGame({
       return () => clearTimeout(timer);
     }
   }, [result]);
+
+  useEffect(() => {
+    if (outOfHearts) {
+      playSound('lost');
+    }
+  }, [outOfHearts]);
 
   return (
     <div className="relative p-2 md:p-4 max-w-5xl mx-auto flex flex-col">

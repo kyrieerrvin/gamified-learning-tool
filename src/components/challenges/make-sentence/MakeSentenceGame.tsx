@@ -11,6 +11,7 @@ import Image from 'next/image';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - allow importing asset for dev reliability
 import mascot from '../../../../assets/talking.gif';
+import { playSound, preloadSounds } from '@/utils/sounds';
 
 interface MakeSentenceGameProps {
   questionsCount?: number;
@@ -49,6 +50,10 @@ export default function MakeSentenceGame({
   /************ All Custom/Library Hooks Next ************/
   // Global game store
   const { addPoints, increaseStreak, data, updateData, setQuests } = useGameProgress();
+
+  useEffect(() => {
+    preloadSounds(['tiles', 'correct', 'wrong']);
+  }, []);
 
   // Notify parent of streak changes (for header indicator)
   useEffect(() => {
@@ -131,6 +136,7 @@ export default function MakeSentenceGame({
     
     try {
       setIsSubmitting(true);
+      playSound('tiles');
       
       // Verify the sentence
       const { gameData: updatedGameData, result } = await gameService.verifyMakeSentence(
@@ -145,6 +151,7 @@ export default function MakeSentenceGame({
       
       // Update global score and streak
       if (result.isCorrect) {
+        playSound('correct');
         console.log('[MakeSentenceTyped] Correct');
         // Base points for correct answer
         const basePoints = 10;
@@ -185,6 +192,7 @@ export default function MakeSentenceGame({
         addPoints(totalPoints, 'make-sentence');
         increaseStreak();
       } else {
+        playSound('wrong');
         console.log('[MakeSentenceTyped] Incorrect - resetting consecutiveCorrect');
         // Don't reset streak on incorrect answers for daily streak
         // But do reset the consecutive correct answers streak

@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import { useGameProgress } from '@/hooks/useGameProgress';
+import { playSound, preloadSounds } from '@/utils/sounds';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import mulcho from '../../../../assets/mulcho.gif';
@@ -71,6 +72,10 @@ export default function PartsOfSpeechGame({
   const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
 
   const totalGoal = 10;
+
+  useEffect(() => {
+    preloadSounds(['tiles', 'correct', 'wrong', 'lost']);
+  }, []);
 
   async function loadNewItem() {
     try {
@@ -145,6 +150,7 @@ export default function PartsOfSpeechGame({
       if (next.has(i)) {
         next.delete(i);
       } else {
+        playSound('tiles');
         // For exact quota difficulties (e.g., medium), cap to required
         if (currentTarget.mode === 'exact' && typeof required === 'number' && next.size >= required) {
           return next;
@@ -163,6 +169,7 @@ export default function PartsOfSpeechGame({
     if (!item || !currentTarget) return;
     if (selected.size === 0 || outOfHearts) return; // enable only when pending exists
     try {
+      playSound('tiles');
       console.log('[POS-Interactive] Checking selection', { selected: Array.from(selected), target: currentTarget });
       const resp = await fetch('/api/challenges/pos-interactive', {
         method: 'POST',
@@ -202,6 +209,7 @@ export default function PartsOfSpeechGame({
         : false;
 
       if (exactSatisfied || allSatisfied || result.status === 'complete') {
+        playSound('correct');
         const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
         setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
         setCompleted(prev => Math.min(totalGoal, prev + 1));
@@ -233,6 +241,7 @@ export default function PartsOfSpeechGame({
         });
       } else if (result.incorrect_indices.length > 0) {
         // Deduct a heart for a mistake
+        playSound('wrong');
         setHearts((prev) => {
           const next = Math.max(0, prev - 1);
           if (next === 0) {
@@ -248,6 +257,12 @@ export default function PartsOfSpeechGame({
       setError(e?.message || 'May nangyaring error.');
     }
   }
+
+  useEffect(() => {
+    if (outOfHearts) {
+      playSound('lost');
+    }
+  }, [outOfHearts]);
 
   function handleNext() {
     if (!item || !currentTarget) return;
