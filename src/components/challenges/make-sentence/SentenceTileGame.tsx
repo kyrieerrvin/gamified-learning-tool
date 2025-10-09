@@ -12,6 +12,7 @@ import Image from 'next/image';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - allow importing asset
 import mascot from '../../../../assets/bata.gif';
+import { useGameProgress } from '@/hooks/useGameProgress';
 
 interface SentenceTileGameProps {
   sampleSentence?: string;
@@ -21,6 +22,7 @@ interface SentenceTileGameProps {
   progressCompleted?: number;
   progressTotal?: number;
   onHeartsChange?: (hearts: number) => void;
+  onStreakChange?: (streak: number) => void;
 }
 
 type TokenItem = {
@@ -55,7 +57,8 @@ export default function SentenceTileGame({
   onComplete,
   progressCompleted = 0,
   progressTotal = 5,
-  onHeartsChange
+  onHeartsChange,
+  onStreakChange
 }: SentenceTileGameProps) {
   const router = useRouter();
   const [expectedSentence, setExpectedSentence] = useState<string>(sampleSentence);
@@ -76,6 +79,12 @@ export default function SentenceTileGame({
   const [hearts, setHearts] = useState<number>(3);
   const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
   const [correctCheer, setCorrectCheer] = useState<string>('Galing!');
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState<number>(0);
+  const { data, setQuests, addPoints } = useGameProgress();
+
+  useEffect(() => {
+    if (onStreakChange) onStreakChange(consecutiveCorrect);
+  }, [consecutiveCorrect, onStreakChange]);
 
   const expectedNormalized = useMemo(() => normalize(expectedSentence), [expectedSentence]);
 
@@ -91,6 +100,7 @@ export default function SentenceTileGame({
         // Start of new round: reset hearts synchronously before async work
         setHearts(3);
         setOutOfHearts(false);
+        setConsecutiveCorrect(0);
         const analysis = await nlpService.analyzeSentence(sampleSentence);
         const rawTokens = analysis.tokens.map(t => t.text).filter(Boolean);
         const cleaned = rawTokens
@@ -152,12 +162,38 @@ export default function SentenceTileGame({
       const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
       const feedback = isCorrect ? 'Naayos mo nang wasto ang pangungusap.' : 'Subukan muli. Hindi tugma ang pagkakasunod-sunod.';
       if (isCorrect) {
+        console.log('[MakeSentenceTile] Correct');
         setCorrectCheer(cheers[Math.floor(Math.random() * cheers.length)]);
+        const nextStreak = consecutiveCorrect + 1;
+        console.log('[MakeSentenceTile] consecutiveCorrect ->', nextStreak);
+        setConsecutiveCorrect(nextStreak);
+
+        // Complete the streak-bonus quest when hitting 3+ consecutive correct
+        if (nextStreak >= 3 && data?.progress['make-sentence']?.quests) {
+          console.log('Currently in an answer streak');
+          const quests = [...data.progress['make-sentence'].quests];
+          const streakBonusQuest = quests.find(q => q.id === 'streak-bonus');
+          if (streakBonusQuest && !streakBonusQuest.isCompleted) {
+            const before = streakBonusQuest.progress;
+            streakBonusQuest.progress = Math.min(streakBonusQuest.progress + 1, streakBonusQuest.target);
+            const justCompleted = before < streakBonusQuest.target && streakBonusQuest.progress >= streakBonusQuest.target;
+            if (streakBonusQuest.progress >= streakBonusQuest.target) {
+              streakBonusQuest.isCompleted = true;
+            }
+            await setQuests('make-sentence', quests);
+            if (justCompleted) {
+              await addPoints(streakBonusQuest.reward, 'make-sentence');
+            }
+          }
+        }
       }
       if (!isCorrect) {
+        console.log('[MakeSentenceTile] Incorrect - reset streak');
+        setConsecutiveCorrect(0);
         setHearts(prev => {
           const next = Math.max(0, prev - 1);
           if (next === 0) setOutOfHearts(true);
+          if (onHeartsChange) onHeartsChange(next);
           return next;
         });
       }
@@ -180,6 +216,9 @@ export default function SentenceTileGame({
 
   return (
     <div className="relative p-2 md:p-4 max-w-5xl mx-auto flex flex-col">
+      {consecutiveCorrect > 0 && !result && (
+        <div className="text-2xl mb-2" aria-label="streak-indicator">🔥</div>
+      )}
       {/* Out of hearts overlay */}
       {outOfHearts && (
         <div className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm rounded-2xl border flex flex-col items-center justify-center p-6 text-center">
@@ -295,7 +334,7 @@ export default function SentenceTileGame({
 
       {/* Bottom action bar */}
       <div className="mt-auto pt-6 border-t border-gray-200">
-        <div className="flex items-center justify-end min-h-[72px]">
+        <div className="flex items.center justify-end min-h-[72px]">
           <AnimatePresence mode="wait">
             {!result && (
               <motion.div
@@ -350,7 +389,7 @@ export default function SentenceTileGame({
                             (el as HTMLElement | null)?.focus?.();
                           }}
                           variant="secondary"
-                          className="rounded-[28px] px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-extrabold text-base md:text-lg shadow-md"
+                          className="rounded-[28px] px-6 py-3 bg.white/10 hover:bg.white/15 text-white font-extrabold text-base md:text-lg shadow-md"
                         >
                           Subukan Muli
                         </Button>

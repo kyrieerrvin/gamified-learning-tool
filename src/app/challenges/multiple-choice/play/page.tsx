@@ -36,6 +36,7 @@ export default function PlayMultipleChoicePage() {
   const [displayXp, setDisplayXp] = useState(0);
   const prefersReduced = useReducedMotion();
   const [hearts, setHearts] = useState(3);
+  const [streak, setStreak] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -92,13 +93,18 @@ export default function PlayMultipleChoicePage() {
     setScore(score);
     setGameCompleted(true);
     
+    // Compute raw score = correct (out of 10) - hearts lost (clamped 0..10)
+    const correctCount = Math.max(0, Math.min(10, Math.round(score / 10)));
+    const heartsLost = Math.max(0, 3 - hearts);
+    const rawScore = Math.max(0, Math.min(10, correctCount - heartsLost));
+
     // Complete level with the score to determine if next level should unlock
-    await completeLevel('multiple-choice', sectionId, levelId, score);
+    await completeLevel('multiple-choice', sectionId, levelId, score, rawScore);
     // Grant fixed +100 XP on level completion (no score threshold)
     await addPoints(100, 'multiple-choice');
     
-    // Update perfect score quest only if perfect
-    if (score === 100) {
+    // Update perfect score quest only if raw perfect (10)
+    if (rawScore === 10) {
       await updateQuestProgress('perfect-score', 1);
     }
     
@@ -186,13 +192,18 @@ export default function PlayMultipleChoicePage() {
         {/* Make-a-Sentence style header + progress */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <button
-              onClick={() => router.push('/challenges/multiple-choice')}
-              className="text-gray-600 hover:text-gray-900"
-              aria-label="Bumalik"
-            >
-              ← Back
-            </button>
+            <div className="flex items-center gap-2">
+              {streak >= 3 && (
+                <span aria-label="streak-indicator">🔥</span>
+              )}
+              <button
+                onClick={() => router.push('/challenges/multiple-choice')}
+                className="text-gray-600 hover:text-gray-900"
+                aria-label="Bumalik"
+              >
+                ← Back
+              </button>
+            </div>
             <div className="flex items-center gap-2 text-gray-700">
               <div className="text-sm text-gray-600 mr-2">Level {sectionId + 1} · Challenge {levelId + 1}</div>
               <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
@@ -217,6 +228,7 @@ export default function PlayMultipleChoicePage() {
             onComplete={handleComplete}
             onProgressChange={(c) => setProgressCompleted(c)}
             onHeartsChange={(h) => setHearts(h)}
+            onStreakChange={(s) => setStreak(s)}
           />
         </div>
       </div>

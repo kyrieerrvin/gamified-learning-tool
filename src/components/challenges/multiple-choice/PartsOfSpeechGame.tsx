@@ -35,12 +35,14 @@ interface PartsOfSpeechGameProps {
   onComplete?: (score: number, levelCompleted: boolean) => void;
   onProgressChange?: (completed: number, total: number) => void;
   onHeartsChange?: (hearts: number) => void;
+  onStreakChange?: (streak: number) => void;
 }
 export default function PartsOfSpeechGame({
   levelNumber = 0,
   onComplete,
   onProgressChange,
-  onHeartsChange
+  onHeartsChange,
+  onStreakChange
 }: PartsOfSpeechGameProps) {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
@@ -63,6 +65,7 @@ export default function PartsOfSpeechGame({
   const [wrong, setWrong] = useState<Set<number>>(new Set());
   const [sheet, setSheet] = useState<null | { kind: 'correct' | 'wrong'; cheer?: string }>(null);
   const [completed, setCompleted] = useState<number>(0);
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState<number>(0);
   // Hearts system
   const [hearts, setHearts] = useState<number>(3);
   const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
@@ -78,6 +81,7 @@ export default function PartsOfSpeechGame({
       setWrong(new Set());
       setSheet(null);
       setTargetIndex(0);
+      console.log('[POS-Interactive] Loading new item, resetting selection state');
       const qs = new URLSearchParams();
       if (sessionGrade) qs.set('grade', sessionGrade);
       if (difficulty) qs.set('difficulty', difficulty);
@@ -87,6 +91,7 @@ export default function PartsOfSpeechGame({
       if (!data?.tokens?.length || !data?.targets?.length) throw new Error('Walang pos na pwedeng laruin, nagre-retry...');
       setItem(data);
       setTargetIndex(data.target_index || 0);
+      console.log('[POS-Interactive] Item loaded');
     } catch (e: any) {
       setError(e?.message || 'May nangyaring error.');
     } finally {
@@ -114,6 +119,11 @@ export default function PartsOfSpeechGame({
   useEffect(() => {
     if (onHeartsChange) onHeartsChange(hearts);
   }, [hearts, onHeartsChange]);
+
+  // Propagate streak changes to parent
+  useEffect(() => {
+    if (onStreakChange) onStreakChange(consecutiveCorrect);
+  }, [consecutiveCorrect, onStreakChange]);
 
   const currentTarget: Target | null = useMemo(() => {
     if (!item) return null;
@@ -153,6 +163,7 @@ export default function PartsOfSpeechGame({
     if (!item || !currentTarget) return;
     if (selected.size === 0 || outOfHearts) return; // enable only when pending exists
     try {
+      console.log('[POS-Interactive] Checking selection', { selected: Array.from(selected), target: currentTarget });
       const resp = await fetch('/api/challenges/pos-interactive', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -165,6 +176,7 @@ export default function PartsOfSpeechGame({
         incorrect_indices: number[];
         all_correct_indices: number[];
       } = await resp.json();
+      console.log('[POS-Interactive] Result', result);
       // Apply locks
       const prevLockedSize = locked.size;
       const uniqueNewCorrect = result.correct_indices.filter(idx => !locked.has(idx));
@@ -193,6 +205,12 @@ export default function PartsOfSpeechGame({
         const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
         setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
         setCompleted(prev => Math.min(totalGoal, prev + 1));
+        setConsecutiveCorrect(prev => {
+          const next = prev + 1;
+          console.log('[POS-Interactive] consecutiveCorrect ->', next);
+          if (next >= 3) console.log('Currently in an answer streak');
+          return next;
+        });
       } else if (result.incorrect_indices.length > 0) {
         // Deduct a heart for a mistake
         setHearts((prev) => {
@@ -202,11 +220,12 @@ export default function PartsOfSpeechGame({
           }
           return next;
         });
+        setConsecutiveCorrect(0);
         setSheet({ kind: 'wrong' });
       }
       // Otherwise, partial correct with no wrong: continue without sheet
     } catch (e: any) {
-      setError(e?.message || 'Error habang nagche-check.');
+      setError(e?.message || 'May nangyaring error.');
     }
   }
 
@@ -295,7 +314,7 @@ export default function PartsOfSpeechGame({
         </div>
       )}
       {/* Hero: image + title + helper */}
-      <div className="grid grid-cols-1 md:grid-cols-[128px,1fr] gap-4 md:gap-6 items-center mb-4 md:mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-[128px,1fr] gap-4 md:gap-6 items-center mb-2">
         <div className="flex items-center justify-center md:justify-start">
           <Image
             src={mulcho}
@@ -306,7 +325,12 @@ export default function PartsOfSpeechGame({
           />
         </div>
         <div className="text-center md:text-left">
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900">{instruction}</h1>
+          <div className="inline-flex items-center gap-2">
+            {consecutiveCorrect >= 3 && !sheet && (
+              <span className="text-5xl" aria-label="streak-indicator">🔥</span>
+            )}
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900">{instruction}</h1>
+          </div>
           {currentTarget.mode === 'exact' && typeof required === 'number' && (
             <div className="mt-2 text-sm md:text-base text-gray-600">
               {lockedCount}/{required} {currentTarget.label_tl} tama

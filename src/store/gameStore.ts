@@ -21,6 +21,8 @@ export type Level = {
   title: string;
   isLocked: boolean;
   isCompleted: boolean;
+  // Raw score for this level (number of correct answers minus hearts lost)
+  score: number;
   bestScore: number;
   attempts: number;
   lastPlayed: string | null;
@@ -116,7 +118,7 @@ type GameState = {
   resetStreak: () => void;
   
   // Game progression
-  completeLevel: (gameType: string, sectionId: number, levelId: number, score?: number) => void;
+  completeLevel: (gameType: string, sectionId: number, levelId: number, score?: number, rawScore?: number) => void;
   canAccessLevel: (gameType: string, sectionId: number, levelId: number) => boolean;
   unlockSection: (gameType: string, sectionId: number) => void;
   initializeGameProgress: (gameType: string) => void;
@@ -196,6 +198,7 @@ const generateSections = (count: number = 5, levelsPerSection: number = 5): Sect
       title: `Level ${levelIndex + 1}`,
       isLocked: levelIndex !== 0, // Only first level in each section is unlocked initially
       isCompleted: false,
+      score: 0,
       bestScore: 0,
       attempts: 0,
       lastPlayed: null
@@ -384,7 +387,7 @@ export const useGameStore = create<GameState>()(
         });
       },
       
-      completeLevel: (gameType: string, sectionId: number, levelId: number, score?: number) => {
+      completeLevel: (gameType: string, sectionId: number, levelId: number, score?: number, rawScore?: number) => {
         set((state) => {
           const gameProgress = state.progress[gameType];
           if (!gameProgress) return state;
@@ -400,6 +403,12 @@ export const useGameStore = create<GameState>()(
           const level = section.levels[levelId];
           level.attempts = (level.attempts || 0) + 1;
           level.lastPlayed = new Date().toISOString();
+
+          // Store raw score for this attempt if provided (clamped 0..10)
+          if (typeof rawScore === 'number' && !Number.isNaN(rawScore)) {
+            const clampedRaw = Math.max(0, Math.min(10, Math.round(rawScore)));
+            level.score = clampedRaw;
+          }
           
           // Store the best score if higher than previous
           if (score !== undefined && (level.bestScore === undefined || score > level.bestScore)) {
@@ -1065,10 +1074,10 @@ export const useGameStore = create<GameState>()(
             };
             
             // First, unlock the first level of each game type
-            for (const gameType of Object.keys(initialProgress)) {
+            const gameTypes = ['make-sentence', 'multiple-choice'] as const;
+            for (const gameType of gameTypes) {
               if (initialProgress[gameType].sections.length > 0) {
                 initialProgress[gameType].sections[0].isLocked = false;
-                
                 if (initialProgress[gameType].sections[0].levels.length > 0) {
                   initialProgress[gameType].sections[0].levels[0].isLocked = false;
                 }
@@ -1077,9 +1086,9 @@ export const useGameStore = create<GameState>()(
             
             // Create initial user profile
             const initialProfile: UserProfile = {
-              displayName: user.displayName,
-              email: user.email,
-              photoURL: user.photoURL,
+              displayName: user.displayName ?? null,
+              email: user.email ?? null,
+              photoURL: user.photoURL ?? null,
               joinDate: new Date().toISOString(),
               lastActiveDate: new Date().toISOString(),
               gradeLevel: null,
@@ -1089,8 +1098,8 @@ export const useGameStore = create<GameState>()(
               }
             };
             
-            // Create initial state to update locally
-            const newUserData = {
+            // Prepare initial state for local store (only GameState-compatible fields)
+            const newUserState: Partial<GameState> = {
               profile: initialProfile,
               score: 0,
               streak: 0,
@@ -1100,22 +1109,25 @@ export const useGameStore = create<GameState>()(
               achievements: [],
               gameAchievements: {},
               recentChallenges: [],
-              progress: initialProgress,
+              progress: initialProgress
+            };
+            // Prepare full document for Firestore (can include extra metadata)
+            const newUserDoc = {
+              ...newUserState,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               userId: user.uid
-            };
+            } as any;
             
             // Update local state
-            set(state => ({
-              ...state,
-              ...newUserData
+            set(() => ({
+              ...(newUserState as Partial<GameState>)
             }));
             
             // IMPORTANT: Save the initial data to Firestore immediately
             // This ensures the user has a gameProgress document from the start
             try {
-              await setDoc(userProgressRef, newUserData);
+              await setDoc(userProgressRef, newUserDoc);
               console.log('[Auth] Successfully created new user progress document in Firestore');
             } catch (error) {
               console.error('[Auth] Error creating initial progress document:', error);
@@ -1156,12 +1168,18 @@ export const useGameStore = create<GameState>()(
       
       // Profile management
       updateUserProfile: (updates: Partial<UserProfile>) => {
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            ...updates
-          }
-        }));
+        set((state) => {
+          const nextProfile: UserProfile = {
+            displayName: updates.displayName ?? state.profile?.displayName ?? null,
+            email: updates.email ?? state.profile?.email ?? null,
+            photoURL: updates.photoURL ?? state.profile?.photoURL ?? null,
+            joinDate: updates.joinDate ?? state.profile?.joinDate ?? new Date().toISOString(),
+            lastActiveDate: updates.lastActiveDate ?? state.profile?.lastActiveDate ?? new Date().toISOString(),
+            gradeLevel: updates.gradeLevel ?? state.profile?.gradeLevel ?? null,
+            preferences: updates.preferences ?? state.profile?.preferences ?? { emailNotifications: false, dailyReminder: true }
+          };
+          return { profile: nextProfile };
+        });
       },
     }),
     {

@@ -16,12 +16,14 @@ interface MakeSentenceGameProps {
   questionsCount?: number;
   levelNumber?: number;
   onComplete?: (score: number, levelCompleted: boolean) => void;
+  onStreakChange?: (streak: number) => void;
 }
 
 export default function MakeSentenceGame({ 
   questionsCount = 1,
   levelNumber = 0,
-  onComplete
+  onComplete,
+  onStreakChange
 }: MakeSentenceGameProps) {
   /************ All State Hooks First ************/
   // Game state
@@ -46,7 +48,12 @@ export default function MakeSentenceGame({
   
   /************ All Custom/Library Hooks Next ************/
   // Global game store
-  const { addPoints, increaseStreak, data, updateData } = useGameProgress();
+  const { addPoints, increaseStreak, data, updateData, setQuests } = useGameProgress();
+
+  // Notify parent of streak changes (for header indicator)
+  useEffect(() => {
+    if (onStreakChange) onStreakChange(consecutiveCorrect);
+  }, [consecutiveCorrect, onStreakChange]);
   
   /************ All Effect Hooks Last ************/
   // Load game data when grade level is available
@@ -138,36 +145,39 @@ export default function MakeSentenceGame({
       
       // Update global score and streak
       if (result.isCorrect) {
+        console.log('[MakeSentenceTyped] Correct');
         // Base points for correct answer
         const basePoints = 10;
         let totalPoints = basePoints;
         
         // Update consecutive correct count
-        setConsecutiveCorrect(prev => prev + 1);
+        setConsecutiveCorrect(prev => {
+          const next = prev + 1;
+          console.log('[MakeSentenceTyped] consecutiveCorrect ->', next);
+          return next;
+        });
         
         // Check if streak bonus should be applied (3 or more consecutive)
         if (consecutiveCorrect >= 2) { // Already have 2, this makes 3+
+          console.log('Currently in an answer streak');
           setStreakBonusActive(true);
           totalPoints += 3; // Bonus points for streak
           
-          // Complete the streak-bonus quest for make-sentence
+          // Complete the streak-bonus quest for make-sentence and award XP instantly
           if (data?.progress['make-sentence']?.quests) {
             const quests = [...data.progress['make-sentence'].quests];
             const streakBonusQuest = quests.find(q => q.id === 'streak-bonus');
             if (streakBonusQuest && !streakBonusQuest.isCompleted) {
+              const before = streakBonusQuest.progress;
               streakBonusQuest.progress = Math.min(streakBonusQuest.progress + 1, streakBonusQuest.target);
+              const justCompleted = before < streakBonusQuest.target && streakBonusQuest.progress >= streakBonusQuest.target;
               if (streakBonusQuest.progress >= streakBonusQuest.target) {
                 streakBonusQuest.isCompleted = true;
               }
-              await updateData({
-                progress: {
-                  ...data.progress,
-                  'make-sentence': {
-                    ...data.progress['make-sentence'],
-                    quests
-                  }
-                }
-              });
+              await setQuests('make-sentence', quests);
+              if (justCompleted) {
+                await addPoints(streakBonusQuest.reward, 'make-sentence');
+              }
             }
           }
         }
@@ -175,6 +185,7 @@ export default function MakeSentenceGame({
         addPoints(totalPoints, 'make-sentence');
         increaseStreak();
       } else {
+        console.log('[MakeSentenceTyped] Incorrect - resetting consecutiveCorrect');
         // Don't reset streak on incorrect answers for daily streak
         // But do reset the consecutive correct answers streak
         setConsecutiveCorrect(0);
@@ -320,6 +331,9 @@ export default function MakeSentenceGame({
   
   return (
     <div className="w-full flex flex-col items-center">
+      {consecutiveCorrect > 0 && !currentResult && (
+        <div className="mb-2 text-xl" aria-label="streak-indicator">🔥</div>
+      )}
       {/* Character + speech bubble ABOVE the card (free-floating) */}
       {currentWord && !currentResult && (
         <div className="max-w-5xl w-full mx-auto mb-4">

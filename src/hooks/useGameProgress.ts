@@ -20,6 +20,8 @@ export type Level = {
   title: string;
   isLocked: boolean;
   isCompleted: boolean;
+  // Raw score for this level (correct answers minus hearts lost), 0..10
+  score: number;
   bestScore: number;
   attempts: number;
   lastPlayed: string | null;
@@ -137,6 +139,7 @@ const generateSections = (): Section[] => {
         title: `Challenge ${levelId + 1}`,
         isLocked: !(sectionId === 0 && levelId === 0), // Only first challenge unlocked
         isCompleted: false,
+        score: 0,
         bestScore: 0,
         attempts: 0,
         lastPlayed: null
@@ -437,7 +440,7 @@ export const useGameProgress = () => {
     });
   };
   
-  const completeLevel = async (gameType: string, sectionId: number, levelId: number, score?: number) => {
+  const completeLevel = async (gameType: string, sectionId: number, levelId: number, score?: number, rawScore?: number) => {
     if (!user?.uid || !data) return;
     
     const gameProgress = data.progress[gameType];
@@ -451,6 +454,11 @@ export const useGameProgress = () => {
     level.attempts = (level.attempts || 0) + 1;
     level.lastPlayed = new Date().toISOString();
     
+    if (typeof rawScore === 'number' && !Number.isNaN(rawScore)) {
+      const clampedRaw = Math.max(0, Math.min(10, Math.round(rawScore)));
+      level.score = clampedRaw;
+    }
+
     if (score !== undefined && (level.bestScore === undefined || score > level.bestScore)) {
       level.bestScore = score;
     }
@@ -487,8 +495,8 @@ export const useGameProgress = () => {
       gameTypeAchievements.add('first-steps');
       updatedAchievements.add('first-steps');
     }
-    // Perfect Score: score 100
-    if (score !== undefined && score >= 100 && !gameTypeAchievements.has('perfect-score')) {
+    // Perfect Score: raw score 10 (correct 10 minus hearts lost must still be 10)
+    if (typeof level.score === 'number' && level.score >= 10 && !gameTypeAchievements.has('perfect-score')) {
       gameTypeAchievements.add('perfect-score');
       updatedAchievements.add('perfect-score');
     }

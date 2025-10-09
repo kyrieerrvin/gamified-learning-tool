@@ -29,6 +29,7 @@ export default function PlayMakeSentencePage() {
   const prefersReduced = useReducedMotion();
   const [displayXp, setDisplayXp] = useState(0);
   const [hearts, setHearts] = useState(3);
+  const [streak, setStreak] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -122,8 +123,13 @@ export default function PlayMakeSentencePage() {
     setScore(score);
     setGameCompleted(true);
     
+    // Compute raw score = correct (out of 10) - hearts lost (clamped 0..10)
+    const correctCount = Math.max(0, Math.min(10, Math.round(score / 10)));
+    const heartsLost = Math.max(0, 3 - hearts);
+    const rawScore = Math.max(0, Math.min(10, correctCount - heartsLost));
+
     // Complete the level in game store
-    await completeLevel('make-sentence', sectionId, levelId, score);
+    await completeLevel('make-sentence', sectionId, levelId, score, rawScore);
     // Grant +100 XP to lifetime on level completion (no score threshold)
     await addPoints(100, 'make-sentence');
     // Streak: mark today as active
@@ -139,8 +145,8 @@ export default function PlayMakeSentencePage() {
     // Update daily quest progress for game completion
     await updateQuestProgress('complete-games', 1);
     
-    // Add progress to perfect score quest if applicable
-    if (score === 100) {
+    // Add progress to perfect score quest only if raw perfect (10)
+    if (rawScore === 10) {
       await updateQuestProgress('perfect-score', 1);
     }
   };
@@ -153,10 +159,14 @@ export default function PlayMakeSentencePage() {
       // Finish level
       setScore(newScore);
       setGameCompleted(true);
-      await completeLevel('make-sentence', sectionId, levelId, newScore);
+      // Compute raw score for tile mode as number of correct sentences (each +10) minus hearts lost
+      const correctCount = Math.max(0, Math.min(10, Math.round(newScore / 10)));
+      const heartsLost = Math.max(0, 3 - hearts);
+      const rawScore = Math.max(0, Math.min(10, correctCount - heartsLost));
+      await completeLevel('make-sentence', sectionId, levelId, newScore, rawScore);
       await addPoints(100, 'make-sentence');
       await updateQuestProgress('complete-games', 1);
-      if (newScore === Math.max(1, tileRounds.length) * 10) {
+      if (rawScore === 10) {
         await updateQuestProgress('perfect-score', 1);
       }
     } else {
@@ -226,13 +236,18 @@ export default function PlayMakeSentencePage() {
       {/* Progress bar header (single top bar) */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <button
-            onClick={() => router.push('/challenges/make-sentence')}
-            className="text-gray-600 hover:text-gray-900"
-            aria-label="Go back"
-          >
-            ← Back
-          </button>
+          <div className="flex items-center gap-2">
+            {streak >= 3 && (
+              <span aria-label="streak-indicator">🔥</span>
+            )}
+            <button
+              onClick={() => router.push('/challenges/make-sentence')}
+              className="text-gray-600 hover:text-gray-900"
+              aria-label="Go back"
+            >
+              ← Back
+            </button>
+          </div>
           <div className="flex items-center gap-2 text-gray-700">
             <div className="text-sm text-gray-600 mr-2">Level {sectionId + 1} · Challenge {levelId + 1}</div>
             <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
@@ -260,6 +275,7 @@ export default function PlayMakeSentencePage() {
               progressTotal={Math.max(1, tileRounds.length)}
               onComplete={() => handleTileRoundComplete()}
               onHeartsChange={setHearts}
+              onStreakChange={setStreak}
             />
           ) : (
             <div className="text-gray-600">Naglo-load ng mga pangungusap…</div>
@@ -269,6 +285,7 @@ export default function PlayMakeSentencePage() {
             questionsCount={10}
             levelNumber={sectionId * 10 + levelId}
             onComplete={handleComplete}
+            onStreakChange={setStreak}
           />
         )}
       </div>
