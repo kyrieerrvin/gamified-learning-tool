@@ -37,6 +37,8 @@ export default function PlayMultipleChoicePage() {
   const prefersReduced = useReducedMotion();
   const [hearts, setHearts] = useState(3);
   const [streak, setStreak] = useState(0);
+  const [pendingBonusXp, setPendingBonusXp] = useState(0);
+  const [finalXp, setFinalXp] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -62,6 +64,8 @@ export default function PlayMultipleChoicePage() {
     setNextSection(null);
     setNextLevel(null);
     setDisplayXp(0);
+    setPendingBonusXp(0);
+    setFinalXp(0);
   }, [sectionId, levelId]);
   
   // Handle quest progress updates
@@ -100,8 +104,10 @@ export default function PlayMultipleChoicePage() {
 
     // Complete level with the score to determine if next level should unlock
     await completeLevel('multiple-choice', sectionId, levelId, score, rawScore);
-    // Grant fixed +100 XP on level completion (no score threshold)
-    await addPoints(100, 'multiple-choice');
+    const bonusToGrant = levelCompleted ? pendingBonusXp : 0;
+    // Grant fixed +100 XP on level completion (no score threshold) + pending bonus
+    await addPoints(100 + bonusToGrant, 'multiple-choice');
+    setFinalXp(100 + bonusToGrant);
     
     // Update perfect score quest only if raw perfect (10)
     if (rawScore === 10) {
@@ -134,14 +140,15 @@ export default function PlayMultipleChoicePage() {
   // Animate XP display to match Make-a-Sentence
   useEffect(() => {
     if (!gameCompleted) return;
+    const target = finalXp;
     if (prefersReduced) {
-      setDisplayXp(score);
+      setDisplayXp(target);
       return;
     }
     const start = performance.now();
     const duration = 800;
     const from = 0;
-    const to = score;
+    const to = target;
     let raf = 0 as unknown as number;
     const step = (t: number) => {
       const p = Math.min(1, (t - start) / duration);
@@ -150,7 +157,7 @@ export default function PlayMultipleChoicePage() {
     };
     raf = requestAnimationFrame(step) as unknown as number;
     return () => cancelAnimationFrame(raf);
-  }, [gameCompleted, score, prefersReduced]);
+  }, [gameCompleted, finalXp, prefersReduced]);
   
   if (loading) {
     return (
@@ -229,6 +236,7 @@ export default function PlayMultipleChoicePage() {
             onProgressChange={(c) => setProgressCompleted(c)}
             onHeartsChange={(h) => setHearts(h)}
             onStreakChange={(s) => setStreak(s)}
+            onBonusEarned={(amt) => setPendingBonusXp(prev => prev + amt)}
           />
         </div>
       </div>

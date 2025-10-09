@@ -18,13 +18,15 @@ interface MakeSentenceGameProps {
   levelNumber?: number;
   onComplete?: (score: number, levelCompleted: boolean) => void;
   onStreakChange?: (streak: number) => void;
+  onBonusEarned?: (amount: number) => void;
 }
 
 export default function MakeSentenceGame({ 
   questionsCount = 1,
   levelNumber = 0,
   onComplete,
-  onStreakChange
+  onStreakChange,
+  onBonusEarned
 }: MakeSentenceGameProps) {
   /************ All State Hooks First ************/
   // Game state
@@ -42,6 +44,7 @@ export default function MakeSentenceGame({
   // Track consecutive correct answers for streak bonus
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
   const [streakBonusActive, setStreakBonusActive] = useState(false);
+  const [streakBonusDisabled, setStreakBonusDisabled] = useState(false);
   
   /************ All Ref Hooks Next ************/
   // Ref for input field to focus after submission
@@ -164,11 +167,19 @@ export default function MakeSentenceGame({
           return next;
         });
         
-        // Check if streak bonus should be applied (3 or more consecutive)
-        if (consecutiveCorrect + 1 >= 3) { // use next value to avoid stale closure
+        // Decide streak bonus activation/award
+        const nextConsec = consecutiveCorrect + 1;
+        const willActivateNow = !streakBonusActive && !streakBonusDisabled && nextConsec >= 3;
+        const alreadyActive = streakBonusActive && !willActivateNow;
+        // If already active before this answer (i.e., activation happened earlier), emit +10 bonus
+        if (alreadyActive && !streakBonusDisabled) {
+          try { onBonusEarned && onBonusEarned(10); } catch {}
+        }
+        // Maintain previous in-game scoring bonus (+3) when active for continuity
+        if (nextConsec >= 3 && !streakBonusDisabled) {
           console.log('Currently in an answer streak');
           setStreakBonusActive(true);
-          totalPoints += 3; // Bonus points for streak
+          totalPoints += 3; // existing smaller in-game bonus
           
           // Complete the streak-bonus quest for make-sentence and award XP instantly
           if (data?.progress['make-sentence']?.quests) {
@@ -197,6 +208,10 @@ export default function MakeSentenceGame({
         // Don't reset streak on incorrect answers for daily streak
         // But do reset the consecutive correct answers streak
         setConsecutiveCorrect(0);
+        // Disable further bonus awards once deactivated after being active
+        if (streakBonusActive && !streakBonusDisabled) {
+          setStreakBonusDisabled(true);
+        }
         setStreakBonusActive(false);
         
         // Subtract points for wrong answer, but don't go below 0
@@ -250,6 +265,7 @@ export default function MakeSentenceGame({
       setInputSentence('');
       setConsecutiveCorrect(0);
       setStreakBonusActive(false);
+      setStreakBonusDisabled(false);
       
       if (!data || !data.profile || !data.profile.gradeLevel) return;
       const grade = data.profile.gradeLevel as any;

@@ -24,6 +24,7 @@ interface SentenceTileGameProps {
   progressTotal?: number;
   onHeartsChange?: (hearts: number) => void;
   onStreakChange?: (streak: number) => void;
+  onBonusEarned?: (amount: number) => void;
 }
 
 type TokenItem = {
@@ -59,7 +60,8 @@ export default function SentenceTileGame({
   progressCompleted = 0,
   progressTotal = 5,
   onHeartsChange,
-  onStreakChange
+  onStreakChange,
+  onBonusEarned
 }: SentenceTileGameProps) {
   const router = useRouter();
   const [expectedSentence, setExpectedSentence] = useState<string>(sampleSentence);
@@ -81,6 +83,8 @@ export default function SentenceTileGame({
   const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
   const [correctCheer, setCorrectCheer] = useState<string>('Galing!');
   const [consecutiveCorrect, setConsecutiveCorrect] = useState<number>(0);
+  const [streakBonusActive, setStreakBonusActive] = useState<boolean>(false);
+  const [streakBonusDisabled, setStreakBonusDisabled] = useState<boolean>(false);
   const { data, setQuests, addPoints } = useGameProgress();
 
   useEffect(() => {
@@ -170,11 +174,17 @@ export default function SentenceTileGame({
         playSound('correct');
         console.log('[MakeSentenceTile] Correct');
         setCorrectCheer(cheers[Math.floor(Math.random() * cheers.length)]);
-        setConsecutiveCorrect(prev => {
-          const next = prev + 1;
-          console.log('[MakeSentenceTile] consecutiveCorrect ->', next);
-          return next;
-        });
+        const hadActive = streakBonusActive && !streakBonusDisabled;
+        const nextCons = consecutiveCorrect + 1;
+        setConsecutiveCorrect(nextCons);
+        if (nextCons >= 3 && !streakBonusDisabled) {
+          console.log('Currently in an answer streak');
+          setStreakBonusActive(true);
+        }
+        // Defer parent state update to avoid setState during child render
+        if (hadActive) {
+          try { setTimeout(() => onBonusEarned && onBonusEarned(10), 0); } catch {}
+        }
 
         // Complete the streak-bonus quest when hitting 3+ consecutive correct
         if (consecutiveCorrect + 1 >= 3 && data?.progress['make-sentence']?.quests) {
@@ -199,6 +209,10 @@ export default function SentenceTileGame({
         playSound('wrong');
         console.log('[MakeSentenceTile] Incorrect - reset streak');
         setConsecutiveCorrect(0);
+        if (streakBonusActive && !streakBonusDisabled) {
+          setStreakBonusDisabled(true);
+        }
+        setStreakBonusActive(false);
         setHearts(prev => {
           const next = Math.max(0, prev - 1);
           if (next === 0) setOutOfHearts(true);

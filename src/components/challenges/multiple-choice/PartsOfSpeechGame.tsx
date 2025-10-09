@@ -37,13 +37,15 @@ interface PartsOfSpeechGameProps {
   onProgressChange?: (completed: number, total: number) => void;
   onHeartsChange?: (hearts: number) => void;
   onStreakChange?: (streak: number) => void;
+  onBonusEarned?: (amount: number) => void;
 }
 export default function PartsOfSpeechGame({
   levelNumber = 0,
   onComplete,
   onProgressChange,
   onHeartsChange,
-  onStreakChange
+  onStreakChange,
+  onBonusEarned
 }: PartsOfSpeechGameProps) {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
@@ -67,6 +69,8 @@ export default function PartsOfSpeechGame({
   const [sheet, setSheet] = useState<null | { kind: 'correct' | 'wrong'; cheer?: string }>(null);
   const [completed, setCompleted] = useState<number>(0);
   const [consecutiveCorrect, setConsecutiveCorrect] = useState<number>(0);
+  const [streakBonusActive, setStreakBonusActive] = useState<boolean>(false);
+  const [streakBonusDisabled, setStreakBonusDisabled] = useState<boolean>(false);
   // Hearts system
   const [hearts, setHearts] = useState<number>(3);
   const [outOfHearts, setOutOfHearts] = useState<boolean>(false);
@@ -213,14 +217,22 @@ export default function PartsOfSpeechGame({
         const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
         setSheet({ kind: 'correct', cheer: cheers[Math.floor(Math.random() * cheers.length)] });
         setCompleted(prev => Math.min(totalGoal, prev + 1));
-        setConsecutiveCorrect(prev => {
-          const next = prev + 1;
+        const prevConsec = consecutiveCorrect;
+        const next = prevConsec + 1;
+        // Award +10 bonus only after streak already active (not on activating answer)
+        if (streakBonusActive && !streakBonusDisabled) {
+          try { onBonusEarned && onBonusEarned(10); } catch {}
+        }
+        setConsecutiveCorrect(() => {
           console.log('[POS-Interactive] consecutiveCorrect ->', next);
-          if (next >= 3) console.log('Currently in an answer streak');
+          if (next >= 3 && !streakBonusDisabled) {
+            console.log('Currently in an answer streak');
+            setStreakBonusActive(true);
+          }
           // Immediately complete streak-bonus quest upon reaching 3-in-a-row, even if level ends later
           try {
             const quests = gameData?.progress['multiple-choice']?.quests ? [...gameData.progress['multiple-choice'].quests] : null;
-            if (next >= 3 && quests) {
+            if (next >= 3 && quests && !streakBonusDisabled) {
               const streakQuest = quests.find(q => q.id === 'streak-bonus');
               if (streakQuest && !streakQuest.isCompleted) {
                 const before = streakQuest.progress;
@@ -250,6 +262,10 @@ export default function PartsOfSpeechGame({
           return next;
         });
         setConsecutiveCorrect(0);
+        if (streakBonusActive && !streakBonusDisabled) {
+          setStreakBonusDisabled(true);
+        }
+        setStreakBonusActive(false);
         setSheet({ kind: 'wrong' });
       }
       // Otherwise, partial correct with no wrong: continue without sheet

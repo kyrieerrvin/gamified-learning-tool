@@ -30,6 +30,8 @@ export default function PlayMakeSentencePage() {
   const [displayXp, setDisplayXp] = useState(0);
   const [hearts, setHearts] = useState(3);
   const [streak, setStreak] = useState(0);
+  const [pendingBonusXp, setPendingBonusXp] = useState(0);
+  const [finalXp, setFinalXp] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function PlayMakeSentencePage() {
     setLoading(false);
   }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
 
-  // Prepare 10 rounds for SentenceTileGame for Easy/Difficult based on grade-level words
+  // Prepare up to 10 unique rounds for SentenceTileGame for Easy/Difficult based on grade-level words
   useEffect(() => {
     const loadTileRounds = async () => {
       // Only for Easy (0) and Difficult (1)
@@ -72,16 +74,28 @@ export default function PlayMakeSentencePage() {
           } else if (sectionId === 1 && difficult) {
             candidates.push({ sentence: difficult, focusWord: wordText });
           }
-          if (candidates.length >= 8) break; // collect a few extra to sample from
         }
-        // Use up to 10 rounds per level
-        let selected = candidates.slice(0, 10);
-        // If we don't have 10, repeat from the start to reach 10
-        if (selected.length > 0 && selected.length < 10) {
-          const need = 10 - selected.length;
-          selected = selected.concat(selected.slice(0, Math.min(need, selected.length)));
+        // Normalize helper for deduplication
+        const normalize = (text: string) =>
+          text.toLowerCase().replace(/[.,!?;:]/g, '').replace(/\s+/g, ' ').trim();
+
+        // Deduplicate by sentence text (normalized), then shuffle, then take up to 10
+        const seen = new Set<string>();
+        const unique: Array<{ sentence: string; focusWord: string }> = [];
+        for (const c of candidates) {
+          const key = normalize(c.sentence);
+          if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(c);
+          }
         }
-        // If still empty, fallback handled below
+        // Fisher–Yates shuffle
+        for (let i = unique.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [unique[i], unique[j]] = [unique[j], unique[i]];
+        }
+        const selected = unique.slice(0, Math.min(10, unique.length));
+        // If empty, fallback handled below
         setTileRounds(selected.length ? selected : []);
         setTileIndex(0);
         setTileScore(0);
@@ -94,6 +108,13 @@ export default function PlayMakeSentencePage() {
     };
     loadTileRounds();
   }, [sectionId, data?.profile?.gradeLevel]);
+
+  // Reset bonus and final XP when navigating between levels
+  useEffect(() => {
+    setPendingBonusXp(0);
+    setFinalXp(0);
+    setDisplayXp(0);
+  }, [sectionId, levelId]);
   
   // Handle quest progress updates
   const updateQuestProgress = async (questId: string, progressAmount: number) => {
@@ -130,8 +151,11 @@ export default function PlayMakeSentencePage() {
 
     // Complete the level in game store
     await completeLevel('make-sentence', sectionId, levelId, score, rawScore);
+    // Only award bonus XP if level is completed and not out-of-hearts
+    const bonusToGrant = levelCompleted ? pendingBonusXp : 0;
     // Grant +100 XP to lifetime on level completion (no score threshold)
-    await addPoints(100, 'make-sentence');
+    await addPoints(100 + bonusToGrant, 'make-sentence');
+    setFinalXp(100 + bonusToGrant);
     // Streak: mark today as active
     try {
       const today = new Date();
@@ -151,11 +175,11 @@ export default function PlayMakeSentencePage() {
     }
   };
 
-  // Handle per-round completion for SentenceTileGame (10 points per correct sentence, 10 rounds -> 100)
+  // Handle per-round completion for SentenceTileGame (10 points per correct sentence)
   const handleTileRoundComplete = async () => {
     const newScore = tileScore + 10;
     const nextIndex = tileIndex + 1;
-    if (nextIndex >= 10 || nextIndex >= tileRounds.length) {
+    if (nextIndex >= tileRounds.length) {
       // Finish level
       setScore(newScore);
       setGameCompleted(true);
@@ -164,7 +188,9 @@ export default function PlayMakeSentencePage() {
       const heartsLost = Math.max(0, 3 - hearts);
       const rawScore = Math.max(0, Math.min(10, correctCount - heartsLost));
       await completeLevel('make-sentence', sectionId, levelId, newScore, rawScore);
-      await addPoints(100, 'make-sentence');
+      // Only award pending bonus when finishing successfully
+      await addPoints(100 + pendingBonusXp, 'make-sentence');
+      setFinalXp(100 + pendingBonusXp);
       await updateQuestProgress('complete-games', 1);
       if (rawScore === 10) {
         await updateQuestProgress('perfect-score', 1);
@@ -175,17 +201,18 @@ export default function PlayMakeSentencePage() {
     }
   };
 
-  // Animate XP count-up when the game completes
+  // Animate XP count-up when the game completes (show 100 + bonus)
   useEffect(() => {
     if (!gameCompleted) return;
+    const target = finalXp;
     if (prefersReduced) {
-      setDisplayXp(score);
+      setDisplayXp(target);
       return;
     }
     const start = performance.now();
     const duration = 800;
     const from = 0;
-    const to = score;
+    const to = target;
     let raf = 0 as unknown as number;
     const step = (t: number) => {
       const p = Math.min(1, (t - start) / duration);
@@ -194,7 +221,7 @@ export default function PlayMakeSentencePage() {
     };
     raf = requestAnimationFrame(step) as unknown as number;
     return () => cancelAnimationFrame(raf);
-  }, [gameCompleted, score, prefersReduced]);
+  }, [gameCompleted, finalXp, prefersReduced]);
   
   if (loading) {
     return (
@@ -276,6 +303,7 @@ export default function PlayMakeSentencePage() {
               onComplete={() => handleTileRoundComplete()}
               onHeartsChange={setHearts}
               onStreakChange={setStreak}
+              onBonusEarned={(amt) => setPendingBonusXp(prev => prev + amt)}
             />
           ) : (
             <div className="text-gray-600">Naglo-load ng mga pangungusap…</div>
@@ -286,6 +314,7 @@ export default function PlayMakeSentencePage() {
             levelNumber={sectionId * 10 + levelId}
             onComplete={handleComplete}
             onStreakChange={setStreak}
+            onBonusEarned={(amt) => setPendingBonusXp(prev => prev + amt)}
           />
         )}
       </div>
