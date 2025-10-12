@@ -1,70 +1,111 @@
 // src/app/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
 import ConsentModal from '@/components/ui/ConsentModal';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { attachSparkles, initHeroThree } from '@/utils/animationController';
 
 export default function Home() {
   const router = useRouter();
-  const [scrollY, setScrollY] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const { prefersReduced, setReduced } = useReducedMotion();
   const [consentOpen, setConsentOpen] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const startRef = useRef<HTMLButtonElement | null>(null);
 
   const openConsent = () => setConsentOpen(true);
   const handleConsentAccept = () => {
     setConsentOpen(false);
     router.push('/login');
   };
-  const handleConsentDecline = () => {
-    setConsentOpen(false);
-  };
+  const handleConsentDecline = () => setConsentOpen(false);
 
   useEffect(() => {
-    // Show content with animation after page loads
-    setIsVisible(true);
-
-    // Parallax effect on scroll
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
+    // Hero Three.js init with graceful fallback
+    if (!canvasRef.current) return;
+    let dispose: (() => void) | undefined;
+    (async () => {
+      dispose = await initHeroThree(canvasRef.current as HTMLCanvasElement, {
+        pastelColors: ['#0032A0', '#BF0D3E', '#FED141', '#0032A0', '#BF0D3E'],
+        maxMeshes: 6,
+      });
+    })();
+    return () => {
+      if (dispose) dispose();
     };
+  }, [prefersReduced]);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  useEffect(() => {
+    // Simple reveal on scroll
+    const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+    const io = new IntersectionObserver(
+      entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('opacity-100', 'translate-y-0');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
   }, []);
 
-  // Calculate parallax positions based on scroll
-  const calculateParallax = (factor: any) => {
-    return {
-      transform: `translateY(${scrollY * factor}px)`,
-    };
-  };
+  const challengeCards = useMemo(
+    () => [
+      {
+        title: 'Conversation',
+        desc: 'Magsanay makipag-usap gamit ang mga palakaibigang tanong at sagot.',
+        color: 'from-[#EAF3FF] to-white border-blue-200',
+        href: '/challenges/conversation',
+      },
+      {
+        title: 'Make a Sentence',
+        desc: 'Ayusin ang mga salita para makabuo ng pangungusap.',
+        color: 'from-[#FFF7CC] to-white border-yellow-200',
+        href: '/challenges/make-sentence',
+      },
+      {
+        title: 'Multiple Choice',
+        desc: 'Hanapin ang tamang salita at mapraktis nang mabilis.',
+        color: 'from-[#FCE7F3] to-white border-pink-200',
+        href: '/challenges/multiple-choice',
+      },
+    ],
+    []
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
+      {/* Page-wide playful pastel background */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-20"
+        style={{
+          background:
+            'radial-gradient(1200px circle at 10% 10%, #EAF3FF 0%, rgba(234,243,255,0) 60%),\
+             radial-gradient(900px circle at 90% 18%, #FFF7CC 0%, rgba(255,247,204,0) 55%),\
+             radial-gradient(1000px circle at 22% 85%, #E8FBF0 0%, rgba(232,251,240,0) 55%),\
+             radial-gradient(900px circle at 85% 88%, #FCE7F3 0%, rgba(252,231,243,0) 55%)',
+          backgroundColor: '#ffffff',
+        }}
+      />
       {/* Fixed navigation */}
-      <nav className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+      <nav className="bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 fixed top-0 left-0 right-0 z-50 border-b border-slate-100">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div className="text-2xl font-bold text-blue-600">TagalogLearn</div>
-            <div className="flex items-center space-x-6">
-              <Link 
-                href="/about" 
-                className="text-gray-600 hover:text-blue-600 transition-colors"
-              >
-                About
-              </Link>
-              <Link 
-                href="/contact" 
-                className="text-gray-600 hover:text-blue-600 transition-colors"
-              >
-                Contact
-              </Link>
-              <button 
+            <div className="text-2xl font-extrabold" style={{ color: 'var(--brand-primary)' }}>TagalogLearn</div>
+            <div className="flex items-center gap-6">
+              {/* <Link href="/about" className="text-slate-600 hover:text-slate-900 transition-colors">About</Link>
+              <Link href="/contact" className="text-slate-600 hover:text-slate-900 transition-colors">Contact</Link> */}
+              <button
                 onClick={openConsent}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                ref={startRef}
+                className="btn-primary hover-scale"
+                onMouseEnter={(e) => attachSparkles(e.currentTarget)}
               >
                 Learn Now
               </button>
@@ -74,276 +115,156 @@ export default function Home() {
       </nav>
 
       {/* Main content with top padding for fixed nav */}
-      <main className="pt-20">
-        {/* Hero Section with parallax background */}
-        <div 
-          className="relative h-screen flex items-center justify-center overflow-hidden"
-          style={{
-            background: "linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8))",
-          }}
-        >
-          {/* Parallax floating shapes */}
-          <div 
-            className="absolute inset-0 pointer-events-none" 
-            style={calculateParallax(0.05)}
-          >
-            <div className="absolute top-20 left-40 w-40 h-40 bg-blue-200 rounded-full opacity-20"></div>
-            <div className="absolute top-40 right-20 w-60 h-60 bg-indigo-200 rounded-full opacity-20"></div>
-            <div className="absolute bottom-20 right-40 w-40 h-40 bg-purple-200 rounded-full opacity-20"></div>
-            <div className="absolute bottom-40 left-20 w-60 h-60 bg-green-200 rounded-full opacity-20"></div>
+      <main className="pt-24">
+        {/* Hero */}
+        <section className="relative overflow-hidden">
+          {/* Hero gradient underlay for extra color depth */}
+          <div
+            className="absolute inset-0 -z-20"
+            aria-hidden
+            style={{
+              background: 'linear-gradient(180deg, #EAF3FF 0%, #FCE7F3 38%, #FFFFFF 100%)',
+            }}
+          />
+          <div className="absolute inset-0 -z-10">
+            <canvas ref={canvasRef} className="w-full h-[56vh] md:h-[64vh] motion-safe-only" aria-hidden="true" />
           </div>
-
-          <div className="container mx-auto px-6 text-center relative z-10">
-            <div 
-              className={`transition-all duration-1000 transform ${
-                isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}
-            >
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">Learn Tagalog!</h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-                A fun and interactive way to learn the Philippine language through gamified challenges
-              </p>
-              <button 
-                onClick={openConsent}
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-all hover:scale-105 text-lg"
-              >
-                Start Learning
-              </button>
+          <div className="container mx-auto px-6 py-16 md:py-24">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div data-reveal className="opacity-0 translate-y-6 transition-all duration-700">
+                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+                  Matuto ng Tagalog — sa paraang masaya!
+                </h1>
+                <p className="text-lg text-slate-700 mb-8">
+                Tuklasin ang Tagalog sa mga laro, at masasayang hamon para sa mga bata!
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <button
+                    onClick={openConsent}
+                    className="btn-primary accent-glow"
+                    onMouseEnter={(e) => attachSparkles(e.currentTarget)}
+                  >
+                    Start Learning
+                  </button>
+                  <Link href="#how" className="btn-secondary" aria-label="Explore Challenges">
+                    Explore Challenges
+                  </Link>
+                </div>
+              </div>
+              <div className="relative" aria-hidden="true">
+                <div className="mx-auto w-64 h-64 md:w-80 md:h-80 rounded-full flex items-center justify-center shadow-sm"
+                  style={{ background: 'var(--tint-blue)' }}>
+                  <div className="text-7xl md:text-8xl" role="img" aria-label="Friendly mascot waving">👋</div>
+                </div>
+                <div className="absolute -top-3 right-2 md:-top-2 md:-right-8 bg-white rounded-2xl px-4 py-2 shadow accent-glow border border-slate-100">
+                  <span className="text-sm md:text-base">“Tara, mag-aral tayo!”</span>
+                </div>
+                {/* Sun and stars */}
+                <div className="absolute right-8 -bottom-4 w-3 h-3 rotate-12" style={{ color: 'var(--ph-yellow)' }}>⭐</div>
+                <div className="absolute right-16 bottom-6 w-3 h-3 -rotate-12" style={{ color: 'var(--ph-yellow)' }}>⭐</div>
+                <div className="absolute right-24 bottom-2 w-3 h-3 -rotate-12" style={{ color: 'var(--ph-yellow)' }}>⭐</div>
+              </div>
             </div>
           </div>
+        </section>
 
-          {/* Bouncing down arrow */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Challenge cards with parallax effect */}
-        <div 
-          className="py-20 bg-white relative overflow-hidden"
-          style={{ 
-            boxShadow: "0 -10px 15px -5px rgba(0, 0, 0, 0.05) inset" 
-          }}
-        >
+        {/* Fun Learning Challenges */}
+        <section id="challenges" className="py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #EAF3FF 0%, #E8FBF0 100%)' }}>
           <div className="container mx-auto px-6">
-            <h2 
-              className="text-3xl font-bold text-center mb-16"
-              style={calculateParallax(-0.03)}
-            >
-              Fun Learning Challenges
-            </h2>
-            
-            <div className="relative max-w-4xl mx-auto">
-              {/* Triangle connecting lines */}
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ zIndex: 0 }}>
-                <path d="M200 120 L600 120 L400 320 L200 120" stroke="rgba(37, 99, 235, 0.1)" strokeWidth="2" strokeDasharray="6 4" />
-                <circle cx="200" cy="120" r="8" fill="rgba(37, 99, 235, 0.2)" />
-                <circle cx="600" cy="120" r="8" fill="rgba(37, 99, 235, 0.2)" />
-                <circle cx="400" cy="320" r="8" fill="rgba(37, 99, 235, 0.2)" />
-              </svg>
-
-              {/* Cards */}
-              <div className="flex flex-wrap justify-center gap-8 relative z-10">
-                {/* Card 1 with parallax */}
-                <div 
-                  className="bg-white rounded-2xl shadow-md p-6 w-64 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                  style={{
-                    ...calculateParallax(-0.02),
-                    transitionProperty: "transform, box-shadow, background-color",
-                  }}
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Fun Learning Challenges</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {challengeCards.map((c) => (
+                <div
+                  key={c.title}
+                  className={`tilt-hover rounded-2xl border p-6 bg-gradient-to-br ${c.color} cursor-default`}
                 >
-                  <div className="text-sm text-gray-500 mb-1">Challenge 1</div>
-                  <div className="text-xl font-bold mb-2 text-blue-600">Conversation</div>
-                  <p className="text-gray-600 mb-4">
-                    Practice real-world dialogues with context-aware AI feedback
-                  </p>
-                  <div className="flex justify-end">
-                    <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                    </div>
+                  <div className="flex items-start mb-4">
+                    <div className="text-xl font-bold">{c.title}</div>
                   </div>
+                  <p className="text-slate-600">{c.desc}</p>
                 </div>
-
-                {/* Card 2 with parallax */}
-                <div 
-                  className="bg-white rounded-2xl shadow-md p-6 w-64 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                  style={{
-                    ...calculateParallax(-0.01),
-                    transitionProperty: "transform, box-shadow, background-color",
-                  }}
-                >
-                  <div className="text-sm text-gray-500 mb-1">Challenge 2</div>
-                  <div className="text-xl font-bold mb-2 text-indigo-600">Make a Sentence</div>
-                  <p className="text-gray-600 mb-4">
-                    Create meaningful sentences with Tagalog words and phrases
-                  </p>
-                  <div className="flex justify-end">
-                    <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 3 with parallax */}
-                <div 
-                  className="bg-white rounded-2xl shadow-md p-6 w-64 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                  style={{
-                    ...calculateParallax(-0.03),
-                    transitionProperty: "transform, box-shadow, background-color",
-                  }}
-                >
-                  <div className="text-sm text-gray-500 mb-1">Challenge 3</div>
-                  <div className="text-xl font-bold mb-2 text-purple-600">Multiple Choice</div>
-                  <p className="text-gray-600 mb-4">
-                    Test your knowledge with adaptive quizzes and instant feedback
-                  </p>
-                  <div className="flex justify-end">
-                    <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* How it works section with parallax */}
-        <div className="py-20 bg-gray-50 relative overflow-hidden">
-          <div 
-            className="absolute inset-0 pointer-events-none" 
-            style={calculateParallax(0.03)}
-          >
-            <div className="absolute top-20 left-1/4 w-20 h-20 bg-blue-300 rounded-full opacity-10"></div>
-            <div className="absolute top-40 right-1/4 w-32 h-32 bg-indigo-300 rounded-full opacity-10"></div>
-            <div className="absolute bottom-20 right-1/3 w-24 h-24 bg-purple-300 rounded-full opacity-10"></div>
-            <div className="absolute bottom-40 left-1/3 w-32 h-32 bg-green-300 rounded-full opacity-10"></div>
-          </div>
-
+        {/* Explore Challenges */}
+        <section id="how" className="py-16 md:py-24" style={{ background: 'var(--ph-beige)' }}>
           <div className="container mx-auto px-6">
-            <h2 
-              className="text-3xl font-bold text-center mb-16"
-              style={calculateParallax(-0.02)}
-            >
-              How It Works
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto relative z-10">
-              <div 
-                className="flex flex-col items-center transform transition-all duration-500 hover:scale-105"
-                style={calculateParallax(-0.01)}
-              >
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 text-blue-600 font-bold text-2xl shadow-md">1</div>
-                <h3 className="text-xl font-semibold mb-3">Choose a Challenge</h3>
-                <p className="text-gray-600 text-center">Select from three different challenge types to practice different aspects of Tagalog</p>
-              </div>
-              
-              <div 
-                className="flex flex-col items-center transform transition-all duration-500 hover:scale-105"
-                style={calculateParallax(-0.02)}
-              >
-                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-6 text-indigo-600 font-bold text-2xl shadow-md">2</div>
-                <h3 className="text-xl font-semibold mb-3">Learn and Practice</h3>
-                <p className="text-gray-600 text-center">Complete challenges to learn new words and phrases with helpful feedback</p>
-              </div>
-              
-              <div 
-                className="flex flex-col items-center transform transition-all duration-500 hover:scale-105"
-                style={calculateParallax(-0.03)}
-              >
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6 text-purple-600 font-bold text-2xl shadow-md">3</div>
-                <h3 className="text-xl font-semibold mb-3">Build Your Skills</h3>
-                <p className="text-gray-600 text-center">Earn points, track your progress, and watch your Tagalog skills improve</p>
-              </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Explore Challenges</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+              {[1, 2, 3].map((n, i) => (
+                <div key={n} data-reveal className="opacity-0 translate-y-6 transition-all duration-700">
+                  <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center font-extrabold text-xl shadow-md mb-4"
+                    style={{ background: 'white', color: i===0?'var(--ph-blue)':i===1?'var(--ph-yellow)':'var(--ph-red)' }}>{n}</div>
+                  <h3 className="text-xl font-semibold text-center mb-2">
+                    {i === 0 ? 'Pumili ng larong gusto mong subukan' : i === 1 ? 'Sagutin, magturo, at matuto!' : 'Makakuha ng XP at mag-unlock ng mga bagong salita!'}
+                  </h3>
+                  <p className="text-slate-600 text-center">
+                    {i === 0 && 'Simulan mo kahit saan—bawat laro ay may bagong kasanayang matututunan.'}
+                    {i === 1 && 'Mag-enjoy habang nag-eensayo ng mga salita at parirala!'}
+                    {i === 2 && 'Kumita ng mga gantimpala at ipagpatuloy ang iyong learning streak!'}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Fun Tagalog Facts */}
-        <div className="py-20 bg-white relative overflow-hidden">
+        <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #FCE7F3 0%, #EDE9FE 100%)' }}>
+          {/* drifting glyphs behind cards */}
+          <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
+            <div className="absolute left-8 top-10 text-3xl opacity-30 levitate">⭐</div>
+            <div className="absolute right-12 top-16 text-3xl opacity-30 levitate" style={{ animationDelay: '800ms' }}>💬</div>
+            <div className="absolute left-1/2 bottom-10 -translate-x-1/2 text-3xl opacity-30 levitate" style={{ animationDelay: '400ms' }}>🇵🇭</div>
+          </div>
           <div className="container mx-auto px-6">
-            <h2 
-              className="text-3xl font-bold text-center mb-16"
-              style={calculateParallax(-0.02)}
-            >
-              Fun Tagalog Facts
-            </h2>
-            
-            <div className="flex flex-wrap justify-center gap-8">
-              <div 
-                className="bg-blue-50 rounded-xl p-6 max-w-xs transform transition-all duration-500 hover:scale-105 hover:rotate-1"
-                style={calculateParallax(-0.01)}
-              >
-                <div className="text-blue-600 text-4xl font-bold mb-2">22M+</div>
-                <p className="text-gray-700">Tagalog is spoken by over 22 million people worldwide</p>
-              </div>
-              
-              <div 
-                className="bg-indigo-50 rounded-xl p-6 max-w-xs transform transition-all duration-500 hover:scale-105 hover:-rotate-1"
-                style={calculateParallax(-0.02)}
-              >
-                <div className="text-indigo-600 text-4xl font-bold mb-2">1937</div>
-                <p className="text-gray-700">Tagalog was made the national language of the Philippines in 1937</p>
-              </div>
-              
-              <div 
-                className="bg-purple-50 rounded-xl p-6 max-w-xs transform transition-all duration-500 hover:scale-105 hover:rotate-1"
-                style={calculateParallax(-0.03)}
-              >
-                <div className="text-purple-600 text-4xl font-bold mb-2">8</div>
-                <p className="text-gray-700">Tagalog has 8 major dialect groups across different regions</p>
-              </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Fun Tagalog Facts</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {[
+                {front: '⭐ 90M+ speakers', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Tagalog.'},
+                {front: '💬 Salitang Tagalog', back: 'May mga salitang Tagalog na hindi kayang isalin nang direkta sa Ingles.'},
+                {front: '🇵🇭 Mabuhay!', back: 'Ang ‘Mabuhay’ ay ibig sabihin ay ‘long live’—isang masayang pagbati ng mga Pilipino!'},
+              ].map((fact, idx) => (
+                <button key={idx} className="flip-card h-44 bg-transparent" aria-pressed="false" onClick={(e) => {
+                  const pressed = e.currentTarget.getAttribute('aria-pressed') === 'true';
+                  e.currentTarget.setAttribute('aria-pressed', (!pressed).toString());
+                }}>
+                  <div className="flip-card-inner">
+                    <div className="flip-card-front bg-white border border-slate-200 p-6 flex items-center justify-center">
+                      <span className="text-lg font-semibold text-slate-800 text-center">{fact.front}</span>
+                    </div>
+                    <div className="flip-card-back bg-white border border-slate-200 p-6 flex items-center justify-center">
+                      <span className="text-slate-700 text-center">{fact.back}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Call to action */}
-        <div className="py-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white relative overflow-hidden">
-          <div 
-            className="absolute inset-0 pointer-events-none" 
-            style={calculateParallax(0.05)}
-          >
-            <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full opacity-5"></div>
-            <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-white rounded-full opacity-5"></div>
-          </div>
-
-          <div className="container mx-auto px-6 text-center relative z-10">
-            <h2 
-              className="text-3xl md:text-4xl font-bold mb-6"
-              style={calculateParallax(-0.01)}
-            >
-              Ready to Learn Tagalog?
-            </h2>
-            <p 
-              className="text-blue-100 mb-8 max-w-lg mx-auto"
-              style={calculateParallax(-0.02)}
-            >
-              Join our community of learners and start building your Tagalog skills today
-            </p>
-            <button 
+        {/* Final CTA Banner */}
+        <section className="py-16 md:py-24 text-white relative" style={{ background: 'linear-gradient(90deg, #3B82F6 0%, #6366F1 100%)' }}>
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Handa ka na bang matuto ng Tagalog?</h2>
+            <p className="text-blue-100 mb-8 max-w-xl mx-auto">Simulan na at paghusayin ang iyong kakayahan sa bawat laro.</p>
+            <button
               onClick={openConsent}
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-blue-50 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
-              style={calculateParallax(-0.03)}
+              className="btn-secondary bg-white text-slate-900"
+              onMouseEnter={(e) => attachSparkles(e.currentTarget)}
             >
               Get Started Now
             </button>
           </div>
-        </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-gray-300 py-12">
+      <footer className="bg-slate-900 text-slate-200 py-12">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-2xl font-bold text-white mb-6 md:mb-0">TagalogLearn</div>
+          {/* <div className="text-2xl font-bold text-white mb-6 md:mb-0">TagalogLearn</div>
             <div className="flex flex-wrap justify-center gap-6">
               <Link href="/about" className="hover:text-white transition-colors">About</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
@@ -352,14 +273,22 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-700 text-center text-sm">
-            <p> {new Date().getFullYear()} TagalogLearn. All rights reserved.</p>
+            <p> {new Date().getFullYear()} TagalogLearn. All rights reserved.</p> */}
+          
+          {/* Other footer links and controls intentionally hidden per request */}
+          <div className="flex justify-center items-center mb-6">
+            <span className="text-xl md:text-2xl font-bold text-white text-center">👋 Salamat! Hanggang sa muli.</span>
+          </div>
+          <div className="pt-6 border-t border-slate-700 text-center text-sm">
+            <p>2025 TagalogLearn. All rights reserved.</p>
           </div>
         </div>
       </footer>
-      <ConsentModal 
-        open={consentOpen} 
-        onAccept={handleConsentAccept} 
-        onDecline={handleConsentDecline} 
+
+      <ConsentModal
+        open={consentOpen}
+        onAccept={handleConsentAccept}
+        onDecline={handleConsentDecline}
       />
     </div>
   );

@@ -25,6 +25,25 @@
     --input: 240 5.9% 90%;
     --ring: 142.1 76.2% 36.3%;
     --radius: 0.75rem;
+    /* Brand palette */
+    --brand-primary: #3B82F6; /* Primary Blue */
+    --brand-yellow: #FACC15;  /* Sunny Yellow */
+    --brand-green: #22C55E;   /* Success Green */
+    --brand-coral: #FB7185;   /* Friendly Coral */
+    --brand-purple: #A78BFA;  /* Soft Purple */
+    /* Background tints */
+    --tint-blue: #EAF3FF;
+    --tint-yellow: #FFF7CC;
+    --tint-pink: #FCE7F3;
+    --tint-green: #E8FBF0;
+    --focus-ring: rgba(59, 130, 246, 0.6);
+    /* Philippines Theme */
+    --ph-blue: #0038A8;     /* Royal Blue */
+    --ph-yellow: #FCD116;   /* Golden Yellow */
+    --ph-red: #CE1126;      /* Crimson Red */
+    --ph-white: #FFFFFF;    /* White */
+    --ph-sky: #4FC3F7;      /* Sky Blue */
+    --ph-beige: #FFF8E1;    /* Warm Beige */
   }
  
   .dark {
@@ -60,11 +79,30 @@
     /* stylelint-disable-next-line at-rule-no-unknown */
     @apply bg-background text-foreground;
   }
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    border-radius: 0.625rem;
+  }
 }
 
 /* Add smooth transitions */
 button {
   transition: all 0.2s ease-in-out;
+}
+
+/* Motion preferences */
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe-only {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* Custom hover effects */
@@ -74,6 +112,21 @@ button {
 
 .hover-scale:hover {
   transform: scale(1.05);
+}
+
+/* Accent glow utility */
+.accent-glow {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15), 0 8px 24px rgba(59, 130, 246, 0.18);
+}
+
+/* Playful hover tilt */
+.tilt-hover {
+  transform-style: preserve-3d;
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+.tilt-hover:hover {
+  transform: perspective(800px) rotateX(4deg) rotateY(-4deg) translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 }
 
 /* 3D Button Effect */
@@ -86,6 +139,34 @@ button {
 .btn-3d:active {
   transform: translateY(-2px);
   box-shadow: 0 2px 0 0 var(--tw-shadow-color);
+}
+
+/* Bright pill button styles */
+.btn-primary {
+  background: linear-gradient(90deg, var(--brand-primary), #2563EB 60%, var(--brand-green));
+  color: white;
+  border-radius: 9999px;
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+}
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px) scale(1.02);
+}
+.btn-secondary {
+  background: white;
+  color: #1E293B;
+  border-radius: 9999px;
+  padding: 0.65rem 1.1rem;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px rgba(30, 58, 138, 0.08);
+}
+.btn-secondary:hover,
+.btn-secondary:focus-visible {
+  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.35), 0 10px 22px rgba(2, 132, 199, 0.15);
+  transform: translateY(-1px) scale(1.02);
 }
 
 /* Path styling for the learning path */
@@ -176,6 +257,48 @@ html, body {
     opacity: 0.85;
     transform: scale(1.05);
   }
+}
+
+/* Flip card for facts */
+.flip-card {
+  perspective: 1000px;
+}
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 600ms ease;
+}
+.flip-card[aria-pressed="true"] .flip-card-inner,
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+}
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Tiny sparkle animation */
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-16px) scale(0.9); opacity: 0; }
+}
+.sparkle {
+  pointer-events: none;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--brand-yellow);
+  animation: sparkleFloat 800ms ease-out forwards;
 }
 
 /* Added specific CSS targeting our newly added remove-vertical-lines class to forcefully remove any vertical lines or dividers in the learning path */

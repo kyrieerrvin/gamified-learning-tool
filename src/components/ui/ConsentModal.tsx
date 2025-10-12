@@ -124,7 +124,7 @@ export default function ConsentModal({ open, onAccept, onDecline }: ConsentModal
           </p>
           <h4 className="font-semibold">7. Contact Information</h4>
           <p>
-            For questions, feedback, or data concerns, you may contact the project team at: 📧 email@gmail.com
+            For questions, feedback, or data concerns, you may contact the project team at: christopher_lamberte@dlsu.edu.ph
           </p>
           <p className="text-sm text-gray-600">
             Digital Compliance Note: This notice is issued in accordance with the Data Privacy Act of 2012 (R.A. 10173) and the Implementing Rules and Regulations of the National Privacy Commission (NPC), Philippines.
