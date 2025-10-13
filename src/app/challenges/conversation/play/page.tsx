@@ -65,7 +65,7 @@ export default function ConversationPlayPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const greeting =
-      'Kumusta! Ako si PinoyPal, upang magkaroon ng puntos, gumamit ng tao, lugar, o organisasyon sa inyong mga pangungusap!';
+      'Kumusta! Ako si PinoyPal! Upang magkaroon ng puntos, gumamit ng tao, lugar, o organisasyon sa iyong mga pangungusap!';
     setMessages((m) => (m.length === 0 ? [{ role: 'bot', text: greeting }] : m));
     focusInput();
   }, []);
@@ -278,11 +278,11 @@ export default function ConversationPlayPage() {
                     transition={{ duration: 0.18 }}
                     className={m.role === 'user' ? 'text-right' : 'text-left'}
                   >
-                    <span className={
+                <span className={
                       'inline-block px-4 py-3 rounded-2xl shadow ' +
                       (m.role === 'user'
-                        ? 'bg-yellow-50 text-gray-900 border border-yellow-100'
-                        : 'bg-blue-600 text-white')
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-yellow-50 text-gray-900 border border-yellow-100')
                     }>
                       {m.text}
                     </span>
@@ -292,7 +292,7 @@ export default function ConversationPlayPage() {
               {/* Typing indicator */}
               {loading && (
                 <div className="text-left">
-                  <span className="inline-block px-4 py-3 rounded-2xl bg-blue-600 text-white">
+                  <span className="inline-block px-4 py-3 rounded-2xl bg-yellow-50 text-gray-900 border border-yellow-100">
                     <span className="inline-flex gap-1">
                       <motion.span animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} className="inline-block">
                         •
