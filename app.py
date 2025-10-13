@@ -19,7 +19,7 @@ import spacy
 import json
 import re
 from typing import Optional
-from conversation.chatbot import get_bot_response as conv_get_bot_response, get_summary as conv_get_summary, get_bot_response_parts as conv_get_bot_response_parts
+from conversation.chatbot import get_bot_response as conv_get_bot_response, get_summary as conv_get_summary, get_bot_response_parts as conv_get_bot_response_parts, reset_conversation as conv_reset
 
 # Optional memory measurement tools
 try:
@@ -1327,6 +1327,19 @@ def conversation_summary():
     except Exception as e:
         logger.error(f"Error fetching conversation summary: {str(e)}", exc_info=True)
         return jsonify({"error": "Error fetching summary"}), 500
+
+@app.route('/api/conversation/reset', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def conversation_reset():
+    """Reset the conversation session (entities/log/points) to start fresh."""
+    if request.method == 'OPTIONS':
+        return handle_preflight_request()
+    try:
+        conv_reset()
+        return create_cors_response({"status": "reset"})
+    except Exception as e:
+        logger.error(f"Error resetting conversation: {str(e)}", exc_info=True)
+        return jsonify({"error": "Error resetting conversation"}), 500
 
 # --- Helper functions ---
 

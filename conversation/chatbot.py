@@ -25,6 +25,28 @@ fallbacks = [
     "Medyo hindi ko naintindihan. Pahingi ng halimbawa?"
 ]
 
+# Entity-specific response templates (randomized for variety)
+PERSON_TEMPLATES = [
+    "Nabanggit mo si '{ent}' ({label}). Pwede mo bang ikuwento sino siya?",
+    "'{ent}' ({label})? Paano kayo nagkakilala?",
+    "Si '{ent}' ({label}) pala! Ano ang pinakanatatandaan mong karanasan kasama siya?",
+    "Nabanggit mo si '{ent}' ({label}). Anong papel niya sa buhay mo?",
+]
+
+LOCATION_TEMPLATES = [
+    "Binanggit mo ang lugar na '{ent}' ({label}). Ano ang karanasan mo roon?",
+    "Ah, sa '{ent}' ({label})! Ano ang pinakagusto mo sa lugar na 'yan?",
+    "Uy, '{ent}' ({label})! May espesyal bang alaala ka ro’n?",
+    "Sa '{ent}' ({label})? Ang saya siguro ro’n! Ano ang una mong naiisip kapag naririnig mo ang lugar na 'yan?",
+]
+
+ORG_TEMPLATES = [
+    "Ay, '{ent}' ({label})! Ano ang ginawa mo o natutunan sa lugar na ito?",
+    "Ay, '{ent}' ({label})! Anong koneksyon mo sa organisasyong ito?",
+    "Uy, '{ent}' ({label})! May kwento ka ba tungkol dito?",
+    "'{ent}' ({label}) — paano mo sila nakilala o nalaman?",
+]
+
 # Gamification feedback
 def get_progress_feedback():
     global user_points, user_level, user_streak
@@ -49,11 +71,14 @@ def _generate_responses(user_input):
         entities_detected.append((ent.text, label))
 
         if label in ["PER", "PERSON"]:
-            responses.append(f"Nabanggit mo si '{ent.text}' ({label}). Pwede mo bang ikuwento sino siya?")
+            template = random.choice(PERSON_TEMPLATES)
+            responses.append(template.format(ent=ent.text, label=label))
         elif label in ["LOC", "GPE"]:
-            responses.append(f"Binanggit mo ang lugar na '{ent.text}' ({label}). Ano ang karanasan mo roon?")
+            template = random.choice(LOCATION_TEMPLATES)
+            responses.append(template.format(ent=ent.text, label=label))
         elif label == "ORG":
-            responses.append(f"Ay, '{ent.text}' ({label})! Ano ang ginawa mo o natutunan sa lugar na ito?")
+            template = random.choice(ORG_TEMPLATES)
+            responses.append(template.format(ent=ent.text, label=label))
         else:
             responses.append(f"Nabanggit mo ang '{ent.text}' ({label}). Pwede mo bang dagdagan ang detalye?")
 
@@ -102,3 +127,12 @@ def get_summary():
         "conversation": conversation_log
     }
     return summary
+
+# Reset conversation session data
+def reset_conversation():
+    global conversation_log, user_points, user_level, user_streak
+    conversation_log = []
+    user_points = 0
+    user_level = 1
+    user_streak = 0
+    return True
