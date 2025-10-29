@@ -674,7 +674,7 @@ def verify_sentence_usage(target_word, sentence):
     """Verify if a word is used correctly in a sentence.
     
     This function uses the NLP model to verify if a word is used correctly
-    in a sentence created by a user.
+    in a sentence created by a user, including grammatical checks.
     
     Args:
         target_word (str): The word that should be used in the sentence
@@ -691,89 +691,90 @@ def verify_sentence_usage(target_word, sentence):
         }
     
     try:
-        # Clean inputs
-        target_word = target_word.strip().lower()
+        # 1. Clean and perform initial hygiene checks
+        target_word_cleaned = target_word.strip().lower()
         sentence = sentence.strip()
         
-        # Basic validation
-        if len(sentence) < 5:
-            return {
-                "isCorrect": False,
-                "feedback": "Masyadong maikli ang pangungusap. Gumawa ng kompletong pangungusap."
-            }
-            
-        # Process the sentence with ToCylog
+        if not sentence:
+            return {"isCorrect": False, "feedback": "Pakisulat ang iyong pangungusap."}
+        
+        if not sentence[0].isupper():
+            return {"isCorrect": False, "feedback": "Dapat magsimula sa malaking titik ang iyong pangungusap."}
+
+        if sentence[-1] not in ['.', '!', '?']:
+            return {"isCorrect": False, "feedback": "Dapat magtapos sa bantas (., ?, !) ang iyong pangungusap."}
+        
+        # 2. Process sentence with NLP model
         doc = nlp(sentence)
         
-        # Check if the target word is in the sentence
-        target_tokens = []
-        for token in doc:
-            # Perform stemming or lemmatization to find variations of the word
-            if (token.text.lower() == target_word or 
-                (hasattr(token, 'lemma_') and token.lemma_.lower() == target_word)):
-                target_tokens.append(token)
-        
-        if not target_tokens:
+        # 3. Token length check (more robust than character length)
+        # Exclude punctuation from token count for this check
+        num_tokens = len([token for token in doc if not token.is_punct])
+        if not (4 <= num_tokens <= 25):
             return {
-                "isCorrect": False,
-                "feedback": f"Hindi mo ginamit ang salitang '{target_word}' sa iyong pangungusap."
+                "isCorrect": False, 
+                "feedback": f"Ang iyong pangungusap ay dapat may 4 hanggang 25 na salita. Ang sa iyo ay may {num_tokens}."
             }
+
+        # 4. Target word check (using cleaned version)
+        target_tokens = [t for t in doc if t.text.lower() == target_word_cleaned or t.lemma_.lower() == target_word_cleaned]
+        if not target_tokens:
+            return {"isCorrect": False, "feedback": f"Hindi mo ginamit ang salitang '{target_word}' sa iyong pangungusap."}
+            
+        # 5. Core syntactic structure checks
+        has_subject = any(t.dep_ == 'nsubj' for t in doc)
+        root_tokens = [t for t in doc if t.dep_ == 'ROOT']
+        has_single_root = len(root_tokens) == 1
+
+        if not has_subject:
+            return {"isCorrect": False, "feedback": "Mukhang kulang ng paksa (subject) ang iyong pangungusap."}
         
-        # For a valid sentence, we need at least one verb and noun
+        if not has_single_root:
+            feedback = "Hindi malinaw ang pangunahing ideya o pandiwa (verb) sa iyong pangungusap."
+            if len(root_tokens) > 1:
+                feedback = "Mukhang mayroong higit sa isang pangunahing ideya ang iyong pangungusap. Subukang gawing mas simple."
+            return {"isCorrect": False, "feedback": feedback}
+        
+        # 6. Tagalog-specific grammar heuristics
+        for i, token in enumerate(doc):
+            # 'mga' must be followed by a noun
+            if token.text.lower() == 'mga':
+                if i + 1 < len(doc) and doc[i+1].pos_ not in ['NOUN', 'PROPN']:
+                    return {"isCorrect": False, "feedback": f"Ang salitang 'mga' ay karaniwang sinusundan ng pangngalan (noun). Mali ang paggamit mo nito bago ang '{doc[i+1].text}'."}
+            
+            # 'ay' should not be at the start or end
+            if token.text.lower() == 'ay':
+                # -2 to account for final punctuation
+                if i == 0 or (i + 2 >= len(doc) and doc[-1].is_punct):
+                    return {"isCorrect": False, "feedback": "Ang 'ay' ay ginagamit sa gitna ng pangungusap para paghiwalayin ang paksa at panaguri."}
+
+        # 7. Target word significance check
+        target_token = target_tokens[0]
+        is_significant = (target_token.dep_ and target_token.dep_ != '') or len(list(target_token.children)) > 0
+        if not is_significant:
+            return {"isCorrect": False, "feedback": f"Ang salitang '{target_word}' ay hindi maayos na naiugnay sa pangungusap."}
+            
+        # 8. All checks passed: The sentence is grammatically correct
+        isCorrect = True
+        feedback = f"Mahusay! Tama ang pagkakabuo at paggamit mo ng salitang '{target_word}' sa pangungusap."
+        
+        # Create analysis object for debugging or future use
         pos_counts = {}
         for token in doc:
             key = resolve_pos(token)
             pos_counts[key] = pos_counts.get(key, 0) + 1
-        
-        # Enhanced checking for sentence structural completeness
-        has_verb = pos_counts.get('VERB', 0) > 0
-        has_noun = pos_counts.get('NOUN', 0) > 0 or pos_counts.get('PROPN', 0) > 0
-        has_subject = any(token.dep_ == 'nsubj' for token in doc)
-        has_predicate = has_verb or any(token.dep_ == 'ROOT' for token in doc)
-        
-        # Check if target word plays a significant role in the sentence
-        target_token = target_tokens[0]  # Use the first occurrence if multiple
-        target_has_dep = target_token.dep_ != ''
-        target_has_children = len(list(target_token.children)) > 0
-        
-        # Evaluate the correctness of the sentence
-        structural_completeness = has_verb and has_noun
-        target_significance = target_has_dep or target_has_children
-        
-        isCorrect = structural_completeness and target_significance
-        
-        # Generate more detailed feedback
-        if isCorrect:
-            # Create more specific positive feedback
-            if target_token.dep_ == 'ROOT':
-                feedback = f"Mahusay! Ang salitang '{target_word}' ay ginagamit bilang pangunahing pandiwa ng pangungusap."
-            elif target_token.dep_ == 'nsubj':
-                feedback = f"Mahusay! Ang salitang '{target_word}' ay ginagamit bilang paksa ng pangungusap."
-            elif target_token.dep_ == 'obj':
-                feedback = f"Mahusay! Ang salitang '{target_word}' ay ginagamit bilang layon ng pangungusap."
-            else:
-                feedback = f"Mahusay! Tama ang paggamit mo ng salitang '{target_word}' sa pangungusap."
-        else:
-            # Create more specific negative feedback
-            if not has_verb:
-                feedback = "Kulang ang pangungusap ng pandiwa (verb)."
-            elif not has_noun:
-                feedback = "Kulang ang pangungusap ng pangngalan (noun)."
-            elif not target_significance:
-                feedback = f"Ang salitang '{target_word}' ay hindi maayos na naiugnay sa pangungusap."
-            else:
-                feedback = "Hindi sapat ang pagkakabuo ng pangungusap."
+
+        analysis = {
+            "hasSubject": has_subject,
+            "hasPredicate": has_single_root,
+            "pos_counts": pos_counts,
+            "targetWordRole": target_token.dep_
+        }
         
         return {
             "isCorrect": isCorrect,
             "feedback": feedback,
-            "analysis": {
-                "hasVerb": has_verb,
-                "hasNoun": has_noun,
-                "hasSubject": has_subject,
-                "hasPredicate": has_predicate,
-                "targetWordRole": target_token.dep_ if target_has_dep else "unknown"
-            }
+            "analysis": analysis
         }
         
     except Exception as e:
