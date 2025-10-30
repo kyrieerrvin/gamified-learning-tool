@@ -32,6 +32,7 @@ export default function PlayMakeSentencePage() {
   const [streak, setStreak] = useState(0);
   const [pendingBonusXp, setPendingBonusXp] = useState(0);
   const [finalXp, setFinalXp] = useState(0);
+  const [progressPct, setProgressPct] = useState(0);
   
   // Check if level is accessible AFTER game progress has loaded
   useEffect(() => {
@@ -282,7 +283,11 @@ export default function PlayMakeSentencePage() {
           </div>
         </div>
         {(() => {
-          const pct = tileRounds.length > 0 ? Math.round((tileIndex / Math.max(1, tileRounds.length)) * 100) : 0;
+          const isTileGame = sectionId === 0 || sectionId === 1;
+          const pct = isTileGame
+            ? (tileRounds.length > 0 ? Math.round((tileIndex / Math.max(1, tileRounds.length)) * 100) : 0)
+            : progressPct;
+
             return (
               <div className="w-full h-[10px] md:h-[14px] bg-gray-200/80 rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)' }}>
                 <div className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative" style={{ width: `${pct}%`, transition: 'width 240ms cubic-bezier(0.22,1,0.36,1)' }} />
@@ -315,6 +320,9 @@ export default function PlayMakeSentencePage() {
             onComplete={handleComplete}
             onStreakChange={setStreak}
             onBonusEarned={(amt) => setPendingBonusXp(prev => prev + amt)}
+            initialHearts={hearts}
+            onHeartsChange={setHearts}
+            onProgressChange={setProgressPct}
           />
         )}
       </div>

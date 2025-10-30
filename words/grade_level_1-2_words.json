@@ -346,5 +346,17 @@
     "easy": "Masarap ang nilutong ulam ni nanay.",
     "difficult_instruction": "Gumawa ng pangungusap tungkol sa masarap na ulam sa hapag-kainan.",
     "difficult": "Masarap ang adobo na ulam sa hapag-kainan."
+  },
+  {
+    "word": "Malinis",
+    "easy": "Malinis ang aming bahay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kahalagahan ng pagiging malinis sa katawan.",
+    "difficult": "Ang pagiging malinis sa kapaligiran ay mahalaga upang makaiwas sa sakit."
+  },
+  {
+    "word": "Mataas",
+    "easy": "Mataas ang puno ng niyog.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang mataas na gusali.",
+    "difficult": "Kailangan nating mag-aral nang mabuti upang makakuha ng mataas na marka."
   }
 ]

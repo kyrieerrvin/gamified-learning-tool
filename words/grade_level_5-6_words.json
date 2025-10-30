@@ -292,5 +292,65 @@
     "easy": "Ang anim ay kalahating bahagdan ng labindalawa.",
     "difficult_instruction": "Gumawa ng pangungusap tungkol sa bahagdan.",
     "difficult": "Tumaas ng sampung bahagdan ang marka ni Liza sa pagsusulit."
+  },
+  {
+    "word": "Pighati",
+    "easy": "Naramdaman niya ang matinding pighati.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa pighati na naramdaman ng isang tauhan sa Noli Me Tángere.",
+    "difficult": "Ang pighati na dulot ng kawalang-katarungan ay malinaw na naipakita sa sinapit ng pamilya ni Sisa."
+  },
+  {
+    "word": "Tunggalian",
+    "easy": "May tunggalian sa pagitan ng dalawang bida.",
+    "difficult_instruction": "Gumawa ng pangungusap na naglalarawan ng isang 'tunggalian laban sa sarili'.",
+    "difficult": "Ang pinakamabigat na tunggalian sa nobela ay ang panloob na laban ni Ibarra sa pagitan ng paghihiganti at pagpapatawad."
+  },
+  {
+    "word": "Katarungan",
+    "easy": "Humingi sila ng katarungan para sa biktima.",
+    "difficult_instruction": "Gumawa ng pangungusap na nagpapaliwanag kung bakit mahalaga ang katarungan sa isang lipunan.",
+    "difficult": "Ang kawalan ng katarungan para sa mga mahihirap ang isa sa mga pangunahing tema ng El Filibusterismo."
+  },
+  {
+    "word": "Adhikain",
+    "easy": "Ang kanyang adhikain ay tulungan ang kapwa.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa adhikain ni Simoun sa El Filibusterismo.",
+    "difficult": "Ipinagpatuloy ng mga kabataan ang marangal na adhikain ng kanilang mga bayani para sa ikauunlad ng bayan."
+  },
+  {
+    "word": "Matalinghaga",
+    "easy": "Ginamit ng makata ang matalinghagang salita.",
+    "difficult_instruction": "Gumawa ng pangungusap na naglalarawan sa isang taong nagsasalita nang matalinhaga.",
+    "difficult": "Madalas na matalinhaga ang paraan ng pagsasalita ng matatanda, na naglalaman ng mas malalim na kahulugan kaysa sa literal."
+  },
+  {
+    "word": "Himagsikan",
+    "easy": "Ang aklat ay tungkol sa isang himagsikan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa mga posibleng sanhi ng isang himagsikan.",
+    "difficult": "Ang patuloy na pang-aabuso at pagwawalang-bahala ng pamahalaan ang nagbunsod sa mga tao upang simulan ang himagsikan."
+  },
+  {
+    "word": "Simbolismo",
+    "easy": "Ang singsing ay may malalim na simbolismo.",
+    "difficult_instruction": "Gumawa ng pangungusap na nagpapaliwanag ng simbolismo ng kadiliman sa isang kwento.",
+    "difficult": "Ang paggamit ng simbolismo, tulad ng banga sa nobela, ay nagbibigay ng mas malalim na pag-unawa sa kalagayan ng lipunan."
+  },
+  {
+    "word": "Paninindigan",
+    "easy": "May matibay siyang paninindigan sa buhay.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa kahalagahan ng pagkakaroon ng sariling paninindigan.",
+    "difficult": "Sa kabila ng mga banta, ipinakita ni Elias ang kanyang matibay na paninindigan na tulungan ang mga naapi."
+  },
+  {
+    "word": "Lipunan",
+    "easy": "Tayo ay bahagi ng isang malaking lipunan.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa isang malaking problema na kinakaharap ng lipunan ngayon.",
+    "difficult": "Ang mga nobela ni Rizal ay isang malinaw na salamin ng mga suliranin at kanser ng lipunan noong panahon ng mga Espanyol."
+  },
+  {
+    "word": "Kabanata",
+    "easy": "Binasa namin ang unang kabanata ng libro.",
+    "difficult_instruction": "Gumawa ng pangungusap tungkol sa iyong paboritong kabanata sa Noli Me Tángere.",
+    "difficult": "Ang bawat kabanata ng ating buhay ay may dalang mahahalagang aral na humuhubog sa ating pagkatao."
   }
 ]

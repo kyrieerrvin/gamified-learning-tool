@@ -19,6 +19,9 @@ interface MakeSentenceGameProps {
   onComplete?: (score: number, levelCompleted: boolean) => void;
   onStreakChange?: (streak: number) => void;
   onBonusEarned?: (amount: number) => void;
+  initialHearts?: number;
+  onHeartsChange?: (hearts: number) => void;
+  onProgressChange?: (progress: number) => void;
 }
 
 export default function MakeSentenceGame({ 
@@ -26,7 +29,10 @@ export default function MakeSentenceGame({
   levelNumber = 0,
   onComplete,
   onStreakChange,
-  onBonusEarned
+  onBonusEarned,
+  initialHearts = 3,
+  onHeartsChange,
+  onProgressChange
 }: MakeSentenceGameProps) {
   /************ All State Hooks First ************/
   // Game state
@@ -37,6 +43,8 @@ export default function MakeSentenceGame({
   const [currentResult, setCurrentResult] = useState<SentenceVerificationResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [hearts, setHearts] = useState(initialHearts);
+  const [outOfHearts, setOutOfHearts] = useState(false);
   
   // Track if this is the first mistake on this question
   const [firstMistake, setFirstMistake] = useState<Record<number, boolean>>({});
@@ -62,6 +70,17 @@ export default function MakeSentenceGame({
   useEffect(() => {
     if (onStreakChange) onStreakChange(consecutiveCorrect);
   }, [consecutiveCorrect, onStreakChange]);
+
+  // Notify parent of hearts changes
+  useEffect(() => {
+    if (onHeartsChange) onHeartsChange(hearts);
+  }, [hearts, onHeartsChange]);
+
+  useEffect(() => {
+    if (outOfHearts) {
+      playSound('lost');
+    }
+  }, [outOfHearts]);
   
   /************ All Effect Hooks Last ************/
   // Load game data when grade level is available
@@ -86,6 +105,13 @@ export default function MakeSentenceGame({
     };
     loadGame();
   }, [questionsCount, data?.profile?.gradeLevel]);
+
+  // Handle progress change
+  useEffect(() => {
+    if (onProgressChange) {
+      onProgressChange(getProgressPercentage());
+    }
+  }, [gameData?.currentIndex, onProgressChange]);
   
   // Handle completion callback - this hook MUST be called in EVERY render
   useEffect(() => {
@@ -204,6 +230,8 @@ export default function MakeSentenceGame({
         increaseStreak();
       } else {
         playSound('wrong');
+        const newHearts = hearts - 1;
+        setHearts(newHearts);
         console.log('[MakeSentenceTyped] Incorrect - resetting consecutiveCorrect');
         // Don't reset streak on incorrect answers for daily streak
         // But do reset the consecutive correct answers streak
@@ -224,10 +252,18 @@ export default function MakeSentenceGame({
             [gameData.currentIndex]: true
           }));
         }
+
+        if (newHearts <= 0) {
+          setOutOfHearts(true);
+        }
       }
       
-      // Check if game is over
-      if (updatedGameData.currentIndex >= updatedGameData.totalQuestions) {
+      // Check if game is over (but not if out of hearts, that's a different state)
+      if (
+        !outOfHearts &&
+        result.isCorrect &&
+        (gameData?.currentIndex ?? 0) + 1 >= (gameData?.totalQuestions ?? 0)
+      ) {
         setGameOver(true);
         if (onComplete) {
           onComplete(updatedGameData.score, isLevelCompleted());
@@ -244,10 +280,32 @@ export default function MakeSentenceGame({
   
   // Handle continuing to next word
   const handleNextWord = () => {
+    if (!gameData) return;
+
+    // Only advance if the answer was correct.
+    if (currentResult?.isCorrect) {
+      const nextIndex = gameData.currentIndex + 1;
+      if (nextIndex >= gameData.totalQuestions) {
+        setGameOver(true);
+      } else {
+        setGameData({ ...gameData, currentIndex: nextIndex });
+      }
+    }
+
     setInputSentence('');
     setCurrentResult(null);
     
     // Focus on input field
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const handleTryAgain = () => {
+    setInputSentence('');
+    setCurrentResult(null);
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus();
@@ -266,6 +324,8 @@ export default function MakeSentenceGame({
       setConsecutiveCorrect(0);
       setStreakBonusActive(false);
       setStreakBonusDisabled(false);
+      setHearts(initialHearts);
+      setOutOfHearts(false);
       
       if (!data || !data.profile || !data.profile.gradeLevel) return;
       const grade = data.profile.gradeLevel as any;
@@ -354,7 +414,23 @@ export default function MakeSentenceGame({
   }
   
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center relative">
+      {outOfHearts && (
+        <div className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm rounded-2xl border flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-2xl md:text-3xl font-extrabold mb-4">Naubos na ang buhay mo!</div>
+          <div className="flex gap-3 text-4xl mb-6">
+            <span className="text-gray-300">💔</span>
+            <span className="text-gray-300">💔</span>
+            <span className="text-gray-300">💔</span>
+          </div>
+          <Button
+            onClick={() => window.location.replace('/challenges/make-sentence')}
+            className="rounded-full px-8 py-3 bg-duolingo-green text-white hover:bg-green-600"
+          >
+            Bumalik sa Main Menu
+          </Button>
+        </div>
+      )}
       {/* Character + title + helper */}
       {currentWord && !currentResult && (
         <div className="max-w-5xl w-full mx-auto mb-4">
@@ -445,9 +521,15 @@ export default function MakeSentenceGame({
 
           {/* Next button */}
           <div className="flex justify-end">
-            <Button onClick={handleNextWord} className="rounded-[24px] px-6 py-3">
-              {gameData.currentIndex < gameData.totalQuestions - 1 ? 'Susunod na Salita' : 'Tapusin ang Laro'}
-            </Button>
+            {currentResult.isCorrect ? (
+              <Button onClick={handleNextWord} className="rounded-[24px] px-6 py-3">
+                {gameData.currentIndex < gameData.totalQuestions - 1 ? 'Susunod na Salita' : 'Tapusin ang Laro'}
+              </Button>
+            ) : (
+              <Button onClick={handleTryAgain} className="rounded-[24px] px-6 py-3">
+                Subukan Muli
+              </Button>
+            )}
           </div>
         </div>
       )}

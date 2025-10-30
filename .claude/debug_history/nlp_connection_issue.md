@@ -29,18 +29,18 @@ Result: No Python process was running for the NLP server
 ```bash
 ./start-nlp.sh
 ```
-Result: Error - "calamancy module not found"
+Result: Error - "spacy module not found"
 
 ### 3. Checking Python Dependencies
 ```bash
-pip list | grep calamancy
+pip list | grep spacy
 ```
-Result: No calamancy package installed
+Result: No spacy package installed
 
 ## Solution
 1. Installed the missing Python dependencies:
 ```bash
-pip install calamancy flask flask-cors
+pip install spacy flask flask-cors
 ```
 
 2. Started the NLP server:
@@ -55,7 +55,7 @@ curl http://localhost:6000/health
 Result: {"status": "ok", "message": "NLP service is running"}
 
 ## Root Cause
-The Python dependencies were not installed, specifically the calamancy NLP model package which is essential for the backend functionality.
+The Python dependencies were not installed, specifically the spacy NLP model package which is essential for the backend functionality.
 
 ## Prevention
 - Added clear dependency installation instructions to README.md

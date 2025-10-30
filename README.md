@@ -16,7 +16,6 @@ A fun and interactive web application for learning Tagalog through gamified chal
   - Persistent user progress via Firebase Firestore
 
 - **User Authentication**:
-  - Email and password login
   - Google authentication
   - Secure user profiles
  
@@ -51,46 +50,14 @@ A fun and interactive web application for learning Tagalog through gamified chal
 
 You can start the application using our convenient scripts:
 
-#### Option 1: All-in-one launcher (recommended)
-
-Run the following command to check dependencies, start the NLP API, and launch the Next.js frontend:
+#### Run the following command to check dependencies, start the NLP API, and launch the Next.js frontend:
 
 ```bash
-./start-nlp.sh && npm run dev
+python app.py && npm run dev
 ```
 
-#### Option 2: Start components separately
+Open your browser and visit: `http://localhost:3000`
 
-1. Start the NLP API:
-   ```bash
-   ./start-nlp.sh 
-   ```
-
-2. In a new terminal, start the Next.js development server:
-   ```bash
-   npm run dev
-   ```
-
-3. Open your browser and visit: `http://localhost:3000`
-
-### Testing the NLP Integration
-
-To verify that the CalamanCy NLP model is working correctly:
-
-1. First validate that the model loads correctly:
-   ```bash
-   python test-nlp.py
-   ```
-
-2. Test the connection between frontend and backend:
-   ```bash
-   python test-connection.py
-   ```
-
-3. Once the application is running, navigate to the Parts of Speech game:
-   `http://localhost:3000/challenges/multiple-choice`
-
-4. Check if the game shows "AI Analysis" instead of "Basic Analysis" in the UI.
 
 ### Troubleshooting
 
@@ -223,7 +190,6 @@ User data is stored in Firebase Firestore using the following structure:
   - **challengeResults/{resultId}** - Subcollection of challenge results
     - challengeType - Type of challenge
     - score - Points earned
-    - completedAt - Timestamp
     - duration - Time taken to complete
 
 ### Security Rules
@@ -233,12 +199,6 @@ The application uses Firestore Security Rules to ensure that:
 - Challenge results are immutable once created
 - Admin functions are protected
 
-### User Context
-
-The `UserContext` provides access to user data throughout the application:
-- Use the `useUser()` hook to access user data and functions
-- Updates are automatically synchronized with Firestore
-- Challenge results are tracked and stored in real-time
 
 ## Deploy on Vercel
 
@@ -247,31 +207,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 For the Python backend, you can deploy to platforms like:
 - Heroku
 - Google Cloud Run
-- AWS Lambda
+- Cloudflare Tunnel
 
 Remember to update the `NEXT_PUBLIC_CALAMANCY_API_URL` environment variable to point to your deployed Python backend.
-
-## Deploying the NLP Flask API
-
-1) Build and run locally (optional):
-
-```bash
-docker build -t tagalog-nlp-api .
-docker run --rm -it -p 5000:5000 tagalog-nlp-api
-```
-
-2) Deploy the container to a host (choose one):
-- Render: create a Web Service from Dockerfile
-- Railway: deploy via Dockerfile
-- Fly.io: `fly launch` and deploy
-- Cloud Run: `gcloud run deploy --source . --allow-unauthenticated`
-
-3) Set the frontend to use the API:
-- In Vercel project → Settings → Environment Variables, set:
-  - `NEXT_PUBLIC_NLP_API_URL` = `https://<your-nlp-api-host>` (no trailing slash)
-
-4) Re-deploy the Vercel app to pick up the env var.
-
-Notes:
-- The Flask API listens on `PORT` (defaults to 5000).
-- The Next.js app falls back to JS/mock data if the API is unreachable, so user testing still works.
