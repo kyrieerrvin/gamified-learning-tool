@@ -42,23 +42,23 @@ export default function Navbar() {
       const t1 = performance.now();
       console.log('NLP test result:', result);
       
-      // Prefer backend-provided metrics if present
-      if ((result as any)?.metrics) {
-        const metrics = (result as any).metrics;
-        const procMs = metrics?.processing_ms;
-        const mem = metrics?.memory;
-        if (typeof procMs === 'number') {
-          console.log(`[NLP Metrics] Processing time (backend): ${procMs} ms`);
-        }
-        if (mem) {
-          const { rss_before_mb, rss_after_mb, delta_mb } = mem as any;
-          console.log(`[NLP Metrics] Memory (backend): before=${rss_before_mb} MB, after=${rss_after_mb} MB, delta=${delta_mb} MB`);
-        }
-      }
+      // // Prefer backend-provided metrics if present
+      // if ((result as any)?.metrics) {
+      //   const metrics = (result as any).metrics;
+      //   const procMs = metrics?.processing_ms;
+      //   const mem = metrics?.memory;
+      //   if (typeof procMs === 'number') {
+      //     console.log(`[NLP Metrics] Processing time (backend): ${procMs} ms`);
+      //   }
+      //   if (mem) {
+      //     const { rss_before_mb, rss_after_mb, delta_mb } = mem as any;
+      //     console.log(`[NLP Metrics] Memory (backend): before=${rss_before_mb} MB, after=${rss_after_mb} MB, delta=${delta_mb} MB`);
+      //   }
+      // }
       
-      // Always log frontend round-trip as well for visibility
-      const rtMs = Math.round(t1 - t0);
-      console.log(`[NLP Metrics] Frontend round-trip: ${rtMs} ms`);
+      // // Always log frontend round-trip as well for visibility
+      // const rtMs = Math.round(t1 - t0);
+      // console.log(`[NLP Metrics] Frontend round-trip: ${rtMs} ms`);
       
       // Show a method badge based on which processing engine was used
       if (result.method) {

@@ -115,13 +115,13 @@
   },
   {
     "word": "Lapis",
-    "easy": "Nagsusulat si Carlo sa kaniyang kuwarderno gamit ang lapis.",
+    "easy": "Nagsusulat si Carlo gamit ang lapis.",
     "difficult_instruction": "Gumawa ng pangungusap tungkol sa lapis na ginagamit sa pagsusulit.",
     "difficult": "Gumamit si Marco ng lapis sa pagsusulit sa matematika."
   },
   {
     "word": "Papel",
-    "easy": "Ginupit niya ang puting papel gamit ang gunting.",
+    "easy": "Ginupit niya ang puting papel.",
     "difficult_instruction": "Gumawa ng pangungusap tungkol sa papel na ginamit sa paggawa ng poster.",
     "difficult": "Ginamit ni Liza ang makulay na papel sa paggawa ng poster."
   },

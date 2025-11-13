@@ -1,8 +1,10 @@
 import spacy
 import random
+import os
 
-# Load ToCylog model
-tocylog_nlp = spacy.load("./tl_tocylog_trf")
+# Load ToCylog model from the project root
+model_path = os.path.join(os.path.dirname(__file__), '..', 'tl_tocylog_trf')
+tocylog_nlp = spacy.load(model_path)
 
 # Gamification state
 user_points = 0

@@ -1179,7 +1179,7 @@ def get_sentence_words():
         return handle_preflight_request()
     
     try:
-        # Optional grade level filter (real pools loaded from files)
+        # grade level filter (real pools loaded from files)
         grade = request.args.get('grade')
 
         # Select pool based on grade or default to full list
