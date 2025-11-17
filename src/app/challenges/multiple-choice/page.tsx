@@ -75,7 +75,7 @@ export default function MultipleChoicePage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-gray-600"
             >
-              Tukuyin ang bahagi ng pangungusap
+              Tukuyin ang bahagi ng pangungusap.
             </motion.p>
           </div>
         </div>

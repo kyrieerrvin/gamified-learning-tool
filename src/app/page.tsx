@@ -107,7 +107,7 @@ export default function Home() {
                 className="btn-primary hover-scale"
                 onMouseEnter={(e) => attachSparkles(e.currentTarget)}
               >
-                Simulan na
+                Simulan
               </button>
             </div>
           </div>
