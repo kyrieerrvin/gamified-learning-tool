@@ -80,19 +80,19 @@ export default function UserStats({ gameType }: UserStatsProps) {
         <div className="flex-1 grid grid-cols-3 gap-4">
           {/* XP */}
           <div className="bg-blue-50 p-3 rounded-lg border border-duolingo-blue">
-            <div className="text-xs text-duolingo-darkBlue font-medium mb-1">Total XP</div>
+            <div className="text-xs text-duolingo-darkBlue font-medium mb-1">Kabuuang XP</div>
             <div className="text-2xl font-bold text-duolingo-blue">{xp} XP</div>
           </div>
           
           {/* Completion */}
           <div className="bg-green-50 p-3 rounded-lg border border-duolingo-green">
-            <div className="text-xs text-duolingo-darkGreen font-medium mb-1">Completion</div>
+            <div className="text-xs text-duolingo-darkGreen font-medium mb-1">Pagkumpleto</div>
             <div className="text-2xl font-bold text-duolingo-green">{completionPercent}%</div>
           </div>
           
           {/* Levels */}
           <div className="bg-purple-50 p-3 rounded-lg border border-duolingo-purple">
-            <div className="text-xs text-duolingo-darkPurple font-medium mb-1">Levels Completed</div>
+            <div className="text-xs text-duolingo-darkPurple font-medium mb-1">Natapos na Lebel</div>
             <div className="text-2xl font-bold text-duolingo-purple">{completedLevels}/{totalLevels}</div>
           </div>
         </div>
@@ -101,8 +101,8 @@ export default function UserStats({ gameType }: UserStatsProps) {
       {/* Progress bar */}
       <div className="mt-6">
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600">Overall Progress</span>
-          <span className="font-medium">{completedLevels}/{totalLevels} levels</span>
+          <span className="text-gray-600">Kabuuang Usad</span>
+          <span className="font-medium">{completedLevels}/{totalLevels} lebel</span>
         </div>
         <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
           <motion.div 
@@ -116,10 +116,10 @@ export default function UserStats({ gameType }: UserStatsProps) {
       
       {/* Achievement badges */}
       <div className="mt-6 pt-4 border-t border-gray-100">
-        <h3 className="font-bold text-gray-700 mb-3">Achievements</h3>
+        <h3 className="font-bold text-gray-700 mb-3">Mga Nakamit</h3>
         <div className="flex flex-wrap justify-center gap-4">
           <AchievementBadge 
-            title="First Steps"
+            title="Unang Hakbang"
             description="Complete your first level" 
             isUnlocked={
               (gameAchievements && gameAchievements[gameType]?.includes('first-steps')) || 
@@ -128,7 +128,7 @@ export default function UserStats({ gameType }: UserStatsProps) {
             icon="🌱"
           />
           <AchievementBadge 
-            title="Perfect Score"
+            title="Perpekto"
             description="Get 100% on any level" 
             isUnlocked={
               (gameAchievements && gameAchievements[gameType]?.includes('perfect-score')) || 
@@ -137,7 +137,7 @@ export default function UserStats({ gameType }: UserStatsProps) {
             icon="🏆"
           />
           <AchievementBadge 
-            title="Streak Master"
+            title="Matiyaga"
             description="Maintain a 7-day streak" 
             isUnlocked={
               (gameAchievements && gameAchievements[gameType]?.includes('streak-master')) || 
@@ -147,7 +147,7 @@ export default function UserStats({ gameType }: UserStatsProps) {
             icon="🔥"
           />
           <AchievementBadge 
-            title="Section Champion"
+            title="Kampyon ng Seksyon"
             description="Complete all levels in a section" 
             isUnlocked={
               (gameAchievements && gameAchievements[gameType]?.includes('section-champion')) || 
@@ -156,7 +156,7 @@ export default function UserStats({ gameType }: UserStatsProps) {
             icon="⭐"
           />
           <AchievementBadge 
-            title="XP Master"
+            title="Hari ng XP"
             description="Earn 1000 XP" 
             isUnlocked={
               (gameAchievements && gameAchievements[gameType]?.includes('xp-master')) || 

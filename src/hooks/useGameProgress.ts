@@ -44,7 +44,7 @@ export type UserProfile = {
   photoURL: string | null;
   joinDate: string;
   lastActiveDate: string;
-  gradeLevel?: 'G1_2' | 'G3_4' | 'G5_6' | null;
+  gradeLevel?: 'G1' | 'G2' | 'G3' | null;
   preferences: {
     emailNotifications: boolean;
     dailyReminder: boolean;
@@ -177,8 +177,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'streak-bonus',
-      title: 'Get 3 Correct in a Row',
-      description: 'Answer three questions correctly in a row',
+      title: 'Tatlong Sunod-sunod!',
+      description: 'Makakuha ng 3 sunod-sunod na tamang sagot',
       reward: 10,
       progress: 0,
       target: 1,
@@ -187,8 +187,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'complete-games',
-      title: 'Complete 3 Games',
-      description: 'Complete any 3 games today (any score)',
+      title: 'Tatlong laro!',
+      description: 'Makatapos ng 3 laro ngayong araw (anumang puntos)',
       reward: 15,
       progress: 0,
       target: 3,
@@ -197,8 +197,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'perfect-score',
-      title: 'Perfect Score',
-      description: 'Complete a level with a perfect score',
+      title: 'Perpekto!',
+      description: 'Tumapos ng isang level na may perpektong puntos.',
       reward: 20,
       progress: 0,
       target: 1,
@@ -415,6 +415,20 @@ export const useGameProgress = () => {
     }
   };
   
+  const resetQuests = async (gameType: string) => {
+    if (!user?.uid) return;
+    try {
+      const userDocRef = doc(db, 'gameProgress', user.uid);
+      await updateDoc(userDocRef, {
+        [`progress.${gameType}.quests`]: generateDailyQuests(),
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error('[GameProgress] Error resetting quests:', err);
+      throw err;
+    }
+  };
+
   const increaseStreak = async () => {
     if (!user?.uid || !data) return;
     
@@ -581,6 +595,7 @@ export const useGameProgress = () => {
     increaseStreak,
     completeLevel,
     canAccessLevel,
+    resetQuests,
     // Convenience getters
     profile: data?.profile || null,
     score: data?.score || 0,

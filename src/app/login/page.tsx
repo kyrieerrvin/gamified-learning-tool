@@ -43,7 +43,7 @@ export default function Login() {
           </h1>
           
           <p className="text-center mb-6 text-gray-600">
-            Sign in to continue to TagalogLearn
+            Sign in upang makapagpatuloy sa TagalogLearn
           </p>
           
           {error && (

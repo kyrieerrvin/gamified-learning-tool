@@ -76,11 +76,11 @@ export default function ConversationSummaryPage() {
             <div className="mt-5 rounded-xl p-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-full px-6 py-4 text-center shadow bg-[#22C55E] text-white border-2 border-white">
-                  <span className="text-sm font-bold">🧩 Final Points</span>
+                  <span className="text-sm font-bold">🧩 Huling Puntos</span>
                   <div className="text-3xl font-extrabold drop-shadow-sm">{sessionPoints || summary?.points || 0}</div>
                 </div>
                 <div className="rounded-full px-6 py-4 text-center shadow bg-[#2563EB] text-white border-2 border-white">
-                  <span className="text-sm font-bold">🌟 Total Lifetime Points</span>
+                  <span className="text-sm font-bold">🌟 Kabuuang Puntos</span>
                   <div className="text-3xl font-extrabold drop-shadow-sm">{lifetimePoints}</div>
                 </div>
               </div>

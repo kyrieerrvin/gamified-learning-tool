@@ -59,7 +59,7 @@ export default function PlayMakeSentencePage() {
       // Need profile/grade
       if (!data?.profile?.gradeLevel) return;
       try {
-        const grade = data.profile.gradeLevel as 'G1_2' | 'G3_4' | 'G5_6';
+        const grade = data.profile.gradeLevel as 'G1' | 'G2' | 'G3';
         const endpoint = grade ? `/api/challenges/make-sentence/words?grade=${grade}` : '/api/challenges/make-sentence/words';
         const resp = await apiGet<{ words: Array<any>; count: number }>(endpoint);
         const words = Array.isArray(resp?.words) ? resp.words : [];

@@ -61,7 +61,7 @@ export interface POSAnswerVerification {
 export interface SentenceWord {
   id: string;
   word: string;
-  grade?: 'G1_2' | 'G3_4' | 'G5_6';
+  grade?: 'G1' | 'G2' | 'G3';
   description?: string;
   imageUrl?: string;
   svgUrl?: string;

@@ -1,0 +1,302 @@
+[
+  {
+    "word": "Mamamayan",
+    "easy": "Masaya ang mga mamamayan sa pista.",
+    "difficult": "Tumutulong ang bawat mamamayan sa pag-aalaga ng kalikasan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mamamayan."
+  },
+  {
+    "word": "Timpalak",
+    "easy": "Nanalo si Christopher sa timpalak.",
+    "difficult": "Nagbigay ng medalya sa nanalo sa timpalak.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Timpalak."
+  },
+  {
+    "word": "Lungsod",
+    "easy": "Nakatira kami sa lungsod.",
+    "difficult": "Pumunta kami sa lungsod para mamasyal.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lungsod."
+  },
+  {
+    "word": "Lalawigan",
+    "easy": "Masarap ang buhay sa lalawigan.",
+    "difficult": "Mas sariwa ang hangin sa lalawigan kaysa sa lungsod.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lalawigan."
+  },
+  {
+    "word": "Lawa",
+    "easy": "Malinaw ang tubig ng lawa.",
+    "difficult": "May makikitang bangka sa lawa.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lawa."
+  },
+  {
+    "word": "Katamtaman",
+    "easy": "Katamtaman ang lakas ng hangin.",
+    "difficult": "Maganda ang panahon dahil katamtaman lang ang init.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Katamtaman."
+  },
+  {
+    "word": "Bukod-tangi",
+    "easy": "Bukod-tangi ang disenyo nito.",
+    "difficult": "Si Miguel ay bukod-tangi sa pagkanta.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Bukod-tangi."
+  },
+  {
+    "word": "Mithiin",
+    "easy": "May mithiin ang bawat bata.",
+    "difficult": "May mithiin si Ben na makatapos ng pag-aaral.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mithiin."
+  },
+  {
+    "word": "Anunsyo",
+    "easy": "Nagbigay ng anunsyo ang guro.",
+    "difficult": "Nabasa ko ang anunsyo sa pader ng paaralan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Anunsyo."
+  },
+  {
+    "word": "Entablado",
+    "easy": "Umaakyat kami sa entablado.",
+    "difficult": "Nagbigay ng talumpati si Marcos sa entablado.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Entablado."
+  },
+  {
+    "word": "Siyudad",
+    "easy": "Matao sa siyudad ngayon",
+    "difficult": "Pumunta kami sa siyudad para bumili ng kailangan namin.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Siyudad."
+  },
+  {
+    "word": "Paksa",
+    "easy": "Tinukoy namin ang paksa ng talata.",
+    "difficult": "Sumulat kami ng pangungusap tungkol sa paksa.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Paksa."
+  },
+  {
+    "word": "Sining",
+    "easy": "Mahilig ako sa sining.",
+    "difficult": "Nagpinta kami ng larawan sa aming klase sa sining.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Sining"
+  },
+  {
+    "word": "Estilo",
+    "easy": "Simple ang estilo ng aking damit.",
+    "difficult": "Ginamit ko ang makulay na estilo sa aking proyekto.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Estilo"
+  },
+  {
+    "word": "Lansangan",
+    "easy": "May batang naglalaro sa lansangan.",
+    "difficult": "Inayos ng mga manggagawa ang sirang bahagi ng lansangan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lansangan"
+  },
+  {
+    "word": "Pahayagan",
+    "easy": "Maraming balita sa pahayagan",
+    "difficult": "Gumawa kami ng poster gamit ang lumang pahayagan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pahayagan"
+  },
+  {
+    "word": "Kumpas",
+    "easy": "Sinundan ko ang kumpas niya.",
+    "difficult": "Malinaw ang kumpas kaya sabay-sabay kami.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kumpas"
+  },
+  {
+    "word": "Simbolo",
+    "easy": "May simbolo sa mapa.",
+    "difficult": "Ang watawat ay simbolo ng kalayaan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Simbolo"
+  },
+  {
+    "word": "Lawa",
+    "easy": "Nangisda sila sa lawa.",
+    "difficult": "May batang nagbibilang ng isda sa lawa.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lawa"
+  },
+  {
+    "word": "Lihim",
+    "easy": "May lihim na itinatago si Rico.",
+    "difficult": "Inilagay niya ang lihim sa kanyang kwaderno.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lihim"
+  },
+  {
+    "word": "Gusali",
+    "easy": "Bagong pintura ang gusali.",
+    "difficult": "Tumayo kami sa harap ng malaking gusali.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Gusali"
+  },
+  {
+    "word": "Sambit",
+    "easy": "Mahina ang sambit niya.",
+    "difficult": "Nagulat si Liza sa sambit ng kaibigan niya.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Sambit"
+  },
+  {
+    "word": "Aktibo",
+    "easy": "Si Mark ay aktibo na sumasagot sa klase.",
+    "difficult": "Aktibo ang mga bata sa pagtakbo sa palaruan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Aktibo"
+  },
+  {
+    "word": "Pook",
+    "easy": "Maraming pasyalan sa aming pook.",
+    "difficult": "Tahimik ang pook na iyon tuwing umaga.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pook."
+  },
+  {
+    "word": "Saklolo",
+    "easy": "Humingi siya ng saklolo.",
+    "difficult": "Nagbigay ng saklolo ang mga tao sa nasugatan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Saklolo"
+  },
+  {
+    "word": "Matalik",
+    "easy": "Siya ang matalik kong kaibigan.",
+    "difficult": "Nagbigay siya ng regalo sa kanyang matalik na kaibigan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Matalik"
+  },
+  {
+    "word": "Tukso",
+    "easy": "Walang mabuting dulot ang tukso.",
+    "difficult": "Nasaktan si Ben dahil sa tukso ng kaklase.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tukso"
+  },
+  {
+    "word": "Asul",
+    "easy": "Kulay asul ang langit ngayon.",
+    "difficult": "Nagsuot si Leah ng asul na damit.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Asul"
+  },
+  {
+    "word": "Ektarya",
+    "easy": "Isang ektarya ang lupa.",
+    "difficult": "Tinaniman nila ang ektarya ng gulay.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Ektarya"
+  },
+  {
+    "word": "Kalamidad",
+    "easy": "Ang bagyo ay isang uri ng kalamidad.",
+    "difficult": "Nayanig ang barangay dahil sa lindol.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kalamidad"
+  },
+  {
+    "word": "Marupok",
+    "easy": "Marupok ang kahoy dahil luma na.",
+    "difficult": "Nabali ang marupok na sanga ng puno.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Marupok"
+  },
+  {
+    "word": "Talata",
+    "easy": "Sumulat ako ng mahabang talata.",
+    "difficult": "Ipinaliwanag ng guro ang talata sa aklat.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Talata."
+  },
+  {
+    "word": "Panuto",
+    "easy": "Basahin nang maigi ang panuto.",
+    "difficult": "Ipinakita ng guro ang panuto sa pisara.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Panuto"
+  },
+  {
+    "word": "Pangkat",
+    "easy": "Ako ang lider ng pangkat.",
+    "difficult": "Nagtulungan ang bawat pangkat upang matapos ang gawain.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pangkat"
+  },
+  {
+    "word": "Kaharian",
+    "easy": "May malaking kastilyo sa kaharian.",
+    "difficult": "Naninirahan ang hari at reyna sa kaharian.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaharian"
+  },
+  {
+    "word": "Himig",
+    "easy": "Masaya ang himig ng awit.",
+    "difficult": "Napangiti kami sa himig ng awiting bata.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Himig"
+  },
+  {
+    "word": "Lagapak",
+    "easy": "Malakas ang lagapak ng kanilang palakpak.",
+    "difficult": "Lagapak ang tunog ng kahoy nang mahulog ito.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lagapak"
+  },
+  {
+    "word": "Pinuno",
+    "easy": "Siya ang pinuno ng klase.",
+    "difficult": "Sinunod namin ang utos ng aming pinuno.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pinuno"
+  },
+  {
+    "word": "Dula",
+    "easy": "Maganda ang dula na napanood namin.",
+    "difficult": "Nagpraktis kami para sa dula ng klase.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Dula"
+  },
+  {
+    "word": "Mungkahi",
+    "easy": "Inilahad niya ang mungkahi para sa proyekto.",
+    "difficult": "Pinili namin ang pinakamagandang mungkahi.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mungkahi"
+  },
+  {
+    "word": "Kultura",
+    "easy": "Mahalaga ang kultura natin.",
+    "difficult": "Tinuturuan kami sa paaralan tungkol sa kultura ng Pilipinas.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kultura"
+  },
+  {
+    "word": "Kabayanihan",
+    "easy": "Kabayanihan ang ipinakita niya.",
+    "difficult": "Ang kabayanihan ay makikita sa simpleng pagtulong sa kapwa.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kabayanihan"
+  },
+  {
+    "word": "Kuwintas",
+    "easy": "Nawala ang kuwintas ko.",
+    "difficult": "Ibinigay ni ate ang kuwintas niya sa akin.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kuwintas"
+  },
+  {
+    "word": "Plaza",
+    "easy": "May bandang tumutugtog sa plaza.",
+    "difficult": "Pinanood namin ang pagtatanghal sa gitna ng plaza.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Plaza"
+  },
+  {
+    "word": "Pista",
+    "easy": "Nagpalipad ang mga bata ng saranggola sa pista.",
+    "difficult": "Naengganyo ang lahat sa parada ng pista",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pista"
+  },
+  {
+    "word": "Komunidad",
+    "easy": "Nagkakaisa ang mga tao sa komunidad dito.",
+    "difficult": "Nagtanim ng puno ang komunidad upang mapaganda ang lugar.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Komunidad"
+  },
+  {
+    "word": "Takdang-aralin",
+    "easy": "Nagbigay ng takdang-aralin ang aming guro.",
+    "difficult": "Pinag-aralan ko ang takdang-aralin nang mabuti.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Takdang-aralin"
+  },
+  {
+    "word": "Liham",
+    "easy": "Sumulat ako ng liham para sa aking kaibigan.",
+    "difficult": "Maingat kong inilagay ang liham sa sobre.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Liham"
+  },
+  {
+    "word": "Ugnayan",
+    "easy": "Maganda ang ugnayan ng grupo namin.",
+    "difficult": "Nakikita ang ugnayan ng mga bata sa kanilang pagtutulungan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Ugnayan"
+  },
+  {
+    "word": "Lampara",
+    "easy": "Kumikinang ang lampara sa dilim ng gabi.",
+    "difficult": "Inilipat ni Ana ang lampara sa gilid ng kama.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lampara"
+  }
+]

@@ -76,7 +76,7 @@ export default function ConsentModal({ open, onAccept, onDecline }: ConsentModal
       {/* Modal content */}
       <div className="relative bg-white rounded-xl shadow-xl max-w-2xl w-[92%] max-h-[85vh] flex flex-col">
         <div className="flex items-start justify-between p-5 border-b border-gray-200">
-          <h2 id="consent-modal-title" className="text-xl font-bold">Data Privacy Notice</h2>
+          <h2 id="consent-modal-title" className="text-xl font-bold">Paunawa sa Privacy ng Datos</h2>
           <button
             aria-label="Close"
             className="text-gray-500 hover:text-gray-700"
@@ -88,46 +88,46 @@ export default function ConsentModal({ open, onAccept, onDecline }: ConsentModal
         </div>
 
         <div className="p-5 overflow-y-auto space-y-4" aria-live="polite">
-          <h3 className="text-lg font-semibold">Terms and Conditions & Privacy Notice</h3>
+          <h3 className="text-lg font-semibold">Mga Tuntunin at Kundisyon at Paalala sa Pribasya</h3>
           <p>
-            Welcome to TagalogLearn, a gamified learning platform that helps users practice Tagalog through interactive translation and conversation challenges. Please read these terms carefully before using the game.
+            Maligayang pagdating sa TagalogLearn, isang plataporma na may mga hamon na tumutulong sa mga gusto magsanay ng Tagalog. Mangyaring basahin nang mabuti ang mga tuntunin bago gamitin ang laro.
           </p>
-          <h4 className="font-semibold">1. Purpose</h4>
+          <h4 className="font-semibold">1. Layunin</h4>
           <p>
-            This platform is designed for educational and research use to promote Tagalog language learning through gamified experiences powered by Natural Language Processing (NLP). By using this application, you agree to participate in gameplay that involves automated responses and progress tracking.
+            Ang platform na ito ay ginawa para sa layuning pang-edukasyon at pananaliksik upang mapalawak ang pagkatuto ng wikang Tagalog sa masayang paraan gamit ang paraan ng pag-laro na pinapagana ng Natural Language Processing (NLP). Sa paggamit ng application, sumasang-ayon kang makilahok sa takbo ng laro na may kasamang progress tracking.
           </p>
-          <h4 className="font-semibold">2. Data Collection</h4>
-          <p>To enhance user experience and monitor learning progress, the game may collect non-personal data, including:</p>
+          <h4 className="font-semibold">2. Koleksiyon ng Datos</h4>
+          <p>Upang mapahusay ang karanasan ng gumagamit at masubaybayan ang pag-unlad sa pag-aaral, maaaring mangolekta ang laro ng hindi personal na datos gaya ng:</p>
           <ul className="list-disc pl-6 space-y-1">
-            <li>Gameplay scores and achievements</li>
-            <li>Level progression</li>
-            <li>Completion data</li>
+            <li>Mga puntos at mga parangal</li>
+            <li>Pag-angat ng antas</li>
+            <li>Datos ng natapos na gawain</li>
           </ul>
           <p>
-            All data collected are anonymous and cannot identify individual users. We do not collect or store real names, email addresses, or other personal identifiers within the game environment.
+            Lahat ng nakokolektang datos ay anonymous at hindi maaaring gamitin upang makilala ang sinumang indibidwal. Hindi kami nangongolekta o nag-iimbak ng tunay na pangalan, email address, o iba pang personal na impormasyon sa loob ng laro.
           </p>
-          <h4 className="font-semibold">3. Data Privacy and Compliance</h4>
+          <h4 className="font-semibold">3. Pribasya at Pagsunod sa Batas</h4>
           <p>
-            This application complies with the Data Privacy Act of 2012 (Republic Act No. 10173) and the regulations of the National Privacy Commission (NPC) of the Philippines. Anonymous gameplay data are processed solely for research, analytics, and educational improvement purposes.
+            Ang application na ito ay sumusunod sa Data Privacy Act of 2012 (Republic Act No. 10173) at sa mga alituntunin ng National Privacy Commission (NPC). Ang anonymous na datos ay pinoproseso lamang para sa pananaliksik, pagsusuri, at pagpapabuti ng sistema.
           </p>
-          <h4 className="font-semibold">4. User Consent</h4>
+          <h4 className="font-semibold">4. Pahintulot ng Gumagamit</h4>
           <p>
-            By selecting “I Agree” or continuing to play, you voluntarily consent to the collection and processing of your anonymous gameplay data as described in this notice. If you do not wish to provide consent, you may close the game or select “Cancel.”
+            Sa pagpili ng “Sumasang-ayon Ako” o sa pagpapatuloy ng paglalaro, kusang loob mong pinapahintulutan ang pagkuha at pagproseso ng iyong anonymous gameplay data ayon sa nakasaad dito. Kung hindi ka sang-ayon, maaari mong pindutin ang “Kanselahin.”
           </p>
-          <h4 className="font-semibold">5. Data Security</h4>
+          <h4 className="font-semibold">5. Seguridad ng Datos</h4>
           <p>
-            All stored data are protected using secure systems and encryption through Firebase and related backend services. Access to data is limited to authorized developers and researchers for analysis and improvement of the system.
+            Lahat ng datos ay iniimbak gamit ang ligtas na sistema at encryption sa pamamagitan ng Firebase at iba pang backend services. Ang pag-suri sa datos ay limitado lamang sa awtorisadong tagapagunlad ng aplikasyon at mananaliksik para sa pagsusuri at pagpapabuti ng aplikasyon.
           </p>
-          <h4 className="font-semibold">6. Third-Party Services</h4>
+          <h4 className="font-semibold">6. Mga Serbisyong Third-Party</h4>
           <p>
-            The game may use external services (such as Firebase Authentication and NLP APIs) that follow their own privacy and security standards. These services comply with global and Philippine data-protection principles.
+            Maaaring gumamit ang laro ng mga panlabas na serbisyo (tulad ng Firebase Authentication at mga NLP API) na may sarili nilang patakaran sa pribasya at seguridad. Ang mga serbisyong ito ay sumusunod sa mga pandaigdigan at pambansang prinsipyo sa proteksiyon ng datos.
           </p>
-          <h4 className="font-semibold">7. Contact Information</h4>
+          <h4 className="font-semibold">7. Impormasyon para sa Pakikipag-ugnayan</h4>
           <p>
-            For questions, feedback, or data concerns, you may contact the project team at: christopher_lamberte@dlsu.edu.ph
+            Para sa mga katanungan, puna, o alalahanin tungkol sa datos, maaari kaming makontak sa: christopher_lamberte@dlsu.edu.ph
           </p>
           <p className="text-sm text-gray-600">
-            Digital Compliance Note: This notice is issued in accordance with the Data Privacy Act of 2012 (R.A. 10173) and the Implementing Rules and Regulations of the National Privacy Commission (NPC), Philippines.
+            Note: Ang paunang abisong ito ay alinsunod sa Data Privacy Act of 2012 (R.A. 10173) at sa Implementing Rules and Regulations ng National Privacy Commission (NPC), Pilipinas.
           </p>
 
         </div>
@@ -137,14 +137,14 @@ export default function ConsentModal({ open, onAccept, onDecline }: ConsentModal
             className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
             onClick={onDecline}
           >
-            Cancel
+            Kanselahin
           </button>
           <button
             className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
             onClick={onAccept}
             ref={lastFocusableRef}
           >
-            I Agree and Confirm
+            Sumasang-ayon Ako
           </button>
         </div>
       </div>

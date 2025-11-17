@@ -12,7 +12,16 @@ import { playSound, preloadSounds } from '@/utils/sounds';
 // @ts-ignore
 import mulcho from '../../../../assets/mulcho.gif';
 
-type GradeLevel = 'G1_2' | 'G3_4' | 'G5_6';
+type GradeLevel = 'G1' | 'G2' | 'G3';
+
+function normalizeGrade(grade?: string | null): GradeLevel | null {
+  if (!grade) return null;
+  if (grade === 'G1' || grade === 'G2' || grade === 'G3') return grade;
+  if (grade === 'G1_2') return 'G1';
+  if (grade === 'G3_4') return 'G2';
+  if (grade === 'G5_6') return 'G3';
+  return null;
+}
 
 type Target = {
   pos: string;
@@ -110,9 +119,9 @@ export default function PartsOfSpeechGame({
 
   // Initialize sessionGrade once when profile data is available, then keep it stable
   useEffect(() => {
-    const g = gameData?.profile?.gradeLevel as GradeLevel | undefined;
-    if (!sessionGrade && (g === 'G1_2' || g === 'G3_4' || g === 'G5_6')) {
-      setSessionGrade(g);
+    const normalized = normalizeGrade(gameData?.profile?.gradeLevel as string | undefined);
+    if (!sessionGrade && normalized) {
+      setSessionGrade(normalized);
     }
   }, [gameData?.profile?.gradeLevel, sessionGrade]);
 
@@ -384,7 +393,7 @@ export default function PartsOfSpeechGame({
           </div>
           {currentTarget.mode === 'exact' && typeof required === 'number' && (
             <div className="mt-2 text-sm md:text-base text-gray-600">
-              {lockedCount}/{required} {currentTarget.label_tl} tama
+              {lockedCount}/{required} tamang {currentTarget.label_tl} 
             </div>
           )}
         </div>
@@ -453,7 +462,7 @@ export default function PartsOfSpeechGame({
                     disabled={!canSubmit}
                     className="font-sans tracking-tight rounded-[24px] px-8 py-4 text-white font-extrabold text-[16px] md:text-[18px] bg-[#3B82F6] hover:bg-[#2563EB] shadow-md shadow-blue-200"
                   >
-                    I-check
+                    Suriin
                   </Button>
                 </motion.div>
               </motion.div>

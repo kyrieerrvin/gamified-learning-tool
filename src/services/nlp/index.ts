@@ -276,11 +276,23 @@ export async function checkNlpHealth(): Promise<{
  * Fetches words for the Make a Sentence game
  * @returns Promise with an array of words with descriptions
  */
-export async function fetchSentenceWords(grade?: 'G1_2' | 'G3_4' | 'G5_6'): Promise<SentenceWord[]> {
+type GradeParam = 'G1' | 'G2' | 'G3';
+
+function normalizeGradeParam(grade?: string): GradeParam | undefined {
+  if (!grade) return undefined;
+  if (grade === 'G1' || grade === 'G2' || grade === 'G3') return grade;
+  if (grade === 'G1_2') return 'G1';
+  if (grade === 'G3_4') return 'G2';
+  if (grade === 'G5_6') return 'G3';
+  return undefined;
+}
+
+export async function fetchSentenceWords(grade?: GradeParam | string): Promise<SentenceWord[]> {
   try {
+    const normalizedGrade = normalizeGradeParam(grade);
     // Try proxy endpoint first
-    const proxyUrl = grade
-      ? `${API_ENDPOINTS.MAKE_SENTENCE_WORDS_PROXY}?grade=${grade}`
+    const proxyUrl = normalizedGrade
+      ? `${API_ENDPOINTS.MAKE_SENTENCE_WORDS_PROXY}?grade=${normalizedGrade}`
       : API_ENDPOINTS.MAKE_SENTENCE_WORDS_PROXY;
     console.log(`Fetching sentence words via Next.js API route`);
     
@@ -290,8 +302,8 @@ export async function fetchSentenceWords(grade?: 'G1_2' | 'G3_4' | 'G5_6'): Prom
       console.warn("Next.js proxy route failed for sentence words, trying direct API:", proxyError);
       
       // Fall back to direct API connection
-      const directUrl = grade
-        ? `${API_ENDPOINTS.MAKE_SENTENCE_WORDS_ENDPOINT}?grade=${grade}`
+      const directUrl = normalizedGrade
+        ? `${API_ENDPOINTS.MAKE_SENTENCE_WORDS_ENDPOINT}?grade=${normalizedGrade}`
         : API_ENDPOINTS.MAKE_SENTENCE_WORDS_ENDPOINT;
       return await apiGet<SentenceWord[]>(directUrl);
     }

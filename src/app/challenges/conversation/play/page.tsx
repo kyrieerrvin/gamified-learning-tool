@@ -215,7 +215,7 @@ export default function ConversationPlayPage() {
           <div className="bg-gradient-to-r from-blue-600 to-yellow-400 px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-2xl">👩‍🏫</div>
-              <h2 className="text-white font-bold text-lg">💬 Practice with PinoyPal!</h2>
+              <h2 className="text-white font-bold text-lg">💬 Mag-sanay kasama si PinoyPal!</h2>
             </div>
             <div className="relative">
               <div className="flex items-center gap-2 text-white text-sm">
@@ -325,14 +325,14 @@ export default function ConversationPlayPage() {
                 onKeyDown={onKey}
               />
               <Button onClick={send} disabled={loading} className="bg-yellow-400 hover:bg-green-500 text-gray-900 font-semibold rounded-full px-6 py-3 text-base lg:text-lg">
-                {loading ? '...' : 'Send'} <span className="ml-1">📨</span>
+                {loading ? '...' : 'Isumite'} <span className="ml-1">📨</span>
               </Button>
             </div>
 
             {/* End conversation */}
             <div className="mt-4 flex justify-center">
               <Button variant="secondary" onClick={endConversation} className="rounded-full bg-blue-100 hover:bg-blue-200 px-6 py-3 text-base">
-                End Conversation
+                Tapusin ang Usapan
               </Button>
             </div>
           </div>

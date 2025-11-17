@@ -15,12 +15,10 @@ import { POSGameData } from '@/types/game/index';
  * @param count Number of questions to fetch
  * @returns Game data with words
  */
-export async function fetchMakeSentenceGame(count: number = 10, gradeLevel?: 'G1_2' | 'G3_4' | 'G5_6'): Promise<MakeSentenceGameData> {
+export async function fetchMakeSentenceGame(count: number = 10, gradeLevel?: 'G1' | 'G2' | 'G3'): Promise<MakeSentenceGameData> {
   try {
     // Call the API to get words, forwarding the grade level
-    const endpoint = gradeLevel
-      ? `/api/challenges/make-sentence/words?grade=${gradeLevel}`
-      : '/api/challenges/make-sentence/words';
+    const endpoint = `/api/challenges/make-sentence/words?grade=${gradeLevel}&count=${count}`;
     const response = await apiGet<{words: Array<{word: string, description: string}>}>(endpoint);
     const sourceWords = response.words;
     
@@ -170,10 +168,10 @@ export function skipMakeSentenceQuestion(gameData: MakeSentenceGameData): MakeSe
  * @param difficulty The difficulty level ('easy', 'medium', 'hard')
  * @returns Game data for multiple choice POS game
  */
-export async function fetchPartsOfSpeechGame(_difficulty?: string, grade?: 'G1_2' | 'G3_4' | 'G5_6'): Promise<POSGameData> {
+export async function fetchPartsOfSpeechGame(_difficulty?: string, grade?: 'G1' | 'G2' | 'G3'): Promise<POSGameData> {
   try {
     // Call the API to get POS game data; grade takes precedence
-    const url = grade ? `/api/challenges/pos-game?grade=${grade}` : `/api/challenges/pos-game?difficulty=medium`;
+    const url = `/api/challenges/pos-game?difficulty=${_difficulty}&grade=${grade}`;
     const response = await apiGet<POSGameData>(url);
     console.log('Successfully fetched POS game data from API');
     return response;

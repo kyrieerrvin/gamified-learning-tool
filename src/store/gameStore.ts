@@ -49,7 +49,7 @@ export type UserProfile = {
   joinDate: string;
   lastActiveDate: string;
   // New: grade level onboarding selection; null until user picks one
-  gradeLevel?: 'G1_2' | 'G3_4' | 'G5_6' | null;
+  gradeLevel?: 'G1' | 'G2' | 'G3' | null;
   preferences: {
     emailNotifications: boolean;
     dailyReminder: boolean;
@@ -214,8 +214,8 @@ const generateDailyQuests = (): DailyQuest[] => {
   return [
     {
       id: 'streak-bonus',
-      title: 'Get 3 Correct in a Row',
-      description: 'Answer three questions correctly in a row',
+      title: 'Tatlong Sunod-sunod!',
+      description: 'Makakuha ng 3 sunod-sunod na tamang sagot',
       reward: 10,
       progress: 0,
       target: 1, // Just needs to be achieved once
@@ -224,8 +224,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'complete-games',
-      title: 'Complete 3 Games',
-      description: 'Complete any 3 games today (any score)',
+      title: 'Tatlong laro!',
+      description: 'Makatapos ng 3 laro ngayong araw (anumang puntos)',
       reward: 15,
       progress: 0,
       target: 3,
@@ -234,8 +234,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'perfect-score',
-      title: 'Perfect Score',
-      description: 'Complete a level with a perfect score',
+      title: 'Perpekto!',
+      description: 'Tumapos ng isang level na may perpektong puntos.',
       reward: 20,
       progress: 0,
       target: 1,

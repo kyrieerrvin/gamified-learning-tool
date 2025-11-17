@@ -75,7 +75,7 @@ export default function MultipleChoicePage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-gray-600"
             >
-              Tukuyin ang bahagi ng pangungusap sa Tagalog
+              Tukuyin ang bahagi ng pangungusap
             </motion.p>
           </div>
         </div>
@@ -83,9 +83,9 @@ export default function MultipleChoicePage() {
         {/* Tab navigation - icon+label with animated underline */}
         <div className="bg-white rounded-xl shadow mb-4 p-1.5 flex justify-center max-w-2xl mx-auto">
           {([
-            { key: 'learning', label: 'Learning Path', icon: '🗺️' },
-            { key: 'quests', label: 'Daily Quests', icon: '⭐' },
-            { key: 'stats', label: 'Achievements', icon: '🏅' },
+            { key: 'learning', label: 'Pag-unlad', icon: '🗺️' },
+            { key: 'quests', label: 'Mga Misyon', icon: '⭐' },
+            { key: 'stats', label: 'Mga Nakamit', icon: '🏅' },
           ] as const).map((tab) => (
             <button
               key={tab.key}

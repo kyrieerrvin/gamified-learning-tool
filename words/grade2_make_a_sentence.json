@@ -1,0 +1,302 @@
+[
+  {
+    "word": "Makitid",
+    "easy": "Makitid ang daan.",
+    "difficult": "Naglakad ang bata sa makitid na kalsada.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Makitid"
+  },
+  {
+    "word": "Burol",
+    "easy": "Umaakyat kami sa burol.",
+    "difficult": "Makikita ang maliit na ilog mula sa tuktok ng burol.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Burol"
+  },
+  {
+    "word": "Bundok",
+    "easy": "Mataas ang bundok.",
+    "difficult": "Makikita sa bundok ang maraming uri ng hayop.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Bundok"
+  },
+  {
+    "word": "Pulo",
+    "easy": "Ang pulo ay napapalibutan ng tubig.",
+    "difficult": "Ang Luzon ang pinakamalaki na pulo sa Pilipinas.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pulo"
+  },
+  {
+    "word": "Posporo",
+    "easy": "Hindi dapat paglaruan ang posporo.",
+    "difficult": "Kumuha si nanay ng posporo upang sindihan ang kandila.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Posporo"
+  },
+  {
+    "word": "Radyo",
+    "easy": "May musika sa radyo.",
+    "difficult": "Isinara ni kuya ang radyo dahil masyadong maingay.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Radyo"
+  },
+  {
+    "word": "Walis",
+    "easy": "Mayroon walis sa kusina.",
+    "difficult": "Ginamit ko ang walis para linisin ang sahig sa sala.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Walis"
+  },
+  {
+    "word": "Timba",
+    "easy": "Puno ng tubig ang timba.",
+    "difficult": "Nalaglag ang timba at kumalat ang tubig sa sahig.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Timba"
+  },
+  {
+    "word": "Kalabaw",
+    "easy": "Malakas ang kalabaw.",
+    "difficult": "Nagpapahinga ang kalabaw sa ilalim ng puno tuwing tanghali",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kalabaw"
+  },
+  {
+    "word": "Kambing",
+    "easy": "Pinapakain ni tatay ang kambing.",
+    "difficult": "Umakyat ang kambing sa mabatong lugar upang humanap ng pagkain.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kambing"
+  },
+  {
+    "word": "Maasim",
+    "easy": "Maasim ang sampalok.",
+    "difficult": "Napapikit ako dahil sobrang maasim na sabaw.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Maasim"
+  },
+  {
+    "word": "Maalat",
+    "easy": "Ayaw ko ng maalat na pagkain.",
+    "difficult": "Maalat ang ulam namin ngayon.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Maalat"
+  },
+  {
+    "word": "Masigla",
+    "easy": "Masigla ang klase namin ngayon.",
+    "difficult": "Masigla si Maria sa pagsagot ng mga gawain sa klase.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masigla"
+  },
+  {
+    "word": "Mahina",
+    "easy": "Mahina ang boses ni Lito.",
+    "difficult": "Mahina ang tunog ng telepono kaya hindi ko agad narinig.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mahina"
+  },
+  {
+    "word": "Magaspang",
+    "easy": "Magaspang ang sahig sa labas.",
+    "difficult": "Magaspang ang buhangin kaya dahan-dahan akong naglakad.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Magaspang"
+  },
+  {
+    "word": "Buhat",
+    "easy": "Buhat ko ang aking bag.",
+    "difficult": "Buhat-buhat niya ang basekt na puno ng pagkain.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Buhat"
+  },
+  {
+    "word": "Pato",
+    "easy": "Lumalangoy ang pato sa tubig.",
+    "difficult": "Ring ni Bentong ang tunog ng mga pato.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pato"
+  },
+  {
+    "word": "Tula",
+    "easy": "Mahilig akong gumawa ng tula.",
+    "difficult": "Sumulat kami ng tula tungkol sa aming pamilya.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tula"
+  },
+  {
+    "word": "Palayan",
+    "easy": "Nagtatrabaho si tatay sa palayan.",
+    "difficult": "Nag-aani ang mga magsasaka sa palayan tuwing tag-araw.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Palayan"
+  },
+  {
+    "word": "Kwaderno",
+    "easy": "Dinala ko ang kwaderno sa silid-aralan.",
+    "difficult": "Pinakita ko sa guro ang sagot na isinulat ko sa kwaderno.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang kwaderno"
+  },
+  {
+    "word": "Tansan",
+    "easy": "Nakita ko ang tansan sa kalsada.",
+    "difficult": "Inipon namin ang mga tansan para sa aming proyekto sa klase.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tansan"
+  },
+  {
+    "word": "Poso",
+    "easy": "Malinis ang tubig sa poso.",
+    "difficult": "Nag-igib kami ng tubig sa poso para sa pagtatanim.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Poso"
+  },
+  {
+    "word": "Dalampasigan",
+    "easy": "Malamig ang hangin sa dalampasigan.",
+    "difficult": "Maingay ang alon sa dalampasigan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Dalampasigan"
+  },
+  {
+    "word": "Simbahan",
+    "easy": "Tahimik sa loob ng simbahan.",
+    "difficult": "Nagtitipon ang mga tao sa simbahan tuwing Linggo.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Simbahan"
+  },
+  {
+    "word": "Gubat",
+    "easy": "Maraming puno sa gubat.",
+    "difficult": "Nakita namin ang ilog sa loob ng gubat.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Gubat"
+  },
+  {
+    "word": "Tahanan",
+    "easy": "Ang ina ay ilaw ng tahanan.",
+    "difficult": "Umuuwi ako sa tahanan matapos mag-aral.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tahanan"
+  },
+  {
+    "word": "Palaka",
+    "easy": "Ang palaka ay mataas tumalon.",
+    "difficult": "Nagtago ang palaka sa likod ng damo.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Palaka"
+  },
+  {
+    "word": "Pagong",
+    "easy": "Mabagal gumalaw ang pagong.",
+    "difficult": "Dahan-dahang naglakad ang pagong papunta sa tubig.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pagong"
+  },
+  {
+    "word": "Kintab",
+    "easy": "Makintab ang bagong sapatos ni Loloy.",
+    "difficult": "Ang kintab ng sahig dahil bagong punas ito.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kintab"
+  },
+  {
+    "word": "Kulimlim",
+    "easy": "Makulimlim ang langit ngayon.",
+    "difficult": "Nagbago ang panahon at biglang naging makulimlim.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kulimlim"
+  },
+  {
+    "word": "Kaway",
+    "easy": "Ngumiti at kumaway ang bata.",
+    "difficult": "Kumaway ako kay Peter para tawagin siya.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaway"
+  },
+  {
+    "word": "Talon",
+    "easy": "Tumalon ako sa bilog na guhit.",
+    "difficult": "Pinakita ni Ben ang mataas niyang talon sa laro.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Talon"
+  },
+  {
+    "word": "Tulay",
+    "easy": "Tumawid kami sa tulay.",
+    "difficult": "Pininturahan ng mga tao ang lumang tulay.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tulay"
+  },
+  {
+    "word": "Salamin",
+    "easy": "Nakita ko ang sarili ko sa salamin.",
+    "difficult": "Nabasag ang salamin kaya inayos ito ni tatay.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Salamin"
+  },
+  {
+    "word": "Kaarawan",
+    "easy": "Masaya ako sa aking kaarawan.",
+    "difficult": "Naghanda si nanay ng pagkain para sa kaarawan ko.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaarawan"
+  },
+  {
+    "word": "Ulap",
+    "easy": "Maraming ulap sa langit.",
+    "difficult": "Natakpan ng ulap ang araw kaya lumamig.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Ulap"
+  },
+  {
+    "word": "Ulan",
+    "easy": "Nabasa ang kalsada sa ulan.",
+    "difficult": "Nagtakbuhan kami sa lilim nang biglang umulan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Ulan"
+  },
+  {
+    "word": "Pahina",
+    "easy": "May larawan sa pahina ng aklat.",
+    "difficult": "Sinundan namin ang pahina na sinabi ng guro.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pahina"
+  },
+  {
+    "word": "Umaga",
+    "easy": "Tahimik ang paligid sa umaga",
+    "difficult": "Nag-almusal kami tuwing umaga.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Umaga"
+  },
+  {
+    "word": "Pawis",
+    "easy": "Punasan mo ang pawis sa noo.",
+    "difficult": "Nagpalit siya ng damit dahil sa dami ng pawis.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pawis"
+  },
+  {
+    "word": "Gabi",
+    "easy": "Nakita ko ang buwan sa gabi.",
+    "difficult": "Sinara namin ang mga ilaw dahil gabi na.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Gabi"
+  },
+  {
+    "word": "Dahon",
+    "easy": "Nahulog ang dahon mula sa puno.",
+    "difficult": "Umihip ang hangin at gumalaw ang mga dahon.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Dahon"
+  },
+  {
+    "word": "Langgam",
+    "easy": "Maliit ang mga langgam.",
+    "difficult": "Masakit ang kagat ng langgam.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Langgam"
+  },
+  {
+    "word": "Buhok",
+    "easy": "Mahaba ang buhok ni Maya.",
+    "difficult": "Sinuklay ni ate ang aking buhok bago pumasok sa paaralan.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Buhok"
+  },
+  {
+    "word": "Duyan",
+    "easy": "Mayroon duyan sa ilalim ng puno.",
+    "difficult": "Humiga ako sa duyan habang nagbabasa ng libro.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Duyan"
+  },
+  {
+    "word": "Gulong",
+    "easy": "May dalawang gulong ang aking bisikleta.",
+    "difficult": "Nabutas ang gulong kaya huminto kami.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Gulong"
+  },
+  {
+    "word": "Barya",
+    "easy": "Marami akong barya sa bulsa.",
+    "difficult": "Bumili ako ng kendi gamit ang aking mga barya.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Barya"
+  },
+  {
+    "word": "Banig",
+    "easy": "Natulog kami sa isang banig.",
+    "difficult": "Maganda ang disenyo ng banig na binili ni Lito.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Banig"
+  },
+  {
+    "word": "Pako",
+    "easy": "May mga pako sa kahoy.",
+    "difficult": "Nalaglag ang pako kaya pinulot ko.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pako"
+  },
+  {
+    "word": "Karayom",
+    "easy": "Matulis ang isang karayom.",
+    "difficult": "Ginamit ni Joy ang karayom para magtahi ng butones.",
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Karayom"
+  }
+]

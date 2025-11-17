@@ -107,7 +107,7 @@ export default function Home() {
                 className="btn-primary hover-scale"
                 onMouseEnter={(e) => attachSparkles(e.currentTarget)}
               >
-                Learn Now
+                Simulan na
               </button>
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function Home() {
                   Matuto ng Tagalog — sa paraang masaya!
                 </h1>
                 <p className="text-lg text-slate-700 mb-8">
-                Tuklasin ang Tagalog sa mga laro, at masasayang hamon para sa mga bata!
+                Tuklasin ang Tagalog sa mga masasayang hamon para sa mga bata!
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <button
@@ -144,10 +144,10 @@ export default function Home() {
                     className="btn-primary accent-glow"
                     onMouseEnter={(e) => attachSparkles(e.currentTarget)}
                   >
-                    Start Learning
+                    Simulan na
                   </button>
                   <Link href="#how" className="btn-secondary" aria-label="Explore Challenges">
-                    Explore Challenges
+                    Tuklasin ang mga laro
                   </Link>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function Home() {
         {/* Fun Learning Challenges */}
         <section id="challenges" className="py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #EAF3FF 0%, #E8FBF0 100%)' }}>
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Fun Learning Challenges</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Mga Hamon sa TagalogLearn</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {challengeCards.map((c) => (
                 <div
@@ -191,7 +191,7 @@ export default function Home() {
         {/* Explore Challenges */}
         <section id="how" className="py-16 md:py-24" style={{ background: 'var(--ph-beige)' }}>
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Explore Challenges</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Paano Simulan?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
               {[1, 2, 3].map((n, i) => (
                 <div key={n} data-reveal className="opacity-0 translate-y-6 transition-all duration-700">
@@ -220,10 +220,10 @@ export default function Home() {
             <div className="absolute left-1/2 bottom-10 -translate-x-1/2 text-3xl opacity-30 levitate" style={{ animationDelay: '400ms' }}>🇵🇭</div>
           </div>
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Fun Tagalog Facts</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Masayang Kaalaman Tungkol sa Tagalog</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {[
-                {front: '⭐ 90M+ speakers', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Tagalog.'},
+                {front: '⭐ 90M+ na tagapagsalita', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Tagalog.'},
                 {front: '💬 Salitang Tagalog', back: 'May mga salitang Tagalog na hindi kayang isalin nang direkta sa Ingles.'},
                 {front: '🇵🇭 Mabuhay!', back: 'Ang ‘Mabuhay’ ay ibig sabihin ay ‘long live’—isang masayang pagbati ng mga Pilipino!'},
               ].map((fact, idx) => (
@@ -255,7 +255,7 @@ export default function Home() {
               className="btn-secondary bg-white text-slate-900"
               onMouseEnter={(e) => attachSparkles(e.currentTarget)}
             >
-              Get Started Now
+              Simulan Na
             </button>
           </div>
         </section>

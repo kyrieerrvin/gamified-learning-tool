@@ -77,7 +77,7 @@ export async function testPOSTagging(sentence: string): Promise<{
  */
 export async function fetchMakeSentenceGame(
   count: number = 10,
-  grade?: 'G1_2' | 'G3_4' | 'G5_6'
+  grade?: 'G1' | 'G2' | 'G3'
 ): Promise<MakeSentenceGameData> {
   try {
     console.log(`Fetching Make a Sentence game with ${count} words`);

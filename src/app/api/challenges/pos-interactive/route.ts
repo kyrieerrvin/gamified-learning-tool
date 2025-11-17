@@ -58,21 +58,33 @@ async function analyze(sentence: string, origin: string): Promise<{ tokens: Anal
 // Statically import sentence pools so they are bundled with the deployment
 // Relative path from this file to project root `words/` directory
 // JSON imports require `resolveJsonModule` which is enabled in tsconfig
-import G1_2_WORDS from '../../../../../words/mulcho_grade_1-2.json';
-import G3_4_WORDS from '../../../../../words/mulcho_grade_3-4.json';
-import G5_6_WORDS from '../../../../../words/mulcho_grade_5-6.json';
+import G1_WORDS from '../../../../../words/grade1_mcq.json';
+import G2_WORDS from '../../../../../words/grade2_mcq.json';
+import G3_WORDS from '../../../../../words/grade3_mcq.json';
 
-type SentenceEntry = { short?: string; long?: string };
+type GradeKey = 'G1' | 'G2' | 'G3';
 
-function pickSentence(grade: string | null, difficulty: string): string | null {
-  if (!grade) return null;
-  const map: Record<string, SentenceEntry[]> = {
-    G1_2: (G1_2_WORDS as unknown as SentenceEntry[]) || [],
-    G3_4: (G3_4_WORDS as unknown as SentenceEntry[]) || [],
-    G5_6: (G5_6_WORDS as unknown as SentenceEntry[]) || [],
+type SentenceEntry = { short?: string; medium?: string; long?: string };
+
+function normalizeGrade(raw: string | null): GradeKey | null {
+  if (!raw) return null;
+  if (raw === 'G1' || raw === 'G2' || raw === 'G3') return raw;
+  if (raw === 'G1_2') return 'G1';
+  if (raw === 'G3_4') return 'G2';
+  if (raw === 'G5_6') return 'G3';
+  return null;
+}
+
+function pickSentence(grade: GradeKey | null, difficulty: string): string | null {
+  const map: Record<GradeKey, SentenceEntry[]> = {
+    G1: (G1_WORDS as unknown as SentenceEntry[]) || [],
+    G2: (G2_WORDS as unknown as SentenceEntry[]) || [],
+    G3: (G3_WORDS as unknown as SentenceEntry[]) || [],
   };
-  const entries = map[grade] || [];
-  const key: 'short' | 'long' = difficulty === 'easy' ? 'short' : 'long';
+  const resolvedGrade = grade || 'G1';
+  const entries = map[resolvedGrade] || [];
+  const key: 'short' | 'medium' | 'long' =
+    difficulty === 'easy' ? 'short' : difficulty === 'hard' ? 'long' : 'medium';
   const pool = entries.map(x => (x && x[key]) || '').filter(Boolean) as string[];
   if (pool.length === 0) return null;
   return pool[Math.floor(Math.random() * pool.length)];
@@ -80,7 +92,7 @@ function pickSentence(grade: string | null, difficulty: string): string | null {
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const grade = searchParams.get('grade');
+  const grade = normalizeGrade(searchParams.get('grade'));
   const difficulty = (searchParams.get('difficulty') || 'medium').toLowerCase();
   let sentence = searchParams.get('sentence');
   const origin = request.nextUrl.origin;

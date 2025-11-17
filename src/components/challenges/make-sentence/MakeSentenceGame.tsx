@@ -488,7 +488,7 @@ export default function MakeSentenceGame({
                   loading={isSubmitting}
                   disabled={isSubmitting || !inputSentence.trim()}
                 >
-                  I-check
+                  Suriin
                 </Button>
               </motion.div>
             </div>

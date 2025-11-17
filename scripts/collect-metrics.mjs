@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-// Usage: node scripts/collect-metrics.mjs --base https:tagaloglearn.vercel.app --grade G3_4 --difficulty medium
+// Usage: node scripts/collect-metrics.mjs --base https://tagaloglearn.vercel.app --runs 100 --grade G3_4 --difficulty medium
 const args = Object.fromEntries(process.argv.slice(2).map((v, i, a) => v.startsWith('--') ? [v.slice(2), a[i+1]] : []).filter(Boolean));
 const BASE = args.base || process.env.BASE_URL || 'http://localhost:3000';
 const RUNS = parseInt(args.runs || '100', 10);

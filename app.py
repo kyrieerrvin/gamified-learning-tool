@@ -311,134 +311,38 @@ SAMPLE_SENTENCES = {
 # }
 
 # Optional external JSON sources for grade-based word pools
-# You can override these paths with environment variables G1_2_JSON_PATH, G3_4_JSON_PATH, G5_6_JSON_PATH
+# You can override these paths with environment variables
 # Default to repo-relative paths; allow override via env vars
-DEFAULT_G1_2_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade_level_1-2_words.json')
-DEFAULT_G3_4_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade_level_3-4_words.json')
-DEFAULT_G5_6_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade_level_5-6_words.json')
-G1_2_JSON_PATH = os.environ.get('G1_2_JSON_PATH', DEFAULT_G1_2_JSON)
-G3_4_JSON_PATH = os.environ.get('G3_4_JSON_PATH', DEFAULT_G3_4_JSON)
-G5_6_JSON_PATH = os.environ.get('G5_6_JSON_PATH', DEFAULT_G5_6_JSON)
+DEFAULT_G1_MAKE_A_SENTENCE_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade1_make_a_sentence.json')
+DEFAULT_G2_MAKE_A_SENTENCE_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade2_make_a_sentence.json')
+DEFAULT_G3_MAKE_A_SENTENCE_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade3_make_a_sentence.json')
 
-def load_g1_2_words_from_json():
-    """Load Grade 1-2 words from external JSON file if available.
+DEFAULT_G1_MCQ_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade1_mcq.json')
+DEFAULT_G2_MCQ_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade2_mcq.json')
+DEFAULT_G3_MCQ_JSON = os.path.join(os.path.dirname(__file__), 'words', 'grade3_mcq.json')
 
-    Expected JSON format (array of objects):
-    {
-      "word": "Bata",
-      "easy": "...",
-      "difficult": "..."
-    }
+G1_MAKE_A_SENTENCE_JSON_PATH = os.environ.get('G1_MAKE_A_SENTENCE_JSON_PATH', DEFAULT_G1_MAKE_A_SENTENCE_JSON)
+G2_MAKE_A_SENTENCE_JSON_PATH = os.environ.get('G2_MAKE_A_SENTENCE_JSON_PATH', DEFAULT_G2_MAKE_A_SENTENCE_JSON)
+G3_MAKE_A_SENTENCE_JSON_PATH = os.environ.get('G3_MAKE_A_SENTENCE_JSON_PATH', DEFAULT_G3_MAKE_A_SENTENCE_JSON)
 
-    Returns list of normalized-like raw entries to be normalized later.
-    """
+G1_MCQ_JSON_PATH = os.environ.get('G1_MCQ_JSON_PATH', DEFAULT_G1_MCQ_JSON)
+G2_MCQ_JSON_PATH = os.environ.get('G2_MCQ_JSON_PATH', DEFAULT_G2_MCQ_JSON)
+G3_MCQ_JSON_PATH = os.environ.get('G3_MCQ_JSON_PATH', DEFAULT_G3_MCQ_JSON)
+
+
+def load_words_from_json(file_path):
+    """Load words from an external JSON file if available."""
     try:
-        if not os.path.isfile(G1_2_JSON_PATH):
-            raise FileNotFoundError(f"G1_2 JSON not found at {G1_2_JSON_PATH}")
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"JSON file not found at {file_path}")
 
-        with open(G1_2_JSON_PATH, 'r', encoding='utf-8') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        words = []
-        for item in data:
-            try:
-                word_text = (item.get('word') or '').strip()
-                easy_sentence = (item.get('easy') or '').strip()
-                difficult_sentence = (item.get('difficult') or '').strip()
-                sentences = [s for s in [easy_sentence, difficult_sentence] if s]
-                if not word_text:
-                    continue
-                words.append({
-                    "id": word_text.lower().replace(' ', '-'),
-                    "word": word_text,
-                    "description": "",
-                    "imageUrl": "",
-                    "sentences": sentences,
-                    "easy": easy_sentence,
-                    "difficult": difficult_sentence,
-                    "grade": 'G1_2'
-                })
-            except Exception:
-                continue
-
-        logger.info(f"Loaded {len(words)} G1_2 words from JSON file")
-        return words
+        logger.info(f"Loaded {len(data)} words from {file_path}")
+        return data
     except Exception as e:
-        logger.warning(f"Failed to load G1_2 words from JSON: {str(e)}")
-        return None
-
-def load_g3_4_words_from_json():
-    """Load Grade 3-4 words from external JSON file if available."""
-    try:
-        if not os.path.isfile(G3_4_JSON_PATH):
-            raise FileNotFoundError(f"G3_4 JSON not found at {G3_4_JSON_PATH}")
-
-        with open(G3_4_JSON_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        words = []
-        for item in data:
-            try:
-                word_text = (item.get('word') or '').strip()
-                easy_sentence = (item.get('easy') or '').strip()
-                difficult_sentence = (item.get('difficult') or '').strip()
-                sentences = [s for s in [easy_sentence, difficult_sentence] if s]
-                if not word_text:
-                    continue
-                words.append({
-                    "id": word_text.lower().replace(' ', '-'),
-                    "word": word_text,
-                    "description": item.get('description') or "",
-                    "imageUrl": item.get('imageUrl') or "",
-                    "sentences": sentences,
-                    "easy": easy_sentence,
-                    "difficult": difficult_sentence,
-                    "grade": 'G3_4'
-                })
-            except Exception:
-                continue
-
-        logger.info(f"Loaded {len(words)} G3_4 words from JSON file")
-        return words
-    except Exception as e:
-        logger.warning(f"Failed to load G3_4 words from JSON: {str(e)}")
-        return None
-
-def load_g5_6_words_from_json():
-    """Load Grade 5-6 words from external JSON file if available."""
-    try:
-        if not os.path.isfile(G5_6_JSON_PATH):
-            raise FileNotFoundError(f"G5_6 JSON not found at {G5_6_JSON_PATH}")
-
-        with open(G5_6_JSON_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        words = []
-        for item in data:
-            try:
-                word_text = (item.get('word') or '').strip()
-                easy_sentence = (item.get('easy') or '').strip()
-                difficult_sentence = (item.get('difficult') or '').strip()
-                sentences = [s for s in [easy_sentence, difficult_sentence] if s]
-                if not word_text:
-                    continue
-                words.append({
-                    "id": word_text.lower().replace(' ', '-'),
-                    "word": word_text,
-                    "description": item.get('description') or "",
-                    "imageUrl": item.get('imageUrl') or "",
-                    "sentences": sentences,
-                    "easy": easy_sentence,
-                    "difficult": difficult_sentence,
-                    "grade": 'G5_6'
-                })
-            except Exception:
-                continue
-
-        logger.info(f"Loaded {len(words)} G5_6 words from JSON file")
-        return words
-    except Exception as e:
-        logger.warning(f"Failed to load G5_6 words from JSON: {str(e)}")
+        logger.warning(f"Failed to load words from JSON file {file_path}: {str(e)}")
         return None
 
 # Normalize word entries to a consistent schema used by the frontend
@@ -890,7 +794,7 @@ def get_pos_game():
     try:
         # Get query parameters
         grade = request.args.get('grade')
-        difficulty = request.args.get('difficulty', 'medium')  # kept for backward compat
+        difficulty = request.args.get('difficulty', 'medium')  # easy, medium, hard
         custom_sentence = request.args.get('sentence')
         
         # Use custom sentence if provided, otherwise select from samples
@@ -898,18 +802,31 @@ def get_pos_game():
             sentence = custom_sentence
             logger.info(f"Using custom sentence: '{sentence}'")
         else:
-            # Placeholder: map grade to sentence pools (replace later)
-            if grade in ['G1_2', 'G3_4', 'G5_6']:
-                # Simple mapping: use easy/medium/hard as proxy for now
-                diff_map = {
-                    'G1_2': 'easy',
-                    'G3_4': 'medium',
-                    'G5_6': 'hard'
-                }
-                mapped = diff_map.get(grade, 'medium')
-                sentences = SAMPLE_SENTENCES.get(mapped, SAMPLE_SENTENCES['medium'])
+            sentences = []
+            if grade == 'G1':
+                mcq_data = load_words_from_json(G1_MCQ_JSON_PATH)
+            elif grade == 'G2':
+                mcq_data = load_words_from_json(G2_MCQ_JSON_PATH)
+            elif grade == 'G3':
+                mcq_data = load_words_from_json(G3_MCQ_JSON_PATH)
             else:
+                mcq_data = load_words_from_json(G1_MCQ_JSON_PATH) # Default to Grade 1
+
+            if mcq_data:
+                if difficulty == 'easy':
+                    sentences = mcq_data.get('short', [])
+                elif difficulty == 'medium':
+                    sentences = mcq_data.get('medium', [])
+                elif difficulty == 'hard':
+                    sentences = mcq_data.get('long', [])
+                else:
+                    sentences = mcq_data.get('short', []) # Default to short sentences
+            
+            if not sentences:
+                # Fallback to old sample sentences if JSON loading fails or key is missing
+                logger.warning(f"Could not find sentences for grade {grade} and difficulty {difficulty}, using fallback.")
                 sentences = SAMPLE_SENTENCES.get(difficulty, SAMPLE_SENTENCES['medium'])
+
             sentence = random.choice(sentences)
             logger.info(f"Selected random sentence (grade={grade or 'n/a'}, diff={difficulty}): '{sentence}'")
         
@@ -1181,43 +1098,27 @@ def get_sentence_words():
     try:
         # grade level filter (real pools loaded from files)
         grade = request.args.get('grade')
+        words = []
 
         # Select pool based on grade or default to full list
-        if grade == 'G1_2':
-            # Prefer external JSON source for Grade 1-2
-            json_words = load_g1_2_words_from_json()
-            if json_words and len(json_words) > 0:
-                words = json_words
-            else:
-                words = GRADE_WORDS.get('G1_2', []).copy()
-        elif grade == 'G3_4':
-            json_words = load_g3_4_words_from_json()
-            if json_words and len(json_words) > 0:
-                words = json_words
-            else:
-                words = GRADE_WORDS.get('G3_4', []).copy()
-        elif grade == 'G5_6':
-            json_words = load_g5_6_words_from_json()
-            if json_words and len(json_words) > 0:
-                words = json_words
-            else:
-                words = GRADE_WORDS.get('G5_6', []).copy()
-        elif grade in GRADE_WORDS and len(GRADE_WORDS[grade]) > 0:
-            words = GRADE_WORDS[grade].copy()
+        if grade == 'G1':
+            words = load_words_from_json(G1_MAKE_A_SENTENCE_JSON_PATH)
+        elif grade == 'G2':
+            words = load_words_from_json(G2_MAKE_A_SENTENCE_JSON_PATH)
+        elif grade == 'G3':
+            words = load_words_from_json(G3_MAKE_A_SENTENCE_JSON_PATH)
         else:
-            # If no grade provided, default to G3_4 to avoid old pool
-            default_grade = 'G3_4'
-            grade = default_grade
-            words = GRADE_WORDS.get(default_grade, [])[:]
+            words = load_words_from_json(G1_MAKE_A_SENTENCE_JSON_PATH) # Default to grade 1
 
-        # Normalize all entries to a consistent schema
-        normalized = [normalize_word_item(w, grade) for w in words]
-        random.shuffle(normalized)
+        if not words:
+            return jsonify({"error": f"Could not load words for grade {grade}"}), 500
+
+        random.shuffle(words)
         
         # Return the words
         return create_cors_response({
-            "words": normalized,
-            "count": len(normalized)
+            "words": words,
+            "count": len(words)
         })
         
     except Exception as e:

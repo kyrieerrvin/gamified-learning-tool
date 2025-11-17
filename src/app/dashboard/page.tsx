@@ -72,7 +72,7 @@ function DashboardContent() {
         <div className={`transition-all duration-1000 transform ${visibilityClasses} mb-6`}>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome, {user?.displayName || 'Learner'}!</h1>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Maligayang pagdating, {user?.displayName || 'Learner'}!</h1>
               <p className="text-gray-700">{motivation}</p>
             </div>
             {/* Reset Timer temporarily disabled */}
@@ -107,9 +107,9 @@ function DashboardContent() {
                   </div>
                   <div className="flex-1 my-2 md:my-0 flex flex-col justify-center max-w-[60ch]">
                     <h3 className="text-2xl md:text-3xl font-semibold mb-2">Conversation</h3>
-                    <p className="text-gray-700">Practice real-world dialogues with context-aware AI feedback.</p>
+                    <p className="text-gray-700">Magsanay sa pakikipagusap sa tulong ng AI.</p>
                     <div className="mt-4 text-blue-700 font-medium group-hover:underline inline-flex items-center">
-                      Start Challenge
+                    Simulan ang hamon 
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -132,9 +132,9 @@ function DashboardContent() {
                   </div>
                   <div className="flex-1 my-2 md:my-0 flex flex-col justify-center max-w-[60ch]">
                     <h3 className="text-2xl md:text-3xl font-semibold mb-2">Make a Sentence</h3>
-                    <p className="text-gray-700">Create meaningful sentences with Tagalog words and phrases.</p>
+                    <p className="text-gray-700">Bumuo ng makabuluhang pangungusap gamit ang Tagalog.</p>
                     <div className="mt-4 text-indigo-700 font-medium group-hover:underline inline-flex items-center">
-                      Start Challenge
+                      Simulan ang hamon
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -157,9 +157,9 @@ function DashboardContent() {
                   </div>
                   <div className="flex-1 my-2 md:my-0 flex flex-col justify-center max-w-[60ch]">
                     <h3 className="text-2xl md:text-3xl font-semibold mb-2">Multiple Choice</h3>
-                    <p className="text-gray-700">Test your knowledge with adaptive quizzes and instant feedback.</p>
+                    <p className="text-gray-700">Subukan ang iyong kaalaman sa mga Tagalog na pangungusap.</p>
                     <div className="mt-4 text-purple-700 font-medium group-hover:underline inline-flex items-center">
-                      Start Challenge
+                    Simulan ang hamon 
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>

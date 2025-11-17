@@ -85,7 +85,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">Daily Quests</h2>
+        <h2 className="text-xl font-bold text-gray-800">Pang-araw-araw na Misyon</h2>
         <div className="flex items-center gap-2">
           <span className="text-xs bg-duolingo-yellow text-duolingo-darkYellow font-bold py-1 px-2 rounded-full">
             {completedQuests}/{quests.length} Completed
@@ -101,7 +101,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
       
       <div className="mt-6 pt-4 border-t border-gray-100">
         <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-600">Total XP</span>
+          <span className="text-gray-600">Kabuuang XP</span>
           <span className="font-bold text-duolingo-orange">{totalXP} XP</span>
         </div>
         
@@ -112,7 +112,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
             transition={{ repeat: Infinity, duration: 2 }}
             className="inline-block bg-gradient-to-r from-duolingo-yellow to-duolingo-orange text-white font-bold py-2 px-4 rounded-lg shadow-lg"
           >
-            Complete quests to earn up to {totalAvailableXP} XP!
+            Tapusin lahat ng mga misyon upang makakuha ng {totalAvailableXP} XP!
           </motion.div>
         </div>
       </div>
