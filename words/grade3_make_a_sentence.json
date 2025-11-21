@@ -61,7 +61,7 @@
   },
   {
     "word": "Siyudad",
-    "easy": "Matao sa siyudad ngayon",
+    "easy": "Matao sa siyudad ngayon.",
     "difficult": "Pumunta kami sa siyudad para bumili ng kailangan namin.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Siyudad."
   },
@@ -91,7 +91,7 @@
   },
   {
     "word": "Pahayagan",
-    "easy": "Maraming balita sa pahayagan",
+    "easy": "Maraming balita sa pahayagan.",
     "difficult": "Gumawa kami ng poster gamit ang lumang pahayagan.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pahayagan"
   },
@@ -266,7 +266,7 @@
   {
     "word": "Pista",
     "easy": "Nagpalipad ang mga bata ng saranggola sa pista.",
-    "difficult": "Naengganyo ang lahat sa parada ng pista",
+    "difficult": "Naengganyo ang lahat sa parada ng pista.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pista"
   },
   {

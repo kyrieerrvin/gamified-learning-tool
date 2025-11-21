@@ -109,8 +109,8 @@
   },
   {
     "word": "Manok",
-    "easy": "Hinabol ko ang manok",
-    "difficult": "Maraming manok sa bakuran",
+    "easy": "Hinabol ko ang manok.",
+    "difficult": "Maraming manok sa bakuran.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Manok"
   },
   {
@@ -163,7 +163,7 @@
   },
   {
     "word": "Prutas",
-    "easy": "Masarap ang prutas",
+    "easy": "Masarap ang prutas.",
     "difficult": "Nagdala ako ng prutas sa paaralan.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Prutas"
   },
@@ -224,7 +224,7 @@
   {
     "word": "Linis",
     "easy": "Malinis ang bakuran namin.",
-    "difficult": "Linisin natin ang kapaligiran",
+    "difficult": "Linisin natin ang kapaligiran.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Linis"
   },
   {
@@ -260,7 +260,7 @@
   {
     "word": "Tulak",
     "easy": "Itulak mo ang bintana.",
-    "difficult": "Tinulak ko ang bisikleta",
+    "difficult": "Tinulak ko ang bisikleta.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tulak"
   },
   {
@@ -289,7 +289,7 @@
   },
   {
     "word": "Parke",
-    "easy": "Malaki ang parke",
+    "easy": "Malaki ang parke.",
     "difficult": "Naglaro kami sa parke matapos ang klase.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Parke"
   },

@@ -50,7 +50,7 @@
   {
     "word": "Kalabaw",
     "easy": "Malakas ang kalabaw.",
-    "difficult": "Nagpapahinga ang kalabaw sa ilalim ng puno tuwing tanghali",
+    "difficult": "Nagpapahinga ang kalabaw sa ilalim ng puno tuwing tanghali.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kalabaw"
   },
   {
@@ -92,7 +92,7 @@
   {
     "word": "Buhat",
     "easy": "Buhat ko ang aking bag.",
-    "difficult": "Buhat-buhat niya ang basekt na puno ng pagkain.",
+    "difficult": "Buhat-buhat niya ang basket na puno ng pagkain.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Buhat"
   },
   {
@@ -229,7 +229,7 @@
   },
   {
     "word": "Umaga",
-    "easy": "Tahimik ang paligid sa umaga",
+    "easy": "Tahimik ang paligid sa umaga.",
     "difficult": "Nag-almusal kami tuwing umaga.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Umaga"
   },
