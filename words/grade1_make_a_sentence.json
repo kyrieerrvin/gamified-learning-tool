@@ -122,6 +122,9 @@
   {
     "word": "Kabayo",
     "easy": "Mabilis ang kabayo tumakbo.",
+    "easy_alternates": [
+      "Mabilis tumakbo ang kabayo."
+    ],
     "difficult": "Sumakay siya sa malaking kabayo.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kabayo"
   },

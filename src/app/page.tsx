@@ -70,7 +70,7 @@ export default function Home() {
       },
       {
         title: 'Multiple Choice',
-        desc: 'Hanapin ang tamang salita at mapraktis nang mabilis.',
+        desc: 'Hanapin ang tamang salita at magsanay nang mabilis.',
         color: 'from-[#FCE7F3] to-white border-pink-200',
         href: '/challenges/multiple-choice',
       },
@@ -201,9 +201,9 @@ export default function Home() {
                     {i === 0 ? 'Pumili ng larong gusto mong subukan' : i === 1 ? 'Sagutin, magturo, at matuto!' : 'Makakuha ng XP at mag-unlock ng mga bagong salita!'}
                   </h3>
                   <p className="text-slate-600 text-center">
-                    {i === 0 && 'Simulan mo kahit saan—bawat laro ay may bagong kasanayang matututunan.'}
+                    {i === 0 && 'Simulan mo kahit saan—bawat laro ay may bagong kasanayang matutuhan.'}
                     {i === 1 && 'Mag-enjoy habang nag-eensayo ng mga salita at parirala!'}
-                    {i === 2 && 'Kumita ng mga gantimpala at ipagpatuloy ang iyong learning streak!'}
+                    {i === 2 && 'Makakuha ng gantimpala at maipagpatuloy ang iyong pagkatuto!'}
                   </p>
                 </div>
               ))}

@@ -11,6 +11,43 @@ import Image from 'next/image';
 import { apiGet } from '@/utils/api';
 import EndOfLevelScreen from '@/components/challenges/common/EndOfLevelScreen';
 
+type TileRound = {
+  sentence: string;
+  focusWord: string;
+  alternates?: string[];
+};
+
+const normalizeSentence = (text: string) =>
+  text.toLowerCase().replace(/[.,!?;:]/g, '').replace(/\s+/g, ' ').trim();
+
+const collectAlternates = (entry: any, fieldNames: string[]): string[] => {
+  const seen = new Set<string>();
+  const results: string[] = [];
+  for (const field of fieldNames) {
+    const raw = entry?.[field];
+    if (Array.isArray(raw)) {
+      raw.forEach((val) => {
+        if (typeof val === 'string') {
+          const trimmed = val.trim();
+          const key = normalizeSentence(trimmed);
+          if (trimmed && !seen.has(key)) {
+            seen.add(key);
+            results.push(trimmed);
+          }
+        }
+      });
+    } else if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      const key = normalizeSentence(trimmed);
+      if (trimmed && !seen.has(key)) {
+        seen.add(key);
+        results.push(trimmed);
+      }
+    }
+  }
+  return results;
+};
+
 export default function PlayMakeSentencePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -22,7 +59,7 @@ export default function PlayMakeSentencePage() {
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
   // Sentence Tile Game multi-round support for sections 0 (Easy) and 1 (Difficult)
-  const [tileRounds, setTileRounds] = useState<Array<{ sentence: string; focusWord: string }>>([]);
+  const [tileRounds, setTileRounds] = useState<TileRound[]>([]);
   const [tileIndex, setTileIndex] = useState(0);
   const [tileScore, setTileScore] = useState(0);
   // Reduced motion preference and XP display state used for the completion screen
@@ -64,27 +101,33 @@ export default function PlayMakeSentencePage() {
         const resp = await apiGet<{ words: Array<any>; count: number }>(endpoint);
         const words = Array.isArray(resp?.words) ? resp.words : [];
         // Build candidates with available sentences
-        const candidates: Array<{ sentence: string; focusWord: string }> = [];
+        const candidates: TileRound[] = [];
         for (const w of words) {
           const wordText = (w.word || '').toString();
           // Prefer explicit easy/difficult fields if available (from backend JSON), else use sentences[0/1]
           const easy = (w.easy || (Array.isArray(w.sentences) ? w.sentences[0] : '')) || '';
           const difficult = (w.difficult || (Array.isArray(w.sentences) ? w.sentences[1] : '')) || '';
+          const easyAlternates = collectAlternates(w, ['easyAlternates', 'easy_alternates']);
+          const difficultAlternates = collectAlternates(w, ['difficultAlternates', 'difficult_alternates']);
           if (sectionId === 0 && easy) {
-            candidates.push({ sentence: easy, focusWord: wordText });
+            candidates.push({
+              sentence: easy,
+              focusWord: wordText,
+              alternates: easyAlternates.length ? easyAlternates : undefined
+            });
           } else if (sectionId === 1 && difficult) {
-            candidates.push({ sentence: difficult, focusWord: wordText });
+            candidates.push({
+              sentence: difficult,
+              focusWord: wordText,
+              alternates: difficultAlternates.length ? difficultAlternates : undefined
+            });
           }
         }
-        // Normalize helper for deduplication
-        const normalize = (text: string) =>
-          text.toLowerCase().replace(/[.,!?;:]/g, '').replace(/\s+/g, ' ').trim();
-
         // Deduplicate by sentence text (normalized), then shuffle, then take up to 10
         const seen = new Set<string>();
-        const unique: Array<{ sentence: string; focusWord: string }> = [];
+        const unique: TileRound[] = [];
         for (const c of candidates) {
-          const key = normalize(c.sentence);
+          const key = normalizeSentence(c.sentence);
           if (!seen.has(key)) {
             seen.add(key);
             unique.push(c);
@@ -309,6 +352,7 @@ export default function PlayMakeSentencePage() {
               onHeartsChange={setHearts}
               onStreakChange={setStreak}
               onBonusEarned={(amt) => setPendingBonusXp(prev => prev + amt)}
+              alternateSentences={tileRounds[Math.min(tileIndex, tileRounds.length - 1)].alternates}
             />
           ) : (
             <div className="text-gray-600">Naglo-load ng mga pangungusap…</div>

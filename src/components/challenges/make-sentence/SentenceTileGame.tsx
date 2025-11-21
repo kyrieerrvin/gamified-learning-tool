@@ -25,6 +25,7 @@ interface SentenceTileGameProps {
   onHeartsChange?: (hearts: number) => void;
   onStreakChange?: (streak: number) => void;
   onBonusEarned?: (amount: number) => void;
+  alternateSentences?: string[];
 }
 
 type TokenItem = {
@@ -61,7 +62,8 @@ export default function SentenceTileGame({
   progressTotal = 5,
   onHeartsChange,
   onStreakChange,
-  onBonusEarned
+  onBonusEarned,
+  alternateSentences = []
 }: SentenceTileGameProps) {
   const router = useRouter();
   const [expectedSentence, setExpectedSentence] = useState<string>(sampleSentence);
@@ -96,6 +98,10 @@ export default function SentenceTileGame({
   }, [consecutiveCorrect, onStreakChange]);
 
   const expectedNormalized = useMemo(() => normalize(expectedSentence), [expectedSentence]);
+  const alternateNormalized = useMemo(
+    () => alternateSentences.map(sentence => normalize(sentence)).filter(Boolean),
+    [alternateSentences]
+  );
 
   // Propagate heart changes to parent after commit to avoid updating ancestor during render
   useEffect(() => {
@@ -167,7 +173,9 @@ export default function SentenceTileGame({
       setChecking(true);
       const idToToken: Record<string, TokenItem> = Object.fromEntries(tokens.map(t => [t.id, t]));
       const userSentence = selectedIds.map(id => idToToken[id]?.text ?? '').join(' ');
-      const isCorrect = normalize(userSentence) === expectedNormalized;
+      const normalizedUser = normalize(userSentence);
+      const isCorrect =
+        normalizedUser === expectedNormalized || alternateNormalized.includes(normalizedUser);
       const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
       const feedback = isCorrect ? 'Naayos mo nang wasto ang pangungusap.' : 'Subukan muli. Hindi tugma ang pagkakasunod-sunod.';
       if (isCorrect) {
