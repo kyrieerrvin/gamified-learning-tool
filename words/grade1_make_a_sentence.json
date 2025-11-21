@@ -146,7 +146,7 @@
   {
     "word": "Saging",
     "easy": "Mahilig ako kumain ng saging.",
-    "difficult": "Mayroon saging sa palengke.",
+    "difficult": "Mayroong saging sa palengke.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Saging"
   },
   {
@@ -169,7 +169,7 @@
   },
   {
     "word": "Tubig",
-    "easy": "Mayroon tubig sa baso.",
+    "easy": "Mayroong tubig sa baso.",
     "difficult": "Uminom kami ng tubig pagkatapos maglaro.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tubig"
   },
@@ -283,7 +283,7 @@
   },
   {
     "word": "Tasa",
-    "easy": "Mayroon akong tasa.",
+    "easy": "Mayroong akong tasa.",
     "difficult": "Uminom si ate ng juice sa tasa.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tasa"
   },
