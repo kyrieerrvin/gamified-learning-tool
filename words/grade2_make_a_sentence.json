@@ -68,12 +68,18 @@
   {
     "word": "Maalat",
     "easy": "Ayaw ko ng maalat na pagkain.",
+    "easy_alternates": [
+      "Ayaw ko ng pagkain na maalat."
+    ],
     "difficult": "Maalat ang ulam namin ngayon.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Maalat"
   },
   {
     "word": "Masigla",
     "easy": "Masigla ang klase namin ngayon.",
+    "easy_alternates": [
+      "Masigla ngayon ang klase namin."
+    ],
     "difficult": "Masigla si Maria sa pagsagot ng mga gawain sa klase.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masigla"
   },
@@ -86,6 +92,9 @@
   {
     "word": "Magaspang",
     "easy": "Magaspang ang sahig sa labas.",
+    "easy_alternates": [
+      "Magaspang sa labas ang sahig."
+    ],
     "difficult": "Magaspang ang buhangin kaya dahan-dahan akong naglakad.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Magaspang"
   },
@@ -98,6 +107,9 @@
   {
     "word": "Pato",
     "easy": "Lumalangoy ang pato sa tubig.",
+    "easy_alternates": [
+      "Lumalangoy sa tubig ang pato."
+    ],
     "difficult": "Ring ni Bentong ang tunog ng mga pato.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pato"
   },
@@ -110,18 +122,27 @@
   {
     "word": "Palayan",
     "easy": "Nagtatrabaho si tatay sa palayan.",
+    "easy_alternates": [
+      "Nagtatrabaho sa palayan si tatay."
+    ],
     "difficult": "Nag-aani ang mga magsasaka sa palayan tuwing tag-araw.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Palayan"
   },
   {
     "word": "Kwaderno",
     "easy": "Dinala ko ang kwaderno sa silid-aralan.",
+    "easy_alternates": [
+      "Dinala ko sa silid-aralan ang kwaderno."
+    ],
     "difficult": "Pinakita ko sa guro ang sagot na isinulat ko sa kwaderno.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang kwaderno"
   },
   {
     "word": "Tansan",
     "easy": "Nakita ko ang tansan sa kalsada.",
+    "easy_alternates": [
+      "Nakita ko sa kalsada ang tansan."
+    ],
     "difficult": "Inipon namin ang mga tansan para sa aming proyekto sa klase.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tansan"
   },
@@ -152,6 +173,9 @@
   {
     "word": "Tahanan",
     "easy": "Ang ina ay ilaw ng tahanan.",
+    "easy_alternates": [
+      "Ang ilaw ng tahanan ay ina."
+    ],
     "difficult": "Umuuwi ako sa tahanan matapos mag-aral.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tahanan"
   },
@@ -176,12 +200,18 @@
   {
     "word": "Kulimlim",
     "easy": "Makulimlim ang langit ngayon.",
+    "easy_alternates": [
+      "Makulimlim ngayon ang langit."
+    ],
     "difficult": "Nagbago ang panahon at biglang naging makulimlim.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kulimlim"
   },
   {
     "word": "Kaway",
     "easy": "Ngumiti at kumaway ang bata.",
+    "easy_alternates": [
+      "Kumaway at ngumiti ang bata."
+    ],
     "difficult": "Kumaway ako kay Peter para tawagin siya.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaway"
   },
@@ -200,6 +230,9 @@
   {
     "word": "Salamin",
     "easy": "Nakita ko ang sarili ko sa salamin.",
+    "easy_alternates": [
+      "Nakita ko sa salamin ang sarili ko."
+    ],
     "difficult": "Nabasag ang salamin kaya inayos ito ni tatay.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Salamin"
   },
@@ -218,6 +251,9 @@
   {
     "word": "Ulan",
     "easy": "Nabasa ang kalsada sa ulan.",
+    "easy_alternates": [
+      "Nabasa sa ulan ang kalsada."
+    ],
     "difficult": "Nagtakbuhan kami sa lilim nang biglang umulan.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Ulan"
   },
@@ -230,6 +266,9 @@
   {
     "word": "Umaga",
     "easy": "Tahimik ang paligid sa umaga.",
+    "easy_alternates": [
+      "Tahimik sa umaga ang paligid."
+    ],
     "difficult": "Nag-almusal kami tuwing umaga.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Umaga"
   },
@@ -248,6 +287,9 @@
   {
     "word": "Dahon",
     "easy": "Nahulog ang dahon mula sa puno.",
+    "easy_alternates": [
+      "Nahulog mula sa puno ang dahon."
+    ],
     "difficult": "Umihip ang hangin at gumalaw ang mga dahon.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Dahon"
   },
@@ -267,6 +309,9 @@
     "word": "Duyan",
     "easy": "Mayroong duyan sa ilalim ng puno.",
     "difficult": "Humiga ako sa duyan habang nagbabasa ng libro.",
+    "difficult_alternates": [
+      "Humiga ako habang nagbabasa ng libro sa duyan."
+    ],
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Duyan"
   },
   {
