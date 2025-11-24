@@ -118,9 +118,20 @@ export default function SentenceTileGame({
         const cleaned = rawTokens
           .map(t => t.replace(/[\u200B-\u200D\uFEFF]/g, '')) // zero-width chars
           .join(' ');
+        const trimmedSample = sampleSentence.replace(/[\u200B-\u200D\uFEFF]/g, '');
         const tokenTexts = cleaned.trim().length > 0
           ? cleaned.split(/\s+/)
-          : sampleSentence.split(/\s+/);
+          : trimmedSample.split(/\s+/);
+
+        // Ensure terminal punctuation like . ! ? stays attached when the analyzer drops it
+        const terminalPunctMatch = trimmedSample.trim().match(/[.!?]+$/);
+        if (
+          terminalPunctMatch &&
+          tokenTexts.length > 0 &&
+          !tokenTexts.some(text => text.includes(terminalPunctMatch[0]) || text === terminalPunctMatch[0])
+        ) {
+          tokenTexts[tokenTexts.length - 1] = `${tokenTexts[tokenTexts.length - 1]}${terminalPunctMatch[0]}`;
+        }
 
         const tokenObjs: TokenItem[] = tokenTexts.map((text, idx) => ({ id: generateId('tok', idx), text }));
         const randomized = shuffle(tokenObjs);

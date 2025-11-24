@@ -228,6 +228,9 @@
   {
     "word": "Pusa",
     "easy": "Mataas tumalon ang pusa.",
+    "easy_alternates": [
+      "Mataas ang pusa tumalon."
+    ],
     "difficult": "Hinabol ng pusa ang daga.",
     "difficult_alternates":[
         "Hinabol ng daga ang pusa."
