@@ -72,7 +72,7 @@ export default function ConversationSummaryPage() {
           {/* Top band */}
           <div className="bg-[#F0F6FF] p-6 border-b-2 border-[#1E40AF]">
             <h1 className="text-3xl font-extrabold text-center mb-2 text-[#1E40AF]">🎉 Salamat sa Pakikipag-usap!</h1>
-            <p className="text-center text-[#64748B]">Ang galing mo! Nakumpleto mo ang iyong sesyon kay PinoyPal 🎈</p>
+            <p className="text-center text-[#64748B]">Ang galing mo! Nakumpleto mo ang seksyon kay MaestroPinoy 🎈</p>
             <div className="mt-5 rounded-xl p-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-full px-6 py-4 text-center shadow bg-[#22C55E] text-white border-2 border-white">
@@ -91,7 +91,7 @@ export default function ConversationSummaryPage() {
           <div className="p-6 bg-white">
             {/* Entities */}
             <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Mga Nabanggit na Entities:</h2>
+              <h2 className="text-xl font-semibold mb-2">Nagamit na mga Tinukoy-Ngalan:</h2>
               <div className="rounded-2xl p-4 bg-white border border-gray-200 max-h-48 overflow-y-auto">
                 {entities.length === 0 ? (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-yellow-800 italic">Walang nahanap na entity</div>
@@ -110,17 +110,17 @@ export default function ConversationSummaryPage() {
 
             {/* Conversation */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-2">Buong Usapan:</h2>
+              <h2 className="text-xl font-semibold mb-2">Buong Mensahe:</h2>
               <div className="rounded-2xl p-4 bg-white border border-gray-200 max-h-[60vh] overflow-y-auto space-y-4">
                 {conversation.length === 0 ? (
                   <p className="text-gray-600 text-sm">Wala pang laman ang usapan.</p>
                 ) : (
                   conversation.map((entry, i) => (
                     <div key={i} className="text-sm space-y-1">
-                      {/* PinoyPal turn: label then bubble */}
+                      {/* MaestroPinoy turn: label then bubble */}
                       {entry.bot && (
                         <>
-                          <div className="text-[#1E40AF] font-semibold">PinoyPal</div>
+                          <div className="text-[#1E40AF] font-semibold">MaestroPinoy</div>
                           <div className="text-left">
                             <span className="inline-block bg-[#EFF6FF] text-[#1E40AF] px-4 py-3 rounded-2xl shadow border border-[#BFDBFE]">{entry.bot}</span>
                           </div>

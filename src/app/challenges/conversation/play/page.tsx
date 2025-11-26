@@ -65,7 +65,7 @@ export default function ConversationPlayPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const greeting =
-      'Kumusta! Ako si PinoyPal! Upang magkaroon ng puntos, gumamit ng tao, lugar, o organisasyon sa iyong mga pangungusap!';
+      'Kumustang araw mo? Ako si MaestrongPinoy. Gusto mo bang makapuntos? Gamitin ang pangalan ng tao, lugar, organisasyon sa pagsulat ng mensahe.';
     setMessages((m) => (m.length === 0 ? [{ role: 'bot', text: greeting }] : m));
     focusInput();
   }, []);
@@ -215,7 +215,7 @@ export default function ConversationPlayPage() {
           <div className="bg-gradient-to-r from-blue-600 to-yellow-400 px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-2xl">👩‍🏫</div>
-              <h2 className="text-white font-bold text-lg">💬 Mag-sanay kasama si PinoyPal!</h2>
+              <h2 className="text-white font-bold text-lg">💬 Mag-ARAL-SANAY kasama si MaestroPinoy!</h2>
             </div>
             <div className="relative">
               <div className="flex items-center gap-2 text-white text-sm">
@@ -262,7 +262,7 @@ export default function ConversationPlayPage() {
                 <div className="mt-1 text-2xl md:text-3xl font-bold text-yellow-800">{sessionStreak}</div>
               </div>
             </div>
-            <div className="mt-4 text-sm text-gray-700">Tip: Banggitin ang pangalan ng tao, lugar, o organisasyon para makakuha ng puntos!</div>
+            <div className="mt-4 text-sm text-gray-700">Tip: Gumamit ng pangalan ng tao, lugar, organisasyon para makakuha ng puntos.</div>
           </div>
 
           {/* Chat area */}
@@ -325,14 +325,14 @@ export default function ConversationPlayPage() {
                 onKeyDown={onKey}
               />
               <Button onClick={send} disabled={loading} className="bg-yellow-400 hover:bg-green-500 text-gray-900 font-semibold rounded-full px-6 py-3 text-base lg:text-lg">
-                {loading ? '...' : 'Isumite'} <span className="ml-1">📨</span>
+                {loading ? '...' : 'Ipasa'} <span className="ml-1">📨</span>
               </Button>
             </div>
 
             {/* End conversation */}
             <div className="mt-4 flex justify-center">
               <Button variant="secondary" onClick={endConversation} className="rounded-full bg-blue-100 hover:bg-blue-200 px-6 py-3 text-base">
-                Tapusin ang Usapan
+              Isarang Usapan
               </Button>
             </div>
           </div>

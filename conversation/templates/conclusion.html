@@ -12,14 +12,14 @@
         <p><b>Final Points:</b> {{ summary.points }}</p>
         <!-- <p><b>Final Level:</b> {{ summary.level }}</p> -->
 
-        <h2>Mga Nabanggit na Entities:</h2>
+        <h2>Nagamit na mga Tinukoy-Ngalan:</h2>
         <ul>
             {% for entity, label in summary.entities %}
                 <li>{{ entity }} ({{ label }})</li>
             {% endfor %}
         </ul>
 
-        <h2>Buong Usapan:</h2>
+        <h2>Buong Mensahe:</h2>
         <div class="chat-box">
             {% for entry in summary.conversation %}
                 {% if entry.user %}
