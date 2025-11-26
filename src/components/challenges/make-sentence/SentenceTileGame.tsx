@@ -188,7 +188,7 @@ export default function SentenceTileGame({
       const isCorrect =
         normalizedUser === expectedNormalized || alternateNormalized.includes(normalizedUser);
       const cheers = ['Galing!', 'Tama!', 'Mahusay!'];
-      const feedback = isCorrect ? 'Naayos mo nang wasto ang pangungusap.' : 'Subukan muli. Hindi tugma ang pagkakasunod-sunod.';
+      const feedback = isCorrect ? 'Naayos mo nang wasto ang pangungusap.' : 'Mali ang sagot.';
       if (isCorrect) {
         playSound('correct');
         console.log('[MakeSentenceTile] Correct');
@@ -420,7 +420,7 @@ export default function SentenceTileGame({
               <div className={`rounded-2xl shadow-xl px-5 py-4 md:px-6 md:py-5 text-white ${result.correct ? 'bg-green-500' : 'bg-red-500'}`}>
                 <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3">
                   <div className="text-lg md:text-xl font-extrabold tracking-tight">
-                    {result.correct ? correctCheer : 'Subukan muli. Hindi tugma ang pagkakasunod-sunod.'}
+                    {result.correct ? correctCheer : 'Mali ang sagot.'}
                   </div>
                   <div className="flex items-center gap-3">
                     {!result.correct && (
@@ -433,7 +433,7 @@ export default function SentenceTileGame({
                           }}
                           className="rounded-[28px] px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-extrabold text-base md:text-lg shadow-md"
                         >
-                          Subukan Muli
+                          Muling sumubok
                         </Button>
                       </motion.div>
                     )}

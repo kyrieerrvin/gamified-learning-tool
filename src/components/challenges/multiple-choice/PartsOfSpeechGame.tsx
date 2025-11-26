@@ -344,7 +344,7 @@ export default function PartsOfSpeechGame({
       <div className="max-w-xl mx-auto bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
         {error}
         <div className="mt-3">
-          <Button onClick={loadNewItem} className="bg-red-100 text-red-800 hover:bg-red-200">Subukan muli</Button>
+          <Button onClick={loadNewItem} className="bg-red-100 text-red-800 hover:bg-red-200">Muling sumubok</Button>
         </div>
       </div>
     );
@@ -486,7 +486,7 @@ export default function PartsOfSpeechGame({
               <div className={`rounded-2xl shadow-xl px-5 py-4 md:px-6 md:py-5 text-white ${sheet.kind === 'correct' ? 'bg-green-500' : 'bg-red-500'}`}>
                 <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3">
                   <div className="text-lg md:text-xl font-extrabold tracking-tight">
-                    {sheet.kind === 'correct' ? (sheet.cheer || 'Mahusay!') : 'Subukan muli. Hindi tugma ang iyong sagot.'}
+                    {sheet.kind === 'correct' ? (sheet.cheer || 'Mahusay!') : 'Mali ang sagot.'}
                   </div>
                   <div className="flex items-center gap-3">
                     {sheet.kind === 'wrong' && (
@@ -496,7 +496,7 @@ export default function PartsOfSpeechGame({
                           variant="secondary"
                           className="rounded-[28px] px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-extrabold text-base md:text-lg shadow-md"
                         >
-                          Subukan Muli
+                          Muling sumubok
                         </Button>
                       </motion.div>
                     )}

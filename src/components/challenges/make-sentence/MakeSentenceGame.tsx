@@ -527,7 +527,7 @@ export default function MakeSentenceGame({
               </Button>
             ) : (
               <Button onClick={handleTryAgain} className="rounded-[24px] px-6 py-3">
-                Subukan Muli
+                Muling sumubok
               </Button>
             )}
           </div>
