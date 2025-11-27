@@ -1,4 +1,4 @@
-# TagalogLearn: Gamified Tagalog Learning Platform
+# FILIPINOnlayn: Gamified Tagalog Learning Platform
 
 A fun and interactive web application for learning Tagalog through gamified challenges and exercises. Built with Next.js, React, Firebase, and the calamancy NLP model for Tagalog language processing.
 

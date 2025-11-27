@@ -3,10 +3,14 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ConsentModal from '@/components/ui/ConsentModal';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { attachSparkles, initHeroThree } from '@/utils/animationController';
+import conversationImage from '../../assets/conversation.png';
+import sentenceImage from '../../assets/sentence.png';
+import multipleImage from '../../assets/multiple.png';
 
 export default function Home() {
   const router = useRouter();
@@ -57,22 +61,28 @@ export default function Home() {
   const challengeCards = useMemo(
     () => [
       {
-        title: 'Conversation',
+        title: 'Usap Tayo',
         desc: 'Magsanay makipag-usap gamit ang mga palakaibigang tanong at sagot.',
         color: 'from-[#EAF3FF] to-white border-blue-200',
         href: '/challenges/conversation',
+        image: conversationImage,
+        alt: 'Usap Tayo challenge preview',
       },
       {
-        title: 'Make a Sentence',
+        title: 'Buuin Mo',
         desc: 'Ayusin ang mga salita para makabuo ng pangungusap.',
         color: 'from-[#FFF7CC] to-white border-yellow-200',
         href: '/challenges/make-sentence',
+        image: sentenceImage,
+        alt: 'Buuin Mo challenge preview',
       },
       {
-        title: 'Multiple Choice',
+        title: 'Hanapin Natin',
         desc: 'Hanapin ang tamang salita at magsanay nang mabilis.',
         color: 'from-[#FCE7F3] to-white border-pink-200',
         href: '/challenges/multiple-choice',
+        image: multipleImage,
+        alt: 'Hanapin Natin challenge preview',
       },
     ],
     []
@@ -97,7 +107,7 @@ export default function Home() {
       <nav className="bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 fixed top-0 left-0 right-0 z-50 border-b border-slate-100">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div className="text-2xl font-extrabold" style={{ color: 'var(--brand-primary)' }}>TagalogLearn</div>
+            <div className="text-2xl font-extrabold" style={{ color: 'var(--brand-primary)' }}>FILIPINOnlayn</div>
             <div className="flex items-center gap-6">
               {/* <Link href="/about" className="text-slate-600 hover:text-slate-900 transition-colors">About</Link>
               <Link href="/contact" className="text-slate-600 hover:text-slate-900 transition-colors">Contact</Link> */}
@@ -133,10 +143,10 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div data-reveal className="opacity-0 translate-y-6 transition-all duration-700">
                 <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-                  Matuto ng Tagalog — sa paraang masaya!
+                Aral-Sanay ng Filipino!
                 </h1>
                 <p className="text-lg text-slate-700 mb-8">
-                Tuklasin ang Tagalog sa mga masasayang hamon para sa mga bata!
+                Gusto mo ba? Libre ito!
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <button
@@ -156,9 +166,6 @@ export default function Home() {
                   style={{ background: 'var(--tint-blue)' }}>
                   <div className="text-7xl md:text-8xl" role="img" aria-label="Friendly mascot waving">👋</div>
                 </div>
-                <div className="absolute -top-3 right-2 md:-top-2 md:-right-8 bg-white rounded-2xl px-4 py-2 shadow accent-glow border border-slate-100">
-                  <span className="text-sm md:text-base">“Tara, mag-aral tayo!”</span>
-                </div>
                 {/* Sun and stars */}
                 <div className="absolute right-8 -bottom-4 w-3 h-3 rotate-12" style={{ color: 'var(--ph-yellow)' }}>⭐</div>
                 <div className="absolute right-16 bottom-6 w-3 h-3 -rotate-12" style={{ color: 'var(--ph-yellow)' }}>⭐</div>
@@ -171,17 +178,26 @@ export default function Home() {
         {/* Fun Learning Challenges */}
         <section id="challenges" className="py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #EAF3FF 0%, #E8FBF0 100%)' }}>
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Mga Hamon sa TagalogLearn</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Aral-Sanay sa FILIPINOnlayn</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {challengeCards.map((c) => (
                 <div
                   key={c.title}
                   className={`tilt-hover rounded-2xl border p-6 bg-gradient-to-br ${c.color} cursor-default`}
                 >
-                  <div className="flex items-start mb-4">
-                    <div className="text-xl font-bold">{c.title}</div>
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <div className="text-xl font-bold">{c.title}</div>
+                      <p className="text-slate-600 mt-2">{c.desc}</p>
+                    </div>
+                    <Image
+                      src={c.image}
+                      alt={c.alt}
+                      width={80}
+                      height={80}
+                      className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-sm"
+                    />
                   </div>
-                  <p className="text-slate-600">{c.desc}</p>
                 </div>
               ))}
             </div>
@@ -191,20 +207,20 @@ export default function Home() {
         {/* Explore Challenges */}
         <section id="how" className="py-16 md:py-24" style={{ background: 'var(--ph-beige)' }}>
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Paano Simulan?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Paano magsimula?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
               {[1, 2, 3].map((n, i) => (
                 <div key={n} data-reveal className="opacity-0 translate-y-6 transition-all duration-700">
                   <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center font-extrabold text-xl shadow-md mb-4"
                     style={{ background: 'white', color: i===0?'var(--ph-blue)':i===1?'var(--ph-yellow)':'var(--ph-red)' }}>{n}</div>
                   <h3 className="text-xl font-semibold text-center mb-2">
-                    {i === 0 ? 'Pumili ng larong gusto mong subukan' : i === 1 ? 'Sagutin, magturo, at matuto!' : 'Makakuha ng XP at mag-unlock ng mga bagong salita!'}
+                    {i === 0 ? 'Pumili ng Gawain' : i === 1 ? 'Sumubok mag-Aral-Sanay' : 'Kumuha ng Ekstrang Puntos  (XP)'}
                   </h3>
-                  <p className="text-slate-600 text-center">
+                  {/* <p className="text-slate-600 text-center">
                     {i === 0 && 'Simulan mo kahit saan—bawat laro ay may bagong kasanayang matutuhan.'}
                     {i === 1 && 'Mag-enjoy habang nag-eensayo ng mga salita at parirala!'}
                     {i === 2 && 'Makakuha ng gantimpala at maipagpatuloy ang iyong pagkatuto!'}
-                  </p>
+                  </p> */}
                 </div>
               ))}
             </div>
@@ -220,12 +236,12 @@ export default function Home() {
             <div className="absolute left-1/2 bottom-10 -translate-x-1/2 text-3xl opacity-30 levitate" style={{ animationDelay: '400ms' }}>🇵🇭</div>
           </div>
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Masayang Kaalaman Tungkol sa Tagalog</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Tuklas-Talino sa FIlipino</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {[
-                {front: '⭐ 90M+ na tagapagsalita', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Tagalog.'},
-                {front: '💬 Salitang Tagalog', back: 'May mga salitang Tagalog na hindi kayang isalin nang direkta sa Ingles.'},
-                {front: '🇵🇭 Mabuhay!', back: 'Ang ‘Mabuhay’ ay ibig sabihin ay ‘long live’—isang masayang pagbati ng mga Pilipino!'},
+                {front: '⭐ Kilala mo ba siya?', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Tagalog.'},
+                {front: '💬 Alam mo ba ito?', back: 'May mga salitang Tagalog na hindi kayang isalin nang direkta sa Ingles.'},
+                {front: '🇵🇭 Anong masasabi mo?', back: 'Ang ‘Mabuhay’ ay ibig sabihin ay ‘long live’—isang masayang pagbati ng mga Pilipino!'},
               ].map((fact, idx) => (
                 <button key={idx} className="flip-card h-44 bg-transparent" aria-pressed="false" onClick={(e) => {
                   const pressed = e.currentTarget.getAttribute('aria-pressed') === 'true';
@@ -248,8 +264,8 @@ export default function Home() {
         {/* Final CTA Banner */}
         <section className="py-16 md:py-24 text-white relative" style={{ background: 'linear-gradient(90deg, #3B82F6 0%, #6366F1 100%)' }}>
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Handa ka na bang matuto ng Tagalog?</h2>
-            <p className="text-blue-100 mb-8 max-w-xl mx-auto">Simulan na at paghusayin ang iyong kakayahan sa bawat laro.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Handa ka na bang mag-ARAL at SANAY?</h2>
+            {/* <p className="text-blue-100 mb-8 max-w-xl mx-auto">Simulan na at paghusayin ang iyong kakayahan sa bawat laro.</p> */}
             <button
               onClick={openConsent}
               className="btn-secondary bg-white text-slate-900"
@@ -264,7 +280,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-200 py-12">
         <div className="container mx-auto px-6">
-          {/* <div className="text-2xl font-bold text-white mb-6 md:mb-0">TagalogLearn</div>
+          {/* <div className="text-2xl font-bold text-white mb-6 md:mb-0">FILIPINOnlayn</div>
             <div className="flex flex-wrap justify-center gap-6">
               <Link href="/about" className="hover:text-white transition-colors">About</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
@@ -273,14 +289,14 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-700 text-center text-sm">
-            <p> {new Date().getFullYear()} TagalogLearn. All rights reserved.</p> */}
+            <p> {new Date().getFullYear()} FILIPINOnlayn. All rights reserved.</p> */}
           
           {/* Other footer links and controls intentionally hidden per request */}
           <div className="flex justify-center items-center mb-6">
-            <span className="text-xl md:text-2xl font-bold text-white text-center">👋 Salamat! Hanggang sa muli.</span>
+            <span className="text-xl md:text-2xl font-bold text-white text-center">👋 Salamat! Sa uulitin!</span>
           </div>
           <div className="pt-6 border-t border-slate-700 text-center text-sm">
-            <p>2025 TagalogLearn. All rights reserved.</p>
+            <p>2025 FILIPINOnlayn. All rights reserved.</p>
           </div>
         </div>
       </footer>

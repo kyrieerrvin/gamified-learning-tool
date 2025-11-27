@@ -90,7 +90,7 @@ export default function ConsentModal({ open, onAccept, onDecline }: ConsentModal
         <div className="p-5 overflow-y-auto space-y-4" aria-live="polite">
           <h3 className="text-lg font-semibold">Mga Tuntunin at Kundisyon at Paalala sa Pribasya</h3>
           <p>
-            Maligayang pagdating sa TagalogLearn, isang plataporma na may mga hamon na tumutulong sa mga gusto magsanay ng Tagalog. Mangyaring basahin nang mabuti ang mga tuntunin bago gamitin ang laro.
+            Maligayang pagdating sa FILIPINOnlayn, isang plataporma na may mga hamon na tumutulong sa mga gusto magsanay ng Tagalog. Mangyaring basahin nang mabuti ang mga tuntunin bago gamitin ang laro.
           </p>
           <h4 className="font-semibold">1. Layunin</h4>
           <p>

@@ -31,7 +31,7 @@ export default function Login() {
       {/* Logo section */}
       <div className="p-6">
         <Link href="/" className="flex items-center">
-          <div className="text-2xl font-bold text-blue-600">TagalogLearn</div>
+          <div className="text-2xl font-bold text-blue-600">FILIPINOnlayn</div>
         </Link>
       </div>
 
@@ -43,7 +43,7 @@ export default function Login() {
           </h1>
           
           <p className="text-center mb-6 text-gray-600">
-            Sign in upang makapagpatuloy sa TagalogLearn
+            Sign in upang makapagpatuloy sa FILIPINOnlayn
           </p>
           
           {error && (

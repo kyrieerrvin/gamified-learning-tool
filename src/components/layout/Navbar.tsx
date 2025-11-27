@@ -81,7 +81,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link href="/dashboard" className="text-2xl font-bold text-white flex items-center">
-            TagalogLearn
+            FILIPINOnlayn
           </Link>
 
           {/* Desktop Navigation */}
