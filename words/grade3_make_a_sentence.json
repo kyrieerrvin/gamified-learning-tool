@@ -393,5 +393,602 @@
     "easy": "Kumikinang ang lampara sa dilim ng gabi.",
     "difficult": "Inilipat ni Ana ang lampara sa gilid ng kama.",
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lampara"
+  },
+  {
+    "word": "Mabait",
+    "easy": "Mabait, mapagbigay, at palabirong kaklase si Nestor kay Julia",
+    "easy_alternates": [
+      "Mabait, mapagbigay, at palabirong kaklase si Nestor kay Julia",
+      "Mabait, mapagbigay, at palabiro si Nestor na kaklase kay Julia"
+    ],
+    "difficult": "Mabait, mapagbigay, at palabirong kaklase si Nestor kay Julia kaya magkaibigan silang dalawa.",
+    "difficult_alternates": [
+      "Mabait, mapagbigay, at palabirong kaklase si Nestor kay Julia kaya magkaibigan silang dalawa.",
+      "Mabait, mapagbigay, at palabiro si Nestor na kaklase kay Julia kaya magkaibigan silang dalawa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mabait"
+  },
+  {
+    "word": "Matiyagang",
+    "easy": "Matiyagang nagtuturo ng Filipino ang guro sa mga mag-aaral sa elementarya.",
+    "easy_alternates": [
+      "Matiyagang nagtuturo ng Filipino ang guro sa mga mag-aaral sa elementarya."
+    ],
+    "difficult": "Matiyagang nagtuturo ng Filipino ang guro sa mga mag-aaral kaya nakapasa sila sa pagsusulit.",
+    "difficult_alternates": [
+      "Matiyagang nagtuturo ng Filipino ang guro sa mga mag-aaral kaya nakapasa sila sa pagsusulit."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Matiyagang"
+  },
+  {
+    "word": "Kumakain",
+    "easy": "Kumakain araw-araw ng sariwang gulay, isda, at prutas ang magkakapatid.",
+    "easy_alternates": [
+      "Kumakain araw-araw ng sariwang gulay, isda, at prutas ang magkakapatid.",
+      "Kumakain araw-araw ang magkakapatid ng sariwang gulay, isda, at prutas."
+    ],
+    "difficult": "Kumakain araw-araw ng sariwang gulay, isda, at prutas ang magkakapatid dahil mabuti ito sa kalusugan",
+    "difficult_alternates": [
+      "Kumakain araw-araw ng sariwang gulay, isda, at prutas ang magkakapatid dahil mabuti ito sa kalusugan.",
+      "Kumakain araw-araw ang magkakapatid ng sariwang gulay, isda, at prutas dahil mabuti ito sa kalusugan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kumakain"
+  },
+  {
+    "word": "Naglalaro",
+    "easy": "Naglalaro ang mga bata ng taguan, habulan, at patintero sa bakuran.",
+    "easy_alternates": [
+      "Naglalaro ang mga bata ng taguan, habulan, at patintero sa bakuran.",
+      "Naglalaro ang mga bata sa bakuran ng taguan, habulan, at patintero."
+    ],
+    "difficult": "Masayang naglalaro ang mga bata ng taguan,  habulan, at patintero sa bakuran.",
+    "difficult_alternates": [
+      "Masayang naglalaro ang mga bata ng taguan, habulan, at patintero sa bakuran.",
+      "Masayang naglalaro sa bakuran ang mga bata ng taguan, habulan, at patintero."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Naglalaro"
+  },
+  {
+    "word": "Nanood",
+    "easy": "Nanood ako ng basketbol kahapon sa plaza kasama sina Grace at Luis",
+    "easy_alternates": [
+      "Nanood ako ng basketbol kahapon sa plaza kasama sina Grace at Luis."
+    ],
+    "difficult": "Nanoood ako ng basketbol kahapon sa plaza kasama sina Grace at Luis pero biglang umulan.",
+    "difficult_alternates": [
+      "Nanoood ako ng basketbol kahapon sa plaza kasama sina Grace at Luis pero biglang umulan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nanood"
+  },
+  {
+    "word": "Nagtanim",
+    "easy": "Nagtanim si Tatay ng kawayang kiling at buho sa bakuran.",
+    "easy_alternates": [
+      "Nagtanim si Tatay ng kawayang kiling at buho sa bakuran.",
+      "Nagtanim si Tatay sa bakuran ng kawayang kiling at buho."
+    ],
+    "difficult": "Nagtanim si Tatay ng kawayang kiling at buho sa bakuran dahil napipigilan nitong pagguho ng lupa.",
+    "difficult_alternates": [
+      "Nagtanim si Tatay ng kawayang kiling at buho sa bakuran dahil napipigilan nitong pagguho ng lupa.",
+      "Nagtanim si Tatay sa bakuran ng kawayang kiling at buho dahil napipigilan nitong pagguho ng lupa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtanim"
+  },
+  {
+    "word": "Bumili",
+    "easy": "Bumili ako ng tatlong Mongol na lapis sa tindahan kaninang umaga.",
+    "easy_alternates": [
+      "Bumili ako ng tatlong Mongol na lapis sa tindahan kaninang umaga.",
+      "Bumili ako sa tindahan kaninang umaga ng tatlong Mongol na lapis."
+    ],
+    "difficult": "Bumili ako ng tatlong Mongol lapis sa tindahan kaninang umaga at pinahiram ko sa kaklase ang sobrang lapis.",
+    "difficult_alternates": [
+      "Bumili ako ng tatlong Mongol lapis sa tindahan kaninang umaga at pinahiram ko sa kaklase ang sobrang lapis."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Bumili"
+  },
+  {
+    "word": "Nasira",
+    "easy": "Nasira ang upuan at mesa ng mga mag-aaral sa klasrum dahil bumaha",
+    "easy_alternates": [
+      "Nasira ang upuan at mesa ng mga mag-aaral sa klasrum dahil bumaha."
+    ],
+    "difficult": "Nasira ang upuan at mesa ng mga mag-aaral sa klasrum dahil laging bumabaha kaya kailangang ayusin.",
+    "difficult_alternates": [
+      "Nasira ang upuan at mesa ng mga mag-aaral sa klasrum dahil laging bumabaha kaya kailangang ayusin."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nasira"
+  },
+  {
+    "word": "Nagsusulat",
+    "easy": "Nagsusulat ang mga mag-aaral ng sanaysay tungkol sa pambansang bayani si Rizal.",
+    "easy_alternates": [
+      "Nagsusulat ang mga mag-aaral ng sanaysay tungkol sa pambansang bayani si Rizal."
+    ],
+    "difficult": "Nagsusulat ang mga mag-aaral ng sanaysay tungkol sa mga bayaning katipunero noong Himagsikan 1896.",
+    "difficult_alternates": [
+      "Nagsusulat ang mga mag-aaral ng sanaysay tungkol sa mga bayaning katipunero noong Himagsikan 1896."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagsusulat"
+  },
+  {
+    "word": "Mahalaga",
+    "easy": "Mahalaga ang mga magsasakang Pilipino dahil nagtatanim sila ng palay.",
+    "easy_alternates": [
+      "Mahalaga ang mga magsasakang Pilipino dahil nagtatanim sila ng palay."
+    ],
+    "difficult": "Mahalaga ang mga magsasakang Pilipino dahil nagtatanim sila ng palay kaya igalang natin sila.",
+    "difficult_alternates": [
+      "Mahalaga ang mga magsasakang Pilipino dahil nagtatanim sila ng palay kaya igalang natin sila."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mahalaga"
+  },
+  {
+    "word": "Kulay",
+    "easy": "Kulay asul ang paboritong bag ni Mavi na iniregalo ng kaniyang ina at ama.",
+    "easy_alternates": [
+      "Kulay asul ang paboritong bag ni Mavi na iniregalo ng kaniyang ina at ama."
+    ],
+    "difficult": "Kulay asul ang paboritong bag ni Mavi na iniregalo ng kaniyang ina at ama sa kaarawan niya.",
+    "difficult_alternates": [
+      "Kulay asul ang paboritong bag ni Mavi na iniregalo ng kaniyang ina at ama sa kaarawan niya."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kulay"
+  },
+  {
+    "word": "Masustansya",
+    "easy": "Masustansya ang kamote kaya kumakain ako nito sa umaga bago pumasok sa paaralan.",
+    "easy_alternates": [
+      "Masustansya ang kamote kaya kumakain ako nito sa umaga bago pumasok sa paaralan."
+    ],
+    "difficult": "Masustansya ang kamote kaya kumakain ako nito para maging malakas, masigla, at makaiwas sa sakit.",
+    "difficult_alternates": [
+      "Masustansya ang kamote kaya kumakain ako nito para maging malakas, masigla, at makaiwas sa sakit."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masustansya"
+  },
+  {
+    "word": "Nanganganib",
+    "easy": "Nanganganib nang mawala ang mga agilang hari ng mga ibon sa ating bansa.",
+    "easy_alternates": [
+      "Nanganganib nang mawala ang mga agilang hari ng mga ibon sa ating bansa."
+    ],
+    "difficult": "Nanganganib nang mawala ang mga agila sa Pilipinas kaya tumulong para sagipin sila.",
+    "difficult_alternates": [
+      "Nanganganib nang mawala ang mga agila sa Pilipinas kaya tumulong para sagipin sila."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nanganganib"
+  },
+  {
+    "word": "Masaya",
+    "easy": "Masaya akong naligo sa dagat kasamang buong pamilya at gumawa kami ng malaking kastilyong buhangin.",
+    "easy_alternates": [
+      "Masaya akong naligo sa dagat kasamang buong pamilya at gumawa kami ng malaking kastilyong buhangin."
+    ],
+    "difficult": "Masaya akong naligo sa dagat kasamang buong pamilya at gumawa kami ng malaking kastilyong buhangin pero nabuwag ito ng mga alon.",
+    "difficult_alternates": [
+      "Masaya akong naligo sa dagat kasamang buong pamilya at gumawa kami ng malaking kastilyong buhangin pero nabuwag ito ng mga alon."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masaya"
+  },
+  {
+    "word": "Nagpapraktis",
+    "easy": "Nagpapraktis akong maglaro ng trumpo araw-araw para humusay.",
+    "easy_alternates": [
+      "Nagpapraktis akong maglaro ng trumpo araw-araw para humusay."
+    ],
+    "difficult": "Pangarap kong manalong kampeon sa paglalaro ng trumpo kaya sasali ako sa taunang paligsahan ng trumpo.",
+    "difficult_alternates": [
+      "Pangarap kong manalong kampeon sa paglalaro ng trumpo kaya sasali ako sa taunang paligsahan ng trumpo."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagpapraktis"
+  },
+  {
+    "word": "Tumatahol",
+    "easy": "Tumatahol ang mga aso nang walang tigil kapag may nararamdaman silang panganib.",
+    "easy_alternates": [
+      "Tumatahol ang mga aso nang walang tigil kapag may nararamdaman silang panganib."
+    ],
+    "difficult": "Tumatahol ang mga aso nang walang tigil kapag may nararamdaman silang panganib tulad ng bantang paglindol.",
+    "difficult_alternates": [
+      "Tumatahol ang mga aso nang walang tigil kapag may nararamdaman silang panganib tulad ng bantang paglindol."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumatahol"
+  },
+  {
+    "word": "Tumutulong",
+    "easy": "Tumutulong akong hindi mabara ang daluyan ng tubig-ulan sa labas ng aming bahay.",
+    "easy_alternates": [
+      "Tumutulong akong hindi mabara ang daluyan ng tubig-ulan sa labas ng aming bahay."
+    ],
+    "difficult": "Tumutulong ang aming pamilya na hindi malagyan ng basura ang daluyan ng tubig-ulan sa aming pamayanan.",
+    "difficult_alternates": [
+      "Tumutulong ang aming pamilya na hindi malagyan ng basura ang daluyan ng tubig-ulan sa aming pamayanan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumutulong"
+  },
+  {
+    "word": "Tumitilaok",
+    "easy": "Tumitilaok ang tandang ngunit hindi ang inahing manok.",
+    "easy_alternates": [
+      "Tumitilaok ang tandang ngunit hindi ang inahing manok."
+    ],
+    "difficult": "Matikas at matapang ang mga tandang samantalang mahinahon at maalaga ang inahing manok.",
+    "difficult_alternates": [
+      "Matikas at matapang ang mga tandang samantalang mahinahon at maalaga ang inahing manok."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumitilaok"
+  },
+  {
+    "word": "Pinupuntahan",
+    "easy": "Pinupuntahan ng mga turista ang Cagayan River dahil pinakamahabang ilog ito sa Pilipinas.",
+    "easy_alternates": [
+      "Pinupuntahan ng mga turista ang Cagayan River dahil pinakamahabang ilog ito sa Pilipinas."
+    ],
+    "difficult": "Umapaw ang Cagayan River kaya maraming nasirang kabahayan at palayan na dapat tulungan ng gobyerno.",
+    "difficult_alternates": [
+      "Umapaw ang Cagayan River kaya maraming nasirang kabahayan at palayan na dapat tulungan ng gobyerno."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pinupuntahan"
+  },
+  {
+    "word": "Nakatutulong",
+    "easy": "Nakatutulong sa mag-aaral na maging maayos ang sulat-kamay",
+    "easy_alternates": [
+      "Nakatutulong sa mag-aaral na maging maayos ang sulat-kamay."
+    ],
+    "difficult": "Nakatutulong sa mag-aaral na maayos ang sulat-kamay sa pagbuo ng mga sanaysay.",
+    "difficult_alternates": [
+      "Nakatutulong sa mag-aaral na maayos ang sulat-kamay sa pagbuo ng mga sanaysay."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nakatutulong"
+  },
+  {
+    "word": "Masipag",
+    "easy": "Masipag at masigasig akong mag-aaral kahit nahihirapan.",
+    "easy_alternates": [
+      "Masipag at masigasig akong mag-aaral kahit nahihirapan."
+    ],
+    "difficult": "Masipag at masigasig akong mag-aaral kahit nahihirapan dahil sa mga pagsubok sa buhay.",
+    "difficult_alternates": [
+      "Masipag at masigasig akong mag-aaral kahit nahihirapan dahil sa mga pagsubok sa buhay."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masipag"
+  },
+  {
+    "word": "Nagluto",
+    "easy": "Nagluto si Nanay ng masarap at mainit na sinigang para sa tanghalian.",
+    "easy_alternates": [
+      "Nagluto si Nanay ng masarap at mainit na sinigang para sa tanghalian."
+    ],
+    "difficult": "Nagluto si Nanay ng espesyal na sinigang sa tulong ng pamanang resipe ni Lola.",
+    "difficult_alternates": [
+      "Nagluto si Nanay ng espesyal na sinigang sa tulong ng pamanang resipe ni Lola."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagluto"
+  },
+  {
+    "word": "Nagbabasa",
+    "easy": "Nagbabasa si Jerem ng mga libro sa aklatan kaya marami siyang natutunan.",
+    "easy_alternates": [
+      "Nagbabasa si Jerem ng mga libro sa aklatan kaya marami siyang natutunan."
+    ],
+    "difficult": "Nagbabasa si Jerem ng mga libro sa aklatan kaya marami siyang natutunan tungkol sa Pilipinas.",
+    "difficult_alternates": [
+      "Nagbabasa si Jerem ng mga libro sa aklatan kaya marami siyang natutunan tungkol sa Pilipinas."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagbabasa"
+  },
+  {
+    "word": "Natutulog",
+    "easy": "Natutulog siya ng 8 oras  kaya malinaw ang kaniyang pag-iisip.",
+    "easy_alternates": [
+      "Natutulog siya ng 8 oras kaya malinaw ang kaniyang pag-iisip."
+    ],
+    "difficult": "Hindi siya natutulog ng 8 oras kaya naapektuhan ang kaniyang kalusugan at saka naospital.",
+    "difficult_alternates": [
+      "Hindi siya natutulog ng 8 oras kaya naapektuhan ang kaniyang kalusugan at saka naospital."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Natutulog"
+  },
+  {
+    "word": "Tapat",
+    "easy": "Tapat akong bata kahit kailan hindi nagsinungaling para lang makalusot sa parusa",
+    "easy_alternates": [
+      "Tapat akong bata kahit kailan hindi nagsinungaling para lang makalusot sa parusa."
+    ],
+    "difficult": "Tapat akong Pilipino sapagkat sinusunod ko ang ugaling matapat ng ating mga ninuno.",
+    "difficult_alternates": [
+      "Tapat akong Pilipino sapagkat sinusunod ko ang ugaling matapat ng ating mga ninuno."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tapat"
+  },
+  {
+    "word": "Palaging",
+    "easy": "Palaging tumatakbo si Chris kaya gumaya na rin ang kaniyang mga kaibigan.",
+    "easy_alternates": [
+      "Palaging tumatakbo si Chris kaya gumaya na rin ang kaniyang mga kaibigan."
+    ],
+    "difficult": "Magandang libangan ang tumakbo araw-araw kasamang mga kaibigan upang maging malusog ang isip at katawan.",
+    "difficult_alternates": [
+      "Magandang libangan ang tumakbo araw-araw kasamang mga kaibigan upang maging malusog ang isip at katawan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Palaging"
+  },
+  {
+    "word": "Nagtitipid",
+    "easy": "Nagtitipid ng tubig ang barangay at sambahayan lalo sa panahon ng tagtuyot.",
+    "easy_alternates": [
+      "Nagtitipid ng tubig ang barangay at sambahayan lalo sa panahon ng tagtuyot."
+    ],
+    "difficult": "Nagtitipid ng tubig ang bawat pamilya upang matulungan ang pamahalaan lalo sa panahon ng tagtuyot.",
+    "difficult_alternates": [
+      "Nagtitipid ng tubig ang bawat pamilya upang matulungan ang pamahalaan lalo sa panahon ng tagtuyot."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtitipid"
+  },
+  {
+    "word": "Tinuturuan",
+    "easy": "Tinuturuan ang mga bata na ubusin ang kanin sa plato.",
+    "easy_alternates": [
+      "Tinuturuan ang mga bata na ubusin ang kanin sa plato."
+    ],
+    "difficult": "Tinuturo sa paaralan at tahanan na mahalagang bawat butil ng palay kaya laging ubusin ang kanin sa plato.",
+    "difficult_alternates": [
+      "Tinuturo sa paaralan at tahanan na mahalagang bawat butil ng palay kaya laging ubusin ang kanin sa plato."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tinuturuan"
+  },
+  {
+    "word": "Pinapaliguan",
+    "easy": "Pinapaliguan ng magsasaka ang kalabaw sa sapa.",
+    "easy_alternates": [
+      "Pinapaliguan ng magsasaka ang kalabaw sa sapa."
+    ],
+    "difficult": "Mahalagang hayop ang kalabaw sa pagsasaka dahil tumutulong ito sa pag-araro ng lupa.",
+    "difficult_alternates": [
+      "Mahalagang hayop ang kalabaw sa pagsasaka dahil tumutulong ito sa pag-araro ng lupa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pinapaliguan"
+  },
+  {
+    "word": "Delikadong",
+    "easy": "Delikadong masagasaan at mamatay sa kalye ang naliligaw na pusa.",
+    "easy_alternates": [
+      "Delikadong masagasaan at mamatay sa kalye ang naliligaw na pusa."
+    ],
+    "difficult": "Delikadong masagasaan at mamatay sa kalye ang naliligaw na pusa kaya dapat iligtas ng mga barangay tanod.",
+    "difficult_alternates": [
+      "Delikadong masagasaan at mamatay sa kalye ang naliligaw na pusa kaya dapat iligtas ng mga barangay tanod."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Delikadong"
+  },
+  {
+    "word": "Nakikinig",
+    "easy": "Nakikinig si Tonio ng kuwentong pambata tungkol sa problema ng pagbaha.",
+    "easy_alternates": [
+      "Nakikinig si Tonio ng kuwentong pambata tungkol sa problema ng pagbaha."
+    ],
+    "difficult": "Nakikinig si Tonio ng kuwento tungkol sa pagtulong ng bata upang umagos ang tubig-ulan pabalik sa dagat.",
+    "difficult_alternates": [
+      "Nakikinig si Tonio ng kuwento tungkol sa pagtulong ng bata upang umagos ang tubig-ulan pabalik sa dagat."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nakikinig"
+  },
+  {
+    "word": "Magpipintura",
+    "easy": "Magpipintura ng bakod ng kanilang paaralan ang mga boluntir ng Brigada Eskwela.",
+    "easy_alternates": [
+      "Magpipintura ng bakod ng kanilang paaralan ang mga boluntir ng Brigada Eskwela."
+    ],
+    "difficult": "Magpipintura ng bakod ng kanilang paaralan ang nagboluntir na mga magulang at barangay tanod para sa Brigada Eskwela.",
+    "difficult_alternates": [
+      "Magpipintura ng bakod ng kanilang paaralan ang nagboluntir na mga magulang at barangay tanod para sa Brigada Eskwela."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Magpipintura"
+  },
+  {
+    "word": "Sumalok",
+    "easy": "Sumalok ng tubig sa poso si Paeng pero hindi puwedeng inumin dahil may lumalabas na kalawang.",
+    "easy_alternates": [
+      "Sumalok ng tubig sa poso si Paeng pero hindi puwedeng inumin dahil may lumalabas na kalawang."
+    ],
+    "difficult": "Sumalok ng tubig sa poso si Paeng pero hindi puwedeng inumin dahil may lumalabas na kalawang kaya sana masolusyunan ng gobyerno.",
+    "difficult_alternates": [
+      "Sumalok ng tubig sa poso si Paeng pero hindi puwedeng inumin dahil may lumalabas na kalawang kaya sana masolusyunan ng gobyerno."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Sumalok"
+  },
+  {
+    "word": "Kaarawan",
+    "easy": "Kaarawan ni Lolo sa makalawa ngunit hindi na puwedeng magpaburda ng barong sa Lumban.",
+    "easy_alternates": [
+      "Kaarawan ni Lolo sa makalawa ngunit hindi na puwedeng magpaburda ng barong sa Lumban."
+    ],
+    "difficult": "Kaarawan ni Lolo sa makalawa kaya may iba't ibang sorpresang regalo ang kaniyang mga anak at apo kasamang apo sa tuhod.",
+    "difficult_alternates": [
+      "Kaarawan ni Lolo sa makalawa kaya may iba't ibang sorpresang regalo ang kaniyang mga anak at apo kasamang apo sa tuhod."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaarawan"
+  },
+  {
+    "word": "Napansin",
+    "easy": "Napansin ng matatandang may kulay puting nakapaikot sa bilog na buwan sa gitna ng dilim.",
+    "easy_alternates": [
+      "Napansin ng matatandang may kulay puting nakapaikot sa bilog na buwan sa gitna ng dilim."
+    ],
+    "difficult": "Napansin ng matatandang may kulay puting nakapaikot sa bilog na buwang babala na may paparating na bagyo.",
+    "difficult_alternates": [
+      "Napansin ng matatandang may kulay puting nakapaikot sa bilog na buwang babala na may paparating na bagyo."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Napansin"
+  },
+  {
+    "word": "Kumakanta",
+    "easy": "Kumakanta ang mga mag-aaral ng Pambansang Awit ng Pilipinas bilang tanda ng kalayaan at kasarinlan ng bansa.",
+    "easy_alternates": [
+      "Kumakanta ang mga mag-aaral ng Pambansang Awit ng Pilipinas bilang tanda ng kalayaan at kasarinlan ng bansa."
+    ],
+    "difficult": "Kumakanta ang mga mag-aaral ng Pambansang Awit ng Pilipinas bilang tanda ng kalayaan at kasarinlan na ipinaglaban ng mga ninuno natin.",
+    "difficult_alternates": [
+      "Kumakanta ang mga mag-aaral ng Pambansang Awit ng Pilipinas bilang tanda ng kalayaan at kasarinlan na ipinaglaban ng mga ninuno natin."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kumakanta"
+  },
+  {
+    "word": "Nagtanim",
+    "easy": "Nagtanim kami ng mga gulay sa lumang sisidlan na puwede pang pakinabangan para mabawasan ang basurang itatapon.",
+    "easy_alternates": [
+      "Nagtanim kami ng mga gulay sa lumang sisidlan na puwede pang pakinabangan para mabawasan ang basurang itatapon."
+    ],
+    "difficult": "Nagtanim kami sa lumang mga sisidlan upang may mapipitas na sariwang gulay sa bahay  at makatulong sa kalikasan.",
+    "difficult_alternates": [
+      "Nagtanim kami sa lumang mga sisidlan upang may mapipitas na sariwang gulay sa bahay at makatulong sa kalikasan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtanim"
+  },
+  {
+    "word": "Pumunta",
+    "easy": "Pumunta kami ng mga pinsan ko sa Museo ni Rizal sa Calamba kaya nakita namin ang bahay na bato.",
+    "easy_alternates": [
+      "Pumunta kami ng mga pinsan ko sa Museo ni Rizal sa Calamba kaya nakita namin ang bahay na bato."
+    ],
+    "difficult": "Pumunta kami ng mga pinsan ko sa Museo ni Rizal sa Calamba kaya nakita namin ang bahay na bato ng kanilang pamilya na puno ng mga alaala.",
+    "difficult_alternates": [
+      "Pumunta kami ng mga pinsan ko sa Museo ni Rizal sa Calamba kaya nakita namin ang bahay na bato ng kanilang pamilya na puno ng mga alaala."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pumunta"
+  },
+  {
+    "word": "Mahalaga",
+    "easy": "Mahalaga bilang mag-aaral na saulado ko ang Alpabetong Filipino sapagkat idineklara sa 1987 konstitusyon na wikang pambansa ang Filipino.",
+    "easy_alternates": [
+      "Mahalaga bilang mag-aaral na saulado ko ang Alpabetong Filipino sapagkat idineklara sa 1987 konstitusyon na wikang pambansa ang Filipino."
+    ],
+    "difficult": "Mahalaga bilang mag-aaral na saulado ko ang Alpabetong Filipino sapagkat idineklara sa 1987 konstitusyon na wikang pambansa, wikang opisyal, at wikang panturo ang Filipino.",
+    "difficult_alternates": [
+      "Mahalaga bilang mag-aaral na saulado ko ang Alpabetong Filipino sapagkat idineklara sa 1987 konstitusyon na wikang pambansa, wikang opisyal, at wikang panturo ang Filipino."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mahalaga"
+  },
+  {
+    "word": "Nagustuhan",
+    "easy": "Nagustuhan ko ang diwatang si Maria Makiling dahil tinuruan niya ang mga taong huwag maging maluho sa pamumuhay.",
+    "easy_alternates": [
+      "Nagustuhan ko ang diwatang si Maria Makiling dahil tinuruan niya ang mga taong huwag maging maluho sa pamumuhay."
+    ],
+    "difficult": "Nagustuhan ko ang diwatang sina Maria Makiling, Maria Sinukuan, Maria Cacao dahil tinuruan nila ang mga taong maging simple at alagaan ang kagubatan.",
+    "difficult_alternates": [
+      "Nagustuhan ko ang diwatang sina Maria Makiling, Maria Sinukuan, Maria Cacao dahil tinuruan nila ang mga taong maging simple at alagaan ang kagubatan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagustuhan"
+  },
+  {
+    "word": "Masamang",
+    "easy": "Masamang tsokolate sa mga aso dahil may sangkap ito na hindi mabuti para sa kanilang utak at puso.",
+    "easy_alternates": [
+      "Masamang tsokolate sa mga aso dahil may sangkap ito na hindi mabuti para sa kanilang utak at puso."
+    ],
+    "difficult": "Masamang tsokolate sa mga aso dahil may sangkap ito na hindi mabuti sa kanilang utak at puso kaya kung aksidenteng nakakain kailangang dalhin sa beterinaryo.",
+    "difficult_alternates": [
+      "Masamang tsokolate sa mga aso dahil may sangkap ito na hindi mabuti sa kanilang utak at puso kaya kung aksidenteng nakakain kailangang dalhin sa beterinaryo."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masamang"
+  },
+  {
+    "word": "Sinuot",
+    "easy": "Sinuot ko ang tsinelas na binigay sa akin dahil sabik akong magkaroon ng sapin sa paa tuwing papasok sa paaralan.",
+    "easy_alternates": [
+      "Sinuot ko ang tsinelas na binigay sa akin dahil sabik akong magkaroon ng sapin sa paa tuwing papasok sa paaralan."
+    ],
+    "difficult": "Palaging nakasuot si Sec. Jesse Robredo ng tsinelas dahil salamin ito ng kaniyang pakikisalamuha sa mga tao bilang pinuno.",
+    "difficult_alternates": [
+      "Palaging nakasuot si Sec. Jesse Robredo ng tsinelas dahil salamin ito ng kaniyang pakikisalamuha sa mga tao bilang pinuno."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Sinuot"
+  },
+  {
+    "word": "Likas",
+    "easy": "Likas na malamig ang tubig mula sa banga dahil sa sangkap nitong luwad.",
+    "easy_alternates": [
+      "Likas na malamig ang tubig mula sa banga dahil sa sangkap nitong luwad."
+    ],
+    "difficult": "Kilala ang ating mga ninuno sa mahusay na paggawa ng mga banga dahil may mataas na uri ng luwad ang Pilipinas.",
+    "difficult_alternates": [
+      "Kilala ang ating mga ninuno sa mahusay na paggawa ng mga banga dahil may mataas na uri ng luwad ang Pilipinas."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Likas"
+  },
+  {
+    "word": "Pinakamahabang",
+    "easy": "Pinakamahabang magdiwang ng Pasko ang mga Pilipino sa buong mundo",
+    "easy_alternates": [
+      "Pinakamahabang magdiwang ng Pasko ang mga Pilipino sa buong mundo."
+    ],
+    "difficult": "Kultura ng mga Pilipino ang pagsasama-sama ng buong pamilya sa araw ng Pasko kaya umuuwi ang mga nasa ibang bansa.",
+    "difficult_alternates": [
+      "Kultura ng mga Pilipino ang pagsasama-sama ng buong pamilya sa araw ng Pasko kaya umuuwi ang mga nasa ibang bansa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Pinakamahabang"
+  },
+  {
+    "word": "Madalas",
+    "easy": "Madalas akong mag-enjoy manood ng Anime kapag may kasama at kakulitan sa harap ng TV.",
+    "easy_alternates": [
+      "Madalas akong mag-enjoy manood ng Anime kapag may kasama at kakulitan sa harap ng TV."
+    ],
+    "difficult": "Manonood pa rin kaya ako ng Anime hanggang pagtanda o magbabago na ang interes ko sa hinaharap at hindi na kasama ang Anime?",
+    "difficult_alternates": [
+      "Manonood pa rin kaya ako ng Anime hanggang pagtanda o magbabago na ang interes ko sa hinaharap at hindi na kasama ang Anime?"
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Madalas"
+  },
+  {
+    "word": "Nakaupo",
+    "easy": "Nakaupo sa silya ang karamihan ng pamilyang Pilipino kapag kumakain ngunit mayroon ding nakaupo sa sahig kapag kumakain.",
+    "easy_alternates": [
+      "Nakaupo sa silya ang karamihan ng pamilyang Pilipino kapag kumakain ngunit mayroon ding nakaupo sa sahig kapag kumakain."
+    ],
+    "difficult": "Impluwensiya lang ng mga Kastila ang pag-upo sa silya dahil likas sa ating mga ninuno na mag-umpukan sa sahig o sa bakuran ng bahay kaysa umupo sa mga silya",
+    "difficult_alternates": [
+      "Impluwensiya lang ng mga Kastila ang pag-upo sa silya dahil likas sa ating mga ninuno na mag-umpukan sa sahig o sa bakuran ng bahay kaysa umupo sa mga silya."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nakaupo"
+  },
+  {
+    "word": "Gumuguhit",
+    "easy": "Gumuguhit sa lalamunan kapag uminom ng mainit na pinakuluang luya kung masamang pakiramdam.",
+    "easy_alternates": [
+      "Gumuguhit sa lalamunan kapag uminom ng mainit na pinakuluang luya kung masamang pakiramdam."
+    ],
+    "difficult": "TInatawag ang Nueva Vizcaya na \"Ginger Capital of the Philippines\" dahil dito inaani ang pinakamaraming luya sa bansa.",
+    "difficult_alternates": [
+      "TInatawag ang Nueva Vizcaya na \"Ginger Capital of the Philippines\" dahil dito inaani ang pinakamaraming luya sa bansa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Gumuguhit"
+  },
+  {
+    "word": "Bumisita",
+    "easy": "Bumisita kami sa Cagsawa Ruins at sinubukan namin ang ATV adventure kaya nag-enjoy kaming magpipinsan.",
+    "easy_alternates": [
+      "Bumisita kami sa Cagsawa Ruins at sinubukan namin ang ATV adventure kaya nag-enjoy kaming magpipinsan."
+    ],
+    "difficult": "Aktibong bulkan ang Mayon kaya hindi pinapayagang tumira ang mga tao sa paanan nito sapagkat delikado dahil may tala ng pagsabog ang bulkan.",
+    "difficult_alternates": [
+      "Aktibong bulkan ang Mayon kaya hindi pinapayagang tumira ang mga tao sa paanan nito sapagkat delikado dahil may tala ng pagsabog ang bulkan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Bumisita"
+  },
+  {
+    "word": "Masaya",
+    "easy": "Masaya ang mga Pilipino kapag nagkakantahan anuman ang okasyon o lugar.",
+    "easy_alternates": [
+      "Masaya ang mga Pilipino kapag nagkakantahan anuman ang okasyon o lugar."
+    ],
+    "difficult": "Kilala sa buong mundo ang talento sa pag-awit ng mga Pilipino katulad noong nanalo si Sofronio Vazquez sa The Voice USA.",
+    "difficult_alternates": [
+      "Kilala sa buong mundo ang talento sa pag-awit ng mga Pilipino katulad noong nanalo si Sofronio Vazquez sa The Voice USA."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masaya"
   }
 ]

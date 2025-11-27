@@ -228,9 +228,6 @@
   {
     "word": "Pusa",
     "easy": "Mataas tumalon ang pusa.",
-    "easy_alternates": [
-      "Mataas ang pusa tumalon."
-    ],
     "difficult": "Hinabol ng pusa ang daga.",
     "difficult_alternates":[
         "Hinabol ng daga ang pusa."
@@ -383,6 +380,622 @@
     "word": "Tumatawa",
     "easy": "Tumatawa si kuya.",
     "difficult": "Tumatawa si Ben matapos nang manalo sa laro.",
+    "difficult_alternates": [
+      "Tumatawa nang manalo sa laro si Ben."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumatawa"
+  },
+  {
+  "word": "Kaklase",
+  "easy": "Kaklase ko si Nestor.",
+  "easy_alternates": [
+    "Kaklase ko si Nestor."
+  ],
+  "difficult": "Mabait na kaklase si Nestor.",
+  "difficult_alternates": [
+    "Mabait si Nestor na kaklase."
+  ],
+  "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaklase"
+  },
+  {
+    "word": "Nagtuturo",
+    "easy": "Nagtuturo ang guro.",
+    "easy_alternates": [
+      "Nagtuturo ang guro."
+    ],
+    "difficult": "Nagtuturo ng Filipino ang guro.",
+    "difficult_alternates": [
+      "Nagtuturo ng Filipino ang guro.",
+      "Nagtuturo ang guro ng Filipino."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtuturo"
+  },
+  {
+    "word": "Kumakain",
+    "easy": "Kumakain ang magkakapatid.",
+    "easy_alternates": [
+      "Kumakain ang magkakapatid."
+    ],
+    "difficult": "Kumakain ng gulay ang magkakapatid.",
+    "difficult_alternates": [
+      "Kumakain ng gulay ang magkakapatid.",
+      "Kumakain ang magkakapatid ng gulay."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kumakain"
+  },
+  {
+    "word": "Naglalaro",
+    "easy": "Naglalaro ang mga bata.",
+    "easy_alternates": [
+      "Naglalaro ang mga bata."
+    ],
+    "difficult": "Naglalaro ang mga bata ng taguan.",
+    "difficult_alternates": [
+      "Naglalaro ang mga bata ng taguan.",
+      "Naglalaro ng taguan ang mga bata."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Naglalaro"
+  },
+  {
+    "word": "Nanood",
+    "easy": "Nanood ako ng laro.",
+    "easy_alternates": [
+      "Nanood ako ng laro."
+    ],
+    "difficult": "Nanood ako ng larong basketbol.",
+    "difficult_alternates": [
+      "Nanood ako ng larong basketbol."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nanood"
+  },
+  {
+    "word": "Nagtanim",
+    "easy": "Nagtanim si Tatay.",
+    "easy_alternates": [
+      "Nagtanim si Tatay."
+    ],
+    "difficult": "Nagtanim si Tatay ng kawayan.",
+    "difficult_alternates": [
+      "Nagtanim si Tatay ng kawayan.",
+      "Nagtanim ng kawayan si Tatay."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtanim"
+  },
+  {
+    "word": "Bumili",
+    "easy": "Bumili ako ng lapis.",
+    "easy_alternates": [
+      "Bumili ako ng lapis."
+    ],
+    "difficult": "Bumili ako ng tatlong lapis.",
+    "difficult_alternates": [
+      "Bumili ako ng tatlong lapis."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Bumili"
+  },
+  {
+    "word": "Nasira",
+    "easy": "Nasira ang upuan.",
+    "easy_alternates": [
+      "Nasira ang upuan."
+    ],
+    "difficult": "Nasira ang upuan ng mga mag-aaral.",
+    "difficult_alternates": [
+      "Nasira ang upuan ng mga mag-aaral.",
+      "Nasira ng mga mag-aaral ang upuan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nasira"
+  },
+  {
+    "word": "Nagsusulat",
+    "easy": "Nagsusulat ang mga mag-aaral.",
+    "easy_alternates": [
+      "Nagsusulat ang mga mag-aaral."
+    ],
+    "difficult": "Nagsusulat ang mga mag-aaral ng sanaysay.",
+    "difficult_alternates": [
+      "Nagsusulat ang mga mag-aaral ng sanaysay.",
+      "Nagsusulat ng sanaysay ang mga mag-aaral."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagsusulat"
+  },
+  {
+    "word": "Mahalaga",
+    "easy": "Mahalaga ang mga magsasaka.",
+    "easy_alternates": [
+      "Mahalaga ang mga magsasaka."
+    ],
+    "difficult": "Mahalaga ang mga magsasaka sa bansa.",
+    "difficult_alternates": [
+      "Mahalaga ang mga magsasaka sa bansa.",
+      "Mahalaga sa bansa ang mga magsasaka."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Mahalaga"
+  },
+  {
+    "word": "Kulay",
+    "easy": "Kulay asul ang bag.",
+    "easy_alternates": [
+      "Kulay asul ang bag."
+    ],
+    "difficult": "Kulay asul ang bag ni Mavi.",
+    "difficult_alternates": [
+      "Kulay asul ang bag ni Mavi."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kulay"
+  },
+  {
+    "word": "Masustansya",
+    "easy": "Masustansya ang kamote.",
+    "easy_alternates": [
+      "Masustansya ang kamote."
+    ],
+    "difficult": "Masustansya at mura ang kamote.",
+    "difficult_alternates": [
+      "Masustansya at mura ang kamote."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masustansya"
+  },
+  {
+    "word": "Lumilipad",
+    "easy": "Lumilipad ang agila.",
+    "easy_alternates": [
+      "Lumilipad ang agila."
+    ],
+    "difficult": "Lumilipad ang agilang hari ng mga ibon.",
+    "difficult_alternates": [
+      "Lumilipad ang agilang hari ng mga ibon."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Lumilipad"
+  },
+  {
+    "word": "Naligo",
+    "easy": "Naligo ako sa dagat.",
+    "easy_alternates": [
+      "Naligo ako sa dagat."
+    ],
+    "difficult": "Naligo ako sa dagat kasamang buong pamilya.",
+    "difficult_alternates": [
+      "Naligo ako sa dagat kasamang buong pamilya.",
+      "Naligo ako kasamang buong pamilya sa dagat."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Naligo"
+  },
+  {
+    "word": "May",
+    "easy": "May trumpo ako.",
+    "easy_alternates": [
+      "May trumpo ako."
+    ],
+    "difficult": "Gusto kong maglaro ng trumpo.",
+    "difficult_alternates": [
+      "Gusto kong maglaro ng trumpo."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang May"
+  },
+  {
+    "word": "Tumatahol",
+    "easy": "Tumatahol ang aso.",
+    "easy_alternates": [
+      "Tumatahol ang aso."
+    ],
+    "difficult": "Tumahol nang malakas ang aso.",
+    "difficult_alternates": [
+      "Tumahol nang malakas ang aso.",
+      "Tumahol ang aso nang malakas."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumatahol"
+  },
+  {
+    "word": "Nagtapon",
+    "easy": "Nagtapon ako ng basura.",
+    "easy_alternates": [
+      "Nagtapon ako ng basura."
+    ],
+    "difficult": "Nagtapon ako ng basura sa tamang lalagyan.",
+    "difficult_alternates": [
+      "Nagtapon ako ng basura sa tamang lalagyan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtapon"
+  },
+  {
+    "word": "Tumitilaok",
+    "easy": "Tumitilaok ang tandang.",
+    "easy_alternates": [
+      "Tumitilaok ang tandang."
+    ],
+    "difficult": "Maagang tumitilaok ang tandang sa bakuran.",
+    "difficult_alternates": [
+      "Maagang tumitilaok ang tandang sa bakuran."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumitilaok"
+  },
+  {
+    "word": "Malinis",
+    "easy": "Malinis ang ilog.",
+    "easy_alternates": [
+      "Malinis ang ilog."
+    ],
+    "difficult": "Naliligo ang mga bata sa ilog.",
+    "difficult_alternates": [
+      "Naliligo ang mga bata sa ilog.",
+      "Naliligo sa ilog ang mga bata."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Malinis"
+  },
+  {
+    "word": "Maayos",
+    "easy": "Maayos ang kaniyang sulat-kamay.",
+    "easy_alternates": [
+      "Maayos ang kaniyang sulat-kamay."
+    ],
+    "difficult": "Maayos ang kaniyang sulat-kamay dahil sa pagsasanay.",
+    "difficult_alternates": [
+      "Maayos ang kaniyang sulat-kamay dahil sa pagsasanay."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Maayos"
+  },
+  {
+    "word": "Masipag",
+    "easy": "Masipag ako.",
+    "easy_alternates": [
+      "Masipag ako."
+    ],
+    "difficult": "Masipag akong mag-aral.",
+    "difficult_alternates": [
+      "Masipag akong mag-aral."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Masipag"
+  },
+  {
+    "word": "Nagluto",
+    "easy": "Nagluto si Nanay.",
+    "easy_alternates": [
+      "Nagluto si Nanay."
+    ],
+    "difficult": "Nagluto si Nanay ng sinigang.",
+    "difficult_alternates": [
+      "Nagluto si Nanay ng sinigang.",
+      "Nagluto ng sinigang si Nanay."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagluto"
+  },
+  {
+    "word": "Nagbabasa",
+    "easy": "Nagbabasa si Jerem.",
+    "easy_alternates": [
+      "Nagbabasa si Jerem."
+    ],
+    "difficult": "Nagbabasa si Jerem ng aklat.",
+    "difficult_alternates": [
+      "Nagbabasa si Jerem ng aklat.",
+      "Nagbabasa ng aklat si Jerem."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagbabasa"
+  },
+  {
+    "word": "Natulog",
+    "easy": "Natulog siya.",
+    "easy_alternates": [
+      "Natulog siya."
+    ],
+    "difficult": "Natulog siya nang maaga.",
+    "difficult_alternates": [
+      "Natulog siya nang maaga."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Natulog"
+  },
+  {
+    "word": "Tapat",
+    "easy": "Tapat ako.",
+    "easy_alternates": [
+      "Tapat ako."
+    ],
+    "difficult": "Tapat akong mag-aaral.",
+    "difficult_alternates": [
+      "Tapat akong mag-aaral."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tapat"
+  },
+  {
+    "word": "Tumatakbo",
+    "easy": "Tumatakbo si Chris.",
+    "easy_alternates": [
+      "Tumatakbo si Chris."
+    ],
+    "difficult": "Tumatakbo si Chris araw-araw.",
+    "difficult_alternates": [
+      "Tumatakbo si Chris araw-araw.",
+      "Tumatakbo araw-araw si Chris."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumatakbo"
+  },
+  {
+    "word": "Nagtitipid",
+    "easy": "Nagtitipid ng tubig.",
+    "easy_alternates": [
+      "Nagtitipid ng tubig."
+    ],
+    "difficult": "Nagtitipid ng tubig ang pamilya Alba at pamilya Santos.",
+    "difficult_alternates": [
+      "Nagtitipid ng tubig ang pamilya Alba at pamilya Santos.",
+      "Nagtitipid ng tubig ang pamilya Santos at pamilya Alba.",
+      "Nagtitipid ang pamilya Santos at pamilya Alba ng tubig."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtitipid"
+  },
+  {
+    "word": "Walang",
+    "easy": "Walang nasasayang na kanin.",
+    "easy_alternates": [
+      "Walang nasasayang na kanin."
+    ],
+    "difficult": "Walang nasasayang na kanin sa bawat plato.",
+    "difficult_alternates": [
+      "Walang nasasayang na kanin sa bawat plato."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Walang"
+  },
+  {
+    "word": "Nakita",
+    "easy": "Nakita ko ang kalabaw.",
+    "easy_alternates": [
+      "Nakita ko ang kalabaw."
+    ],
+    "difficult": "Nakita ko ang kalabaw sa bukid.",
+    "difficult_alternates": [
+      "Nakita ko ang kalabaw sa bukid.",
+      "Nakita ko sa bukid ang kalabaw."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nakita"
+  },
+  {
+    "word": "Naliligaw",
+    "easy": "Naliligaw ang pusa.",
+    "easy_alternates": [
+      "Naliligaw ang pusa."
+    ],
+    "difficult": "Naliligaw ang pusa sa kalye.",
+    "difficult_alternates": [
+      "Naliligaw ang pusa sa kalye.",
+      "Naliligaw sa kalye ang pusa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Naliligaw"
+  },
+  {
+    "word": "Nakikinig",
+    "easy": "Nakikinig si Tonio.",
+    "easy_alternates": [
+      "Nakikinig si Tonio."
+    ],
+    "difficult": "Nakikinig si Tonio ng kuwentong pambata.",
+    "difficult_alternates": [
+      "Nakikinig si Tonio ng kuwentong pambata.",
+      "Nakikinig ng kuwentong pambata si Tonio."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nakikinig"
+  },
+  {
+    "word": "May",
+    "easy": "May pintura ang bakod.",
+    "easy_alternates": [
+      "May pintura ang bakod."
+    ],
+    "difficult": "Kulay puti ang pintura ng bakod.",
+    "difficult_alternates": [
+      "Kulay puti ang pintura ng bakod."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang May"
+  },
+  {
+    "word": "Sumalok",
+    "easy": "Sumalok ng tubig.",
+    "easy_alternates": [
+      "Sumalok ng tubig."
+    ],
+    "difficult": "Sumalok ng tubig si Paeng.",
+    "difficult_alternates": [
+      "Sumalok ng tubig si Paeng.",
+      "Sumalok si Paeng ng tubig."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Sumalok"
+  },
+  {
+    "word": "Kaarawan",
+    "easy": "Kaarawan ni Lolo.",
+    "easy_alternates": [
+      "Kaarawan ni Lolo."
+    ],
+    "difficult": "Kaarawan ni Lolo sa makalawa.",
+    "difficult_alternates": [
+      "Kaarawan ni Lolo sa makalawa."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaarawan"
+  },
+  {
+    "word": "Madilim",
+    "easy": "Madilim ang langit.",
+    "easy_alternates": [
+      "Madilim ang langit."
+    ],
+    "difficult": "Madilim ang langit at bilog ang buwan.",
+    "difficult_alternates": [
+      "Madilim ang langit at bilog ang buwan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Madilim"
+  },
+  {
+    "word": "Kumakanta",
+    "easy": "Kumakanta ang mga mag-aaral.",
+    "easy_alternates": [
+      "Kumakanta ang mga mag-aaral."
+    ],
+    "difficult": "Kumakanta ang mga mag-aaral ng Pambansang Awit ng Pilipinas.",
+    "difficult_alternates": [
+      "Kumakanta ang mga mag-aaral ng Pambansang Awit ng Pilipinas.",
+      "Kumakanta ng Pambansang Awit ng Pilipinas ang mga mag-aaral."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kumakanta"
+  },
+  {
+    "word": "Nagtanim",
+    "easy": "Nagtanim kami.",
+    "easy_alternates": [
+      "Nagtanim kami."
+    ],
+    "difficult": "Nagtanim kami ng mga gulay.",
+    "difficult_alternates": [
+      "Nagtanim kami ng mga gulay.",
+      "Nagtanim ng mga gulay kami."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagtanim"
+  },
+  {
+    "word": "Bumisita",
+    "easy": "Bumisita ako.",
+    "easy_alternates": [
+      "Bumisita ako."
+    ],
+    "difficult": "Bumisita ako sa mga pinsan ko.",
+    "difficult_alternates": [
+      "Bumisita ako sa mga pinsan ko.",
+      "Bumisita sa mga pinsan ko ako."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Bumisita"
+  },
+  {
+    "word": "Kaya",
+    "easy": "Kaya kong bigkasin.",
+    "easy_alternates": [
+      "Kaya kong bigkasin."
+    ],
+    "difficult": "Kaya kong bigkasin ang Alpabetong Filipino.",
+    "difficult_alternates": [
+      "Kaya kong bigkasin ang Alpabetong Filipino."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Kaya"
+  },
+  {
+    "word": "Nagustuhan",
+    "easy": "Nagustuhan ko.",
+    "easy_alternates": [
+      "Nagustuhan ko."
+    ],
+    "difficult": "Nagustuhan ko ang kuwentong bayan.",
+    "difficult_alternates": [
+      "Nagustuhan ko ang kuwentong bayan."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagustuhan"
+  },
+  {
+    "word": "Matamlay",
+    "easy": "Matamlay ang aso.",
+    "easy_alternates": [
+      "Matamlay ang aso."
+    ],
+    "difficult": "Matamlay ang aso ni Anita.",
+    "difficult_alternates": [
+      "Matamlay ang aso ni Anita."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Matamlay"
+  },
+  {
+    "word": "Sinuot",
+    "easy": "Sinuot ko.",
+    "easy_alternates": [
+      "Sinuot ko."
+    ],
+    "difficult": "Sinuot ko ang tsinelas.",
+    "difficult_alternates": [
+      "Sinuot ko ang tsinelas.",
+      "Sinuot ang tsinelas ko."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Sinuot"
+  },
+  {
+    "word": "Uminom",
+    "easy": "Uminom siya.",
+    "easy_alternates": [
+      "Uminom siya."
+    ],
+    "difficult": "Uminom siya ng tubig.",
+    "difficult_alternates": [
+      "Uminom siya ng tubig."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Uminom"
+  },
+  {
+    "word": "Saulado",
+    "easy": "Saulado ko.",
+    "easy_alternates": [
+      "Saulado ko."
+    ],
+    "difficult": "Saulado ko ang 12 buwan sa kalendaryo.",
+    "difficult_alternates": [
+      "Saulado ko ang 12 buwan sa kalendaryo."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Saulado"
+  },
+  {
+    "word": "Nanonood",
+    "easy": "Nanonood ako ng Anime.",
+    "easy_alternates": [
+      "Nanonood ako ng Anime."
+    ],
+    "difficult": "Nanonood ako ng Anime kapag tapos na ang klase.",
+    "difficult_alternates": [
+      "Nanonood ako ng Anime kapag tapos na ang klase."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nanonood"
+  },
+  {
+    "word": "Nakaupo",
+    "easy": "Nakaupo ako.",
+    "easy_alternates": [
+      "Nakaupo ako."
+    ],
+    "difficult": "Nakaupo ako sa silya.",
+    "difficult_alternates": [
+      "Nakaupo ako sa silya."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nakaupo"
+  },
+  {
+    "word": "Uminom",
+    "easy": "Uminom si Lola.",
+    "easy_alternates": [
+      "Uminom si Lola."
+    ],
+    "difficult": "Uminom si Lola ng salabat araw-araw.",
+    "difficult_alternates": [
+      "Uminom si Lola ng salabat araw-araw.",
+      "Uminom ng salabat si Lola araw-araw."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Uminom"
+  },
+  {
+    "word": "Nagbakasyon",
+    "easy": "Nagbakasyon ang aming pamilya.",
+    "easy_alternates": [
+      "Nagbakasyon ang aming pamilya."
+    ],
+    "difficult": "Nagbakasyon ang aming pamilya sa Bicol.",
+    "difficult_alternates": [
+      "Nagbakasyon ang aming pamilya sa Bicol.",
+      "Nagbakasyon sa Bicol ang aming pamilya."
+    ],
+    "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Nagbakasyon"
+  },
+  {
+    "word": "Tumatawa",
+    "easy": "Tumatawa si Kuya Rodel.",
+    "easy_alternates": [
+      "Tumatawa si Kuya Rodel."
+    ],
+    "difficult": "Tumatawa si Kuya Rodel.",
+    "difficult_alternates": [
+      "Tumatawa si Kuya Rodel."
+    ],
     "difficult_instruction": "Gumawa ng isang pangungusap na gumagamit ng salitang Tumatawa"
   }
 ]
