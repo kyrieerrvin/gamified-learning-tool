@@ -23,11 +23,11 @@ function DashboardContent() {
 
   // Rotating motivational messages (Tagalog)
   const motivationalMessages = [
-    'Handa ka na bang matuto ngayon?',
-    'Magaling! Patuloy lang sa pag-aaral!',
-    'Ang sipag mo! Tuloy-tuloy na natin ‘to.',
-    'Maliit man, bawat hakbang ay progreso.',
-    'Ang galing mo! Ipagpatuloy mo lang!'
+    'Nandito ka ngayon sa FILIPINOnlayn.'
+    // 'Magaling! Patuloy lang sa pag-aaral!',
+    // 'Ang sipag mo! Tuloy-tuloy na natin ‘to.',
+    // 'Maliit man, bawat hakbang ay progreso.',
+    // 'Ang galing mo! Ipagpatuloy mo lang!'
   ];
   const [motivation, setMotivation] = useState('');
 
@@ -92,7 +92,7 @@ function DashboardContent() {
         
         {/* Challenge Cards - vertically prioritized layout */}
         <div className={`transition-all duration-1000 delay-300 transform ${visibilityClasses} mb-6`}>
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Matuto ng Tagalog:</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Magkasama tayong matuto!</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-5">
             <Link href="/challenges/conversation" className="group block">
               <div
@@ -106,10 +106,10 @@ function DashboardContent() {
                     </svg>
                   </div>
                   <div className="flex-1 my-2 md:my-0 flex flex-col justify-center max-w-[60ch]">
-                    <h3 className="text-2xl md:text-3xl font-semibold mb-2">Conversation</h3>
+                    <h3 className="text-2xl md:text-3xl font-semibold mb-2">Usap Tayo</h3>
                     <p className="text-gray-700">Magsanay sa pakikipagusap sa tulong ng AI.</p>
                     <div className="mt-4 text-blue-700 font-medium group-hover:underline inline-flex items-center">
-                    Simulan ang hamon 
+                    Simulan
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -131,10 +131,10 @@ function DashboardContent() {
                     </svg>
                   </div>
                   <div className="flex-1 my-2 md:my-0 flex flex-col justify-center max-w-[60ch]">
-                    <h3 className="text-2xl md:text-3xl font-semibold mb-2">Make a Sentence</h3>
-                    <p className="text-gray-700">Bumuo ng makabuluhang pangungusap gamit ang Tagalog.</p>
+                    <h3 className="text-2xl md:text-3xl font-semibold mb-2">Buuin Mo</h3>
+                    <p className="text-gray-700">Magsanay bumuo ng pangungusap.</p>
                     <div className="mt-4 text-indigo-700 font-medium group-hover:underline inline-flex items-center">
-                      Simulan ang hamon
+                      Simulan
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -156,8 +156,8 @@ function DashboardContent() {
                     </svg>
                   </div>
                   <div className="flex-1 my-2 md:my-0 flex flex-col justify-center max-w-[60ch]">
-                    <h3 className="text-2xl md:text-3xl font-semibold mb-2">Multiple Choice</h3>
-                    <p className="text-gray-700">Subukan ang iyong kaalaman sa mga Tagalog na pangungusap.</p>
+                    <h3 className="text-2xl md:text-3xl font-semibold mb-2">Hanapin Natin</h3>
+                    <p className="text-gray-700">Matuto ng iba pang kaalaman sa Filipino.</p>
                     <div className="mt-4 text-purple-700 font-medium group-hover:underline inline-flex items-center">
                     Simulan ang hamon 
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

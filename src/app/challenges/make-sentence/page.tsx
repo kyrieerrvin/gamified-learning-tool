@@ -114,9 +114,9 @@ export default function MakeSentencePage() {
         {/* Tab navigation - icon+label with animated underline */}
         <div className="bg-white rounded-xl shadow mb-4 p-1.5 flex justify-center max-w-2xl mx-auto">
           {([
-            { key: 'learning', label: 'Pag-unlad', icon: '🗺️' },
-            { key: 'quests', label: 'Mga Misyon', icon: '⭐' },
-            { key: 'stats', label: 'Mga Nakamit', icon: '🏅' },
+            { key: 'learning', label: 'Sariling Sikap', icon: '🗺️' },
+            { key: 'quests', label: 'Misyon', icon: '⭐' },
+            { key: 'stats', label: 'Resulta', icon: '🏅' },
           ] as const).map((tab, idx) => (
             <button
               key={tab.key}

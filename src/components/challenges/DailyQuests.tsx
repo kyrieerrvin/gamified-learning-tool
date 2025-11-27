@@ -101,7 +101,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
       
       <div className="mt-6 pt-4 border-t border-gray-100">
         <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-600">Kabuuang XP</span>
+          <span className="text-gray-600">Kabuuang Ekstrang Puntos (XP)</span>
           <span className="font-bold text-duolingo-orange">{totalXP} XP</span>
         </div>
         
@@ -112,7 +112,7 @@ export default function DailyQuests({ gameType }: DailyQuestsProps) {
             transition={{ repeat: Infinity, duration: 2 }}
             className="inline-block bg-gradient-to-r from-duolingo-yellow to-duolingo-orange text-white font-bold py-2 px-4 rounded-lg shadow-lg"
           >
-            Tapusin lahat ng mga misyon upang makakuha ng {totalAvailableXP} XP!
+            Tapusin lahat ng ARAL-SANAY para makuha ka ng {totalAvailableXP} XP!
           </motion.div>
         </div>
       </div>

@@ -177,8 +177,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'streak-bonus',
-      title: 'Tatlong Sunod-sunod!',
-      description: 'Makakuha ng 3 sunod-sunod na tamang sagot',
+      title: '3 Magkakasunod na tamang sagot.',
+      description: 'Tama lahat ng sagot sa tatlong magkakasunod na tanong.',
       reward: 10,
       progress: 0,
       target: 1,
@@ -187,8 +187,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'complete-games',
-      title: 'Tatlong laro!',
-      description: 'Makatapos ng 3 laro ngayong araw (anumang puntos)',
+      title: '3 Nakumpletong Aral-Sanay.',
+      description: 'Natapos ang tatlong aral-sanay sa loob ng isang araw.',
       reward: 15,
       progress: 0,
       target: 3,
@@ -197,8 +197,8 @@ const generateDailyQuests = (): DailyQuest[] => {
     },
     {
       id: 'perfect-score',
-      title: 'Perpekto!',
-      description: 'Tumapos ng isang level na may perpektong puntos.',
+      title: 'Perpektong Iskor!',
+      description: 'Tamang lahat ang mga sagot sa isang lebel.',
       reward: 20,
       progress: 0,
       target: 1,
