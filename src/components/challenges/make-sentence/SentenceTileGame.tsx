@@ -285,9 +285,9 @@ export default function SentenceTileGame({
           <Image src={mascot} alt="Mascot" className="rounded-xl shadow-md" width={140} height={140} />
         </motion.div>
         <div className="text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 text-gray-900">Buuin ang pangungusap</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 text-gray-900">Bumuo ng pangungusap</h1>
           <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-2xl px-4 py-2 shadow-sm">
-            <span className="text-orange-700 text-sm font-semibold">Salitang Pokus:</span>
+            <span className="text-orange-700 text-sm font-semibold">Ang Paksa:</span>
             <span className="text-orange-900 font-bold capitalize">{focusWord}</span>
           </div>
         </div>
@@ -396,7 +396,7 @@ export default function SentenceTileGame({
                     disabled={!isComplete || checking}
                     className="font-sans tracking-tight rounded-[24px] px-8 py-4 text-white font-extrabold text-[16px] md:text-[18px] bg-[#3B82F6] hover:bg-[#2563EB] shadow-md shadow-blue-200"
                   >
-                    Suriin
+                    Buuin
                   </Button>
                 </motion.div>
               </motion.div>

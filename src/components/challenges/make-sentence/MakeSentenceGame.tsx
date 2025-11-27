@@ -444,16 +444,16 @@ export default function MakeSentenceGame({
                   {/* {consecutiveCorrect >= 3 && !currentResult && (
                     <span className="text-5xl" aria-label="streak-indicator" title="Tatlong o mahigit na sunod sunod na tamang sagot!">🔥</span>
                   )} */}
-                  <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">Buuin ang pangungusap</h1>
+                  <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">Bumuo ng pangungusap</h1>
                 </div>
               </div>
               <div className="mt-3 inline-block bg-blue-50 rounded-2xl p-6 text-blue-900 font-sans">
-                <div className="text-lg md:text-2xl font-semibold tracking-tight">Gamitin ang salitang</div>
+                <div className="text-lg md:text-2xl font-semibold tracking-tight">Gamitin sa pangungusap</div>
+                <div className="text-lg md:text-2xl font-semibold tracking-tight">ang salitang</div>
                 <div className="mt-3 inline-block px-5 py-2 rounded-full bg-blue-600 text-white font-extrabold text-lg md:text-xl">{currentWord.word}</div>
                 {currentWord.description && (
                   <div className="mt-3 text-base md:text-lg text-blue-700">{currentWord.description}</div>
                 )}
-                <div className="text-lg md:text-2xl font-semibold tracking-tight">sa isang pangungusap.</div>
               </div>
             </div>
           </div>
@@ -473,7 +473,7 @@ export default function MakeSentenceGame({
               ref={inputRef}
               className="w-full p-6 rounded-2xl bg-gray-50 border-2 border-blue-200 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-lg md:text-xl font-sans"
               rows={6}
-              placeholder="Isulat ang iyong pangungusap dito…"
+              placeholder="Isulat dito ang pangungusap mo..."
               value={inputSentence}
               onChange={(e) => setInputSentence(e.target.value)}
               disabled={isSubmitting}
@@ -488,7 +488,7 @@ export default function MakeSentenceGame({
                   loading={isSubmitting}
                   disabled={isSubmitting || !inputSentence.trim()}
                 >
-                  Suriin
+                  Buuin
                 </Button>
               </motion.div>
             </div>
