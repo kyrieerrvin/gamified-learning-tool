@@ -462,7 +462,7 @@ export default function PartsOfSpeechGame({
                     disabled={!canSubmit}
                     className="font-sans tracking-tight rounded-[24px] px-8 py-4 text-white font-extrabold text-[16px] md:text-[18px] bg-[#3B82F6] hover:bg-[#2563EB] shadow-md shadow-blue-200"
                   >
-                    Suriin
+                    Piliin 
                   </Button>
                 </motion.div>
               </motion.div>
