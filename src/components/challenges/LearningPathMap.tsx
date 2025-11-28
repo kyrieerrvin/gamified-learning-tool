@@ -54,7 +54,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
   const router = useRouter();
   const { progress, canAccessLevel, loading } = useGameProgress();
   
-  // Map Level groups to colors: Easy→green, Difficult→orange, Hard→red
+  // Map level groups to colors: Easy→green, Medium→orange, Hard→red
   const getLevelColor = (sectionIndex: number): 'green' | 'orange' | 'red' => {
     if (sectionIndex === 0) return 'green';
     if (sectionIndex === 1) return 'orange';
@@ -198,7 +198,7 @@ export default function LearningPathMap({ gameType, title = "Learning Path" }: L
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-full bg-white ${badgeTextClass} flex items-center justify-center text-lg font-bold`}>{toRoman(sectionIndex + 1)}</div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold">{['Easy', 'Difficult', 'Hard'][sectionIndex] || section.title}</span>
+                      <span className="text-xl font-bold">{['Easy', 'Medium', 'Hard'][sectionIndex] || section.title}</span>
                     </div>
                   </div>
                   {/* Progress line */}

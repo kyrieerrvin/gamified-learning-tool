@@ -119,7 +119,7 @@ export default function UserStats({ gameType }: UserStatsProps) {
         <h3 className="font-bold text-gray-700 mb-3">Resulta</h3>
         <div className="flex flex-wrap justify-center gap-4">
           <AchievementBadge 
-            title="Bagito"
+            title="Baguhan"
             description="Complete your first level" 
             isUnlocked={
               (gameAchievements && gameAchievements[gameType]?.includes('first-steps')) || 

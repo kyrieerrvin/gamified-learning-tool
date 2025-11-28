@@ -51,14 +51,14 @@ const collectAlternates = (entry: any, fieldNames: string[]): string[] => {
 export default function PlayMakeSentencePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Difficult, 2: Hard)
+  const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Medium, 2: Hard)
   const levelId = parseInt(searchParams.get('level') || '0'); // Challenge index within the level (0..9)
   
   const { progress, canAccessLevel, completeLevel, updateData, addPoints, setQuests, data, loading: gameProgressLoading } = useGameProgress();
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
-  // Sentence Tile Game multi-round support for sections 0 (Easy) and 1 (Difficult)
+  // Sentence Tile Game multi-round support for sections 0 (Easy) and 1 (Medium)
   const [tileRounds, setTileRounds] = useState<TileRound[]>([]);
   const [tileIndex, setTileIndex] = useState(0);
   const [tileScore, setTileScore] = useState(0);
@@ -88,10 +88,10 @@ export default function PlayMakeSentencePage() {
     setLoading(false);
   }, [sectionId, levelId, canAccessLevel, router, gameProgressLoading, data]);
 
-  // Prepare up to 10 unique rounds for SentenceTileGame for Easy/Difficult based on grade-level words
+  // Prepare up to 10 unique rounds for SentenceTileGame for Easy/Medium based on grade-level words
   useEffect(() => {
     const loadTileRounds = async () => {
-      // Only for Easy (0) and Difficult (1)
+      // Only for Easy (0) and Medium (1)
       if (!(sectionId === 0 || sectionId === 1)) return;
       // Need profile/grade
       if (!data?.profile?.gradeLevel) return;
@@ -321,7 +321,7 @@ export default function PlayMakeSentencePage() {
             <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
             <span className="font-semibold">x{hearts}</span>
             {streak >= 3 && (
-              <span aria-label="streak-indicator">Sunod sunod na tama! 🔥</span>
+              <span aria-label="streak-indicator">Sunud-sunod na tama! 🔥</span>
             )}
           </div>
         </div>

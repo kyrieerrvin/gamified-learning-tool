@@ -23,7 +23,7 @@ const PartsOfSpeechGame = dynamic(
 export default function PlayMultipleChoicePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Difficult, 2: Hard)
+  const sectionId = parseInt(searchParams.get('section') || '0'); // Level group index (0: Easy, 1: Medium, 2: Hard)
   const levelId = parseInt(searchParams.get('level') || '0'); // Challenge index within the level (0..9)
   
   const { progress, canAccessLevel, completeLevel, updateData, addPoints, setQuests, data, loading: gameProgressLoading } = useGameProgress();
@@ -213,7 +213,7 @@ export default function PlayMultipleChoicePage() {
               <Image src="/hearts.svg" alt="Hearts" width={24} height={24} />
               <span className="font-semibold">x{hearts}</span>
               {streak >= 3 && (
-              <span aria-label="streak-indicator">Sunod sunod na tama! 🔥</span>
+              <span aria-label="streak-indicator">Sunud-sunod na tama! 🔥</span>
               )}
             </div>
           </div>
