@@ -12,7 +12,7 @@ const mockPosData: POSGameData = {
       question: "What part of speech is 'Ang'?",
       options: ["Article", "Pronoun", "Noun", "Adjective"],
       correctAnswer: "Article",
-      explanation: "'Ang' is a definite article in Tagalog that marks the subject of a sentence."
+      explanation: "'Ang' is a definite article in Filipino that marks the subject of a sentence."
     },
     {
       id: 2,
@@ -40,7 +40,7 @@ const mockPosData: POSGameData = {
       question: "What part of speech is 'sa'?",
       options: ["Preposition", "Conjunction", "Pronoun", "Interjection"],
       correctAnswer: "Preposition",
-      explanation: "'Sa' is a preposition in Tagalog, similar to 'in', 'at', or 'on' in English."
+      explanation: "'Sa' is a preposition in Filipino, similar to 'in', 'at', or 'on' in English."
     }
   ],
   source: "mock_data",

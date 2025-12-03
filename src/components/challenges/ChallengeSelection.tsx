@@ -35,7 +35,7 @@ export default function ChallengeSelection() {
   const challenges = [
     {
       id: 'conversation',
-      name: 'Tagalog Chatbot',
+      name: 'Filipino Chatbot',
       path: '/challenges/conversation',
       color: 'blue',
       progressPercentage: 0 // No progression map for this yet

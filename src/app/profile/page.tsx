@@ -57,7 +57,7 @@ export default function ProfilePage() {
                 {user?.displayName ? user.displayName[0].toUpperCase() : "U"}
               </div>
               <div>
-                <h2 className="text-xl font-semibold">{user?.displayName || "Tagalog Learner"}</h2>
+                <h2 className="text-xl font-semibold">{user?.displayName || "Filipino Learner"}</h2>
                 <p className="text-gray-600">{user?.email}</p>
                 <p className="text-gray-500 text-sm mt-1">
                   Member since {profile?.joinDate 

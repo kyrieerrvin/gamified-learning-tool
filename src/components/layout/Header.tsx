@@ -7,7 +7,7 @@ export default function Header() {
       <nav className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="font-bold text-xl">
-            Tagalog Learning
+            Filipino Learning
           </Link>
           <div className="flex gap-4">
             <Link href="/challenges/conversation" className="hover:text-blue-600">

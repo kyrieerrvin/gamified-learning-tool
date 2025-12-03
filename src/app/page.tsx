@@ -227,7 +227,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Fun Tagalog Facts */}
+        {/* Fun Filipino Facts */}
         <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #FCE7F3 0%, #EDE9FE 100%)' }}>
           {/* drifting glyphs behind cards */}
           <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
@@ -239,8 +239,8 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Tuklas-Talino sa FIlipino</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {[
-                {front: '⭐ Kilala mo ba siya?', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Tagalog.'},
-                {front: '💬 Alam mo ba ito?', back: 'May mga salitang Tagalog na hindi kayang isalin nang direkta sa Ingles.'},
+                {front: '⭐ Kilala mo ba siya?', back: 'Mahigit 90 milyong tao sa buong mundo ang nagsasalita ng Filipino.'},
+                {front: '💬 Alam mo ba ito?', back: 'May mga salitang Filipino na hindi kayang isalin nang direkta sa Ingles.'},
                 {front: '🇵🇭 Anong masasabi mo?', back: 'Ang ‘Mabuhay’ ay ibig sabihin ay ‘long live’—isang masayang pagbati ng mga Pilipino!'},
               ].map((fact, idx) => (
                 <button key={idx} className="flip-card h-44 bg-transparent" aria-pressed="false" onClick={(e) => {

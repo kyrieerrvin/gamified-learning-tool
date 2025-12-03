@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FILIPINOnlayn - Learn Tagalog Online",
-  description: "A fun and interactive way to learn Tagalog",
+  title: "FILIPINOnlayn - Learn Filipino Online",
+  description: "A fun and interactive way to learn Filipino",
 };
 
 export default function RootLayout({

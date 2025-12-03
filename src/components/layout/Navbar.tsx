@@ -212,7 +212,7 @@ export default function Navbar() {
               <div className="space-y-4">
                 <div>
                   <label htmlFor="testSentence" className="block text-sm font-medium text-gray-700 mb-1">
-                    Enter a Tagalog sentence to analyze:
+                    Enter a Filipino sentence to analyze:
                   </label>
                   <textarea
                     id="testSentence"
@@ -220,7 +220,7 @@ export default function Navbar() {
                     rows={3}
                     value={testSentence}
                     onChange={(e) => setTestSentence(e.target.value)}
-                    placeholder="Type a Tagalog sentence here..."
+                    placeholder="Type a Filipino sentence here..."
                     disabled={testLoading}
                   />
                 </div>

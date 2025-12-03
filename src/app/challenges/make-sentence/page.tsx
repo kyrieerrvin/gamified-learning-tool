@@ -106,7 +106,7 @@ export default function MakeSentencePage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-gray-600"
             >
-              Magsanay sa paggawa ng pangungusap gamit ang Tagalog.
+              Magsanay sa paggawa ng pangungusap gamit ang Filipino.
             </motion.p>
           </div>
         </div>
