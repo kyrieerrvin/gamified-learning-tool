@@ -47,12 +47,6 @@ src/
 └── utils/          # Utility functions
 ```
 
-Key architectural features:
-- Clear separation of concerns between data, services, and UI
-- Centralized type definitions to reduce duplication
-- Dedicated mock data directory for fallback scenarios
-- Modular service layer with focused responsibilities
-
 ## Technical Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
@@ -84,19 +78,6 @@ The NLP API provides the following endpoints:
 - **GET `/api/pos-game?difficulty=medium`** - Generate game data with optional difficulty parameter
 - **POST `/api/analyze`** - Analyze a Tagalog sentence for POS tagging
 - **POST `/api/verify`** - Verify if a selected answer is correct
-
-### Fallback Mechanism
-
-The system includes multi-level fallbacks:
-1. Try to use dedicated NLP API with CalamanCy model
-2. If model fails, use dictionary-based approach in the NLP API
-3. If NLP API is unreachable, fall back to hardcoded data in the frontend
-
-### Technical Notes
-
-- The Python backend runs on port 5000 by default
-- The NLP API writes its port to `/tmp/nlp_api_port.txt` for the frontend to discover
-- The CalamanCy model needs 1-2GB RAM and may take 10-15 seconds to load initially
 
 ## Firebase Integration
 
